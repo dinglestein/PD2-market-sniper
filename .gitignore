@@ -1,0 +1,6 @@
+seen_items.json
+scan_results.json
+screenshots/
+__pycache__/
+*.pyc
+.env
