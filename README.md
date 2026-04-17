@@ -34,6 +34,7 @@ This tool is deliberately conservative because aggressive scanning could get an 
 Current protections:
 - filter rotation instead of scanning the entire saved list every cycle
 - randomized delay between filter scans
+- randomized delay between pagination page turns
 - daily scan cap
 - seen-item tracking so the same listing does not keep surfacing constantly
 - manual user-controlled offer amount, no auto-bidding
@@ -58,6 +59,14 @@ Main files:
 - `scripts/dashboard.py` - HTML dashboard generation
 - `scripts/config.py` - shared config and filter list
 
+Pagination support:
+
+- scans page 1 by default
+- supports bounded multi-page traversal with `--max-pages N`
+- deduplicates repeated listings across pages
+- stops early if later pages repeat or go empty
+- intended for conservative deep scans, not full aggressive crawls
+
 State / generated files:
 
 - `scan_results.json` - latest scan output
@@ -73,7 +82,7 @@ State / generated files:
 ### Standard Scan
 
 ```bash
-python scripts/sniper.py scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200
+python scripts/sniper.py scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1
 ```
 
 ### Scan a Specific Filter
@@ -94,7 +103,7 @@ This is the preferred real-world flow.
 Operator scan:
 
 ```bash
-python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --top 3
+python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1 --top 3
 ```
 
 Show the current pending deal:
@@ -210,6 +219,7 @@ This is intended as visibility only, especially because some desired corruptions
 
 ## Recommended Next Steps
 
+- add generic ad hoc search support for live market queries like `Type: Bow`
 - schedule conservative recurring scans
 - wire the operator alert output directly into messaging surfaces
 - improve cropped listing screenshots

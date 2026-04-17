@@ -26,12 +26,14 @@ Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentL
 
 ### 1) Safe Scan Cycle
 ```bash
-python scripts/sniper.py scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200
+python scripts/sniper.py scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1
 ```
 
 What it does:
 - Rotates through only part of the saved filter list each cycle (default 12 filters)
 - Enforces conservative pacing with 2.0-3.5s randomized delays between filters
+- Supports bounded pagination with `--max-pages` (default 1 page)
+- Adds randomized delay between page turns during multi-page scans
 - Caps daily checks (default 200) via `sniper_state.json`
 - Intercepts market XHR/fetch JSON when available, with DOM fallback if the API shape changes
 - Expires old seen items after 36h so relists can surface again
@@ -41,7 +43,7 @@ What it does:
 
 ### 2) Scan a Specific Filter
 ```bash
-python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0.5
+python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0.5 --max-pages 3
 ```
 
 ### 3) Alert-Then-Offer Flow
@@ -52,7 +54,7 @@ python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0
 
 Operator scan (best for chat workflow):
 ```bash
-python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --top 3
+python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1 --top 3
 ```
 This prints compact operator-ready deal cards and stores the top result as the current pending confirmation target.
 
@@ -144,6 +146,7 @@ The sniper tracks whether filters return listings over time:
 
 - Conservative cadence is deliberate to reduce ban risk
 - Keep cycles limited instead of hammering all 59 filters at once
+- Use `--max-pages 1` for normal sniper behavior, increase pages only for deliberate deep scans
 - Avoid spamming the same listing, use `offer_history.json` as a sanity check
 - Season 13 ladder resets April 24, 2026
 

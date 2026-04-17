@@ -10,11 +10,14 @@ from config import (
     CHROME_DEBUG_URL,
     DEFAULT_DAILY_FILTER_LIMIT,
     DEFAULT_FILTERS_PER_CYCLE,
+    DEFAULT_MAX_PAGES,
     DEFAULT_MAX_PRICE_HR,
     DEFAULT_TIMEOUT_MS,
     DEFAULT_WAIT_AFTER_NAV_SECONDS,
     FILTERS,
     MARKET_URL,
+    PAGE_DELAY_MAX_SECONDS,
+    PAGE_DELAY_MIN_SECONDS,
     SCAN_DELAY_MAX_SECONDS,
     SCAN_DELAY_MIN_SECONDS,
     SCREENSHOTS_DIR,
@@ -42,11 +45,13 @@ class MarketScanner:
         filters_per_cycle: int = DEFAULT_FILTERS_PER_CYCLE,
         daily_filter_limit: int = DEFAULT_DAILY_FILTER_LIMIT,
         force_economy_refresh: bool = False,
+        max_pages: int = DEFAULT_MAX_PAGES,
     ):
         self.max_price_hr = max_price_hr
         self.filters_per_cycle = filters_per_cycle
         self.daily_filter_limit = daily_filter_limit
         self.force_economy_refresh = force_economy_refresh
+        self.max_pages = max(1, max_pages)
         self.state = StateStore()
         self.seen = SeenStore()
         self.offers = OfferHistory()
@@ -117,29 +122,94 @@ class MarketScanner:
             except Exception:
                 return
 
+        async def collect_page(current_page_num: int) -> tuple[list[dict[str, Any]], list[str]]:
+            listings: list[dict[str, Any]] = []
+            api_hits: list[str] = []
+            page_source_url = page.url or listing_url
+            for payload in api_payloads:
+                parsed = parse_api_response(payload["payload"], filter_id=filter_id, filter_name=filter_name, source_url=payload["url"])
+                if parsed:
+                    for item in parsed:
+                        item["page"] = current_page_num
+                    listings.extend(parsed)
+                    api_hits.append(payload["url"])
+            if not listings:
+                dom_listings = await parse_dom_listings(page, filter_id=filter_id, filter_name=filter_name, source_url=page_source_url)
+                for item in dom_listings:
+                    item["page"] = current_page_num
+                listings.extend(dom_listings)
+            return listings, api_hits
+
+        async def goto_page(page_num: int) -> bool:
+            if page_num <= 1:
+                return True
+            candidates = page.locator("button, a")
+            count = await candidates.count()
+            for i in range(count):
+                try:
+                    text = (await candidates.nth(i).inner_text()).strip()
+                    if text == str(page_num):
+                        await candidates.nth(i).click(timeout=DEFAULT_TIMEOUT_MS)
+                        await asyncio.sleep(DEFAULT_WAIT_AFTER_NAV_SECONDS)
+                        return True
+                except Exception:
+                    continue
+            return False
+
         page.on("response", handle_response)
         try:
             await page.goto(listing_url, wait_until="domcontentloaded", timeout=DEFAULT_TIMEOUT_MS)
             await asyncio.sleep(DEFAULT_WAIT_AFTER_NAV_SECONDS)
-            listings = []
-            api_hits = []
-            for payload in api_payloads:
-                parsed = parse_api_response(payload["payload"], filter_id=filter_id, filter_name=filter_name, source_url=payload["url"])
-                if parsed:
-                    listings.extend(parsed)
-                    api_hits.append(payload["url"])
-            if not listings:
-                listings = await parse_dom_listings(page, filter_id=filter_id, filter_name=filter_name, source_url=listing_url)
+
+            all_listings: list[dict[str, Any]] = []
+            all_api_hits: list[str] = []
+            pages_scanned = 0
+            pagination_seen_keys: set[str] = set()
+
+            for page_num in range(1, self.max_pages + 1):
+                if page_num > 1:
+                    ok = await goto_page(page_num)
+                    if not ok:
+                        break
+                    await asyncio.sleep(random.uniform(PAGE_DELAY_MIN_SECONDS, PAGE_DELAY_MAX_SECONDS))
+
+                listings, api_hits = await collect_page(page_num)
+                all_api_hits.extend(api_hits)
+                pages_scanned += 1
+
+                if not listings:
+                    if page_num == 1:
+                        continue
+                    break
+
+                new_on_page = 0
+                for item in listings:
+                    dedupe_key = json.dumps([
+                        item.get("listing_id"),
+                        item.get("listing_url"),
+                        item.get("item_name"),
+                        item.get("seller_name"),
+                        item.get("price_hr"),
+                    ], sort_keys=True)
+                    if dedupe_key in pagination_seen_keys:
+                        continue
+                    pagination_seen_keys.add(dedupe_key)
+                    all_listings.append(item)
+                    new_on_page += 1
+
+                if page_num > 1 and new_on_page == 0:
+                    break
+
             deals = []
             review = []
-            for item in listings:
+            for item in all_listings:
                 item["economy_value_hr"] = self.economy.value_for(item.get("item_name"))
                 item["recent_offer_count"] = len(self.offers.recent_for_listing(item.get("listing_id"), item.get("listing_url")))
                 if item.get("price_hr") is None:
                     review.append(item)
                     continue
                 if item["price_hr"] <= self.max_price_hr and self.seen.is_new(item):
-                    screenshot_path = SCREENSHOTS_DIR / f"deal-{filter_id}-{item.get('listing_id') or len(deals)}.png"
+                    screenshot_path = SCREENSHOTS_DIR / f"deal-{filter_id}-p{item.get('page', 1)}-{item.get('listing_id') or len(deals)}.png"
                     try:
                         await page.screenshot(path=str(screenshot_path), full_page=True)
                         item["screenshot"] = str(screenshot_path)
@@ -148,13 +218,14 @@ class MarketScanner:
                     self.seen.mark_seen(item)
                     deals.append(item)
             self.seen.save()
-            self.state.record_filter_result(filter_id, filter_name, success=True, listings=len(listings), deals=len(deals))
+            self.state.record_filter_result(filter_id, filter_name, success=True, listings=len(all_listings), deals=len(deals))
             return {
                 "filter_id": filter_id,
                 "filter_name": filter_name,
                 "url": listing_url,
-                "listing_count": len(listings),
-                "api_hits": api_hits,
+                "listing_count": len(all_listings),
+                "pages_scanned": pages_scanned,
+                "api_hits": sorted(set(all_api_hits)),
                 "deals": deals,
                 "needs_review": review,
             }
@@ -165,6 +236,7 @@ class MarketScanner:
                 "filter_name": filter_name,
                 "url": listing_url,
                 "listing_count": 0,
+                "pages_scanned": 0,
                 "api_hits": [],
                 "deals": [],
                 "needs_review": [],

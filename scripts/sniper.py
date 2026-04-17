@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 from alerts import format_alert, format_operator_alert
-from config import DEFAULT_FILTERS_PER_CYCLE, DEFAULT_MAX_PRICE_HR, FILTERS, SCAN_RESULTS_FILE
+from config import DEFAULT_FILTERS_PER_CYCLE, DEFAULT_MAX_PAGES, DEFAULT_MAX_PRICE_HR, FILTERS, SCAN_RESULTS_FILE
 from dashboard import write_dashboard
 from economy import EconomyManager
 from history import OfferHistory, StateStore
@@ -28,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     scan.add_argument("--filters-per-cycle", type=int, default=DEFAULT_FILTERS_PER_CYCLE)
     scan.add_argument("--daily-limit", type=int, default=200)
     scan.add_argument("--force-economy-refresh", action="store_true")
+    scan.add_argument("--max-pages", type=int, default=DEFAULT_MAX_PAGES)
 
     offer = sub.add_parser("offer", help="Submit an offer to a listing")
     offer.add_argument("--listing-url", required=True)
@@ -45,6 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     operator_scan.add_argument("--filters-per-cycle", type=int, default=DEFAULT_FILTERS_PER_CYCLE)
     operator_scan.add_argument("--daily-limit", type=int, default=200)
     operator_scan.add_argument("--force-economy-refresh", action="store_true")
+    operator_scan.add_argument("--max-pages", type=int, default=DEFAULT_MAX_PAGES)
     operator_scan.add_argument("--top", type=int, default=3)
 
     pending = sub.add_parser("pending", help="Show the current pending confirmation deal")
@@ -66,6 +68,7 @@ async def cmd_scan(args) -> int:
         filters_per_cycle=args.filters_per_cycle,
         daily_filter_limit=args.daily_limit,
         force_economy_refresh=args.force_economy_refresh,
+        max_pages=args.max_pages,
     )
     results = await scanner.scan(filter_id=args.filter_id)
     SCAN_RESULTS_FILE.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -89,6 +92,7 @@ async def cmd_operator_scan(args) -> int:
         filters_per_cycle=args.filters_per_cycle,
         daily_filter_limit=args.daily_limit,
         force_economy_refresh=args.force_economy_refresh,
+        max_pages=args.max_pages,
     )
     results = await scanner.scan(filter_id=args.filter_id)
     SCAN_RESULTS_FILE.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
