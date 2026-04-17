@@ -90,6 +90,23 @@ def _refresh_dashboard() -> None:
         logger.error("Dashboard refresh failed: %s", exc)
 
 
+NOTIFY_FILE = ASSETS_DIR / "_scan_notify.json"
+
+
+def _notify_agent(message: str) -> None:
+    """Write a notification file for the OpenClaw agent to pick up."""
+    try:
+        payload = {
+            "pending": True,
+            "message": message,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        NOTIFY_FILE.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        logger.info("Agent notification written")
+    except Exception as exc:
+        logger.warning("Could not write notification: %s", exc)
+
+
 def _run_scan_background() -> None:
     """Run a full operator scan in a background thread."""
     global _scan_running
@@ -105,10 +122,19 @@ def _run_scan_background() -> None:
         )
         if result.returncode == 0:
             logger.info("Scan completed successfully")
+            deals_output = result.stdout.strip()
+            if deals_output:
+                _notify_agent(
+                    "PD2 market scan completed from dashboard. Results:\n\n" + deals_output
+                )
         else:
             logger.error("Scan failed (exit %d): %s", result.returncode, result.stderr[:500])
+            _notify_agent(
+                "PD2 market scan from dashboard FAILED. Error: " + result.stderr[:300]
+            )
     except Exception as exc:
         logger.error("Scan failed: %s", exc)
+        _notify_agent("PD2 market scan from dashboard FAILED: " + str(exc))
     finally:
         with _scan_lock:
             _scan_running = False
