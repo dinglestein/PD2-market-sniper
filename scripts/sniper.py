@@ -16,6 +16,14 @@ from offers import submit_offer
 from scanner import MarketScanner
 
 
+def refresh_dashboard_from_state() -> None:
+    state = StateStore()
+    offer_history = OfferHistory().stats()
+    economy = EconomyManager(state).load()
+    scan_results = json.loads(SCAN_RESULTS_FILE.read_text(encoding="utf-8")) if SCAN_RESULTS_FILE.exists() else {"summary": {}, "deals": [], "state": state.data}
+    write_dashboard(scan_results, offer_history, state.filter_health(), economy)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="PD2 market sniper")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -81,6 +89,7 @@ async def cmd_scan(args) -> int:
 async def cmd_offer(args) -> int:
     item = json.loads(args.item_json) if args.item_json else None
     result = await submit_offer(listing_url=args.listing_url, amount_hr=args.amount, item=item)
+    refresh_dashboard_from_state()
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result.get("ok") else 1
 
@@ -121,6 +130,7 @@ async def cmd_confirm(args) -> int:
     result = await submit_offer(listing_url=deal["listing_url"], amount_hr=args.amount, item=deal)
     if result.get("ok"):
         StateStore().set_pending_confirmation(None)
+    refresh_dashboard_from_state()
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result.get("ok") else 1
 
@@ -145,6 +155,7 @@ async def cmd_reply_offer(args) -> int:
     result = await submit_offer(listing_url=pending["listing_url"], amount_hr=args.amount, item=pending)
     if result.get("ok"):
         state.set_pending_confirmation(None)
+    refresh_dashboard_from_state()
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result.get("ok") else 1
 
@@ -161,11 +172,7 @@ def cmd_history() -> int:
 
 
 def cmd_dashboard() -> int:
-    state = StateStore()
-    offer_history = OfferHistory().stats()
-    economy = EconomyManager(state).load()
-    scan_results = json.loads(SCAN_RESULTS_FILE.read_text(encoding="utf-8")) if SCAN_RESULTS_FILE.exists() else {"summary": {}, "deals": [], "state": state.data}
-    write_dashboard(scan_results, offer_history, state.filter_health(), economy)
+    refresh_dashboard_from_state()
     print("Dashboard written")
     return 0
 
