@@ -75,3 +75,29 @@ def format_alert(item: dict[str, Any]) -> str:
         f"seller={item.get('seller_name')} | filter={item.get('filter_name')} | "
         f"link={item.get('listing_url')}" + (f" | {extras}" if extras else "")
     )
+
+
+def format_operator_alert(item: dict[str, Any], *, deal_index: int = 0) -> str:
+    stats = list(item.get("stats") or [])[:6]
+    stats_text = "\n".join(f"- {stat}" for stat in stats)
+    corruption = ", ".join(str(v) for v in item.get("corruption") or [] if v)
+    screenshot = item.get("screenshot")
+    lines = [
+        f"Deal #{deal_index}",
+        f"Item: {item.get('item_name')}",
+        f"Price: {item.get('price_hr')} HR",
+        f"Seller: {item.get('seller_name')}",
+        f"Filter: {item.get('filter_name')}",
+        f"Score: {item.get('score', 0):.1f}",
+        f"Link: {item.get('listing_url')}",
+    ]
+    if item.get("posted_at"):
+        lines.append(f"Posted: {item.get('posted_at')}")
+    if corruption:
+        lines.append(f"Corruption: {corruption}")
+    if stats_text:
+        lines.append("Stats:\n" + stats_text)
+    if screenshot:
+        lines.append(f"Screenshot: {screenshot}")
+    lines.append("Reply with just an HR amount like `0.4` and I can submit the offer.")
+    return "\n".join(lines)

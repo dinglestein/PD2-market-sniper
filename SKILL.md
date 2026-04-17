@@ -45,10 +45,26 @@ python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0
 ```
 
 ### 3) Alert-Then-Offer Flow
-1. Run a scan.
-2. Inspect ranked deals in `scan_results.json` or console output.
-3. Pick the listing and decide your own offer amount.
-4. Submit it with either command below.
+1. Run an operator scan.
+2. Send the top deal card to the user.
+3. Wait for the user to reply with just an amount like `0.4`.
+4. Submit that amount against the pending deal.
+
+Operator scan (best for chat workflow):
+```bash
+python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --top 3
+```
+This prints compact operator-ready deal cards and stores the top result as the current pending confirmation target.
+
+Show the pending deal again:
+```bash
+python scripts/sniper.py pending
+```
+
+Submit a user reply amount against the pending deal:
+```bash
+python scripts/sniper.py reply-offer 0.3
+```
 
 Direct offer by URL:
 ```bash
@@ -60,7 +76,7 @@ One-click confirm using the last scan result:
 python scripts/sniper.py confirm --deal-index 0 --amount 0.3
 ```
 
-The scanner does **not** auto-price. It alerts, ranks, screenshots, and waits for the user to choose the number.
+The sniper does **not** auto-price. It alerts, ranks, screenshots, and waits for the user to choose the number.
 
 ## Other Commands
 
@@ -72,6 +88,11 @@ python scripts/sniper.py filters
 Show offer history stats:
 ```bash
 python scripts/sniper.py history
+```
+
+Show the current pending confirmation deal as JSON:
+```bash
+python scripts/sniper.py pending --json
 ```
 
 Refresh economy cache:

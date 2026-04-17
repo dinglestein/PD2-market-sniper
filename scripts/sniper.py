@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from alerts import format_alert
+from alerts import format_alert, format_operator_alert
 from config import DEFAULT_FILTERS_PER_CYCLE, DEFAULT_MAX_PRICE_HR, FILTERS, SCAN_RESULTS_FILE
 from dashboard import write_dashboard
 from economy import EconomyManager
@@ -39,6 +39,20 @@ def build_parser() -> argparse.ArgumentParser:
     confirm.add_argument("--deal-index", type=int, default=0)
     confirm.add_argument("--results-file", default=str(SCAN_RESULTS_FILE))
 
+    operator_scan = sub.add_parser("operator-scan", help="Scan and print operator-ready deal cards")
+    operator_scan.add_argument("--filter-id")
+    operator_scan.add_argument("--max-price", type=float, default=DEFAULT_MAX_PRICE_HR)
+    operator_scan.add_argument("--filters-per-cycle", type=int, default=DEFAULT_FILTERS_PER_CYCLE)
+    operator_scan.add_argument("--daily-limit", type=int, default=200)
+    operator_scan.add_argument("--force-economy-refresh", action="store_true")
+    operator_scan.add_argument("--top", type=int, default=3)
+
+    pending = sub.add_parser("pending", help="Show the current pending confirmation deal")
+    pending.add_argument("--json", action="store_true")
+
+    reply_offer = sub.add_parser("reply-offer", help="Submit an offer amount against the pending deal")
+    reply_offer.add_argument("amount", type=float)
+
     sub.add_parser("history", help="Show offer history stats")
     sub.add_parser("dashboard", help="Regenerate dashboard from current state")
     economy = sub.add_parser("economy", help="Refresh economy cache")
@@ -68,6 +82,31 @@ async def cmd_offer(args) -> int:
     return 0 if result.get("ok") else 1
 
 
+async def cmd_operator_scan(args) -> int:
+    state = StateStore()
+    scanner = MarketScanner(
+        max_price_hr=args.max_price,
+        filters_per_cycle=args.filters_per_cycle,
+        daily_filter_limit=args.daily_limit,
+        force_economy_refresh=args.force_economy_refresh,
+    )
+    results = await scanner.scan(filter_id=args.filter_id)
+    SCAN_RESULTS_FILE.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+    deals = results.get("deals", [])
+    if not deals:
+        state.set_pending_confirmation(None)
+        print("No deals found.")
+        print(json.dumps(results.get("summary", {}), indent=2))
+        return 0
+    top_deals = deals[: max(1, args.top)]
+    state.set_pending_confirmation(top_deals[0])
+    for idx, deal in enumerate(top_deals):
+        print(format_operator_alert(deal, deal_index=idx))
+        print("\n---\n")
+    print(json.dumps(results.get("summary", {}), indent=2))
+    return 0
+
+
 async def cmd_confirm(args) -> int:
     path = Path(args.results_file)
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -76,6 +115,32 @@ async def cmd_confirm(args) -> int:
         raise SystemExit("No deals in scan results.")
     deal = deals[args.deal_index]
     result = await submit_offer(listing_url=deal["listing_url"], amount_hr=args.amount, item=deal)
+    if result.get("ok"):
+        StateStore().set_pending_confirmation(None)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    return 0 if result.get("ok") else 1
+
+
+def cmd_pending(args) -> int:
+    pending = StateStore().get_pending_confirmation()
+    if not pending:
+        print("No pending deal.")
+        return 1
+    if args.json:
+        print(json.dumps(pending, indent=2, ensure_ascii=False))
+    else:
+        print(format_operator_alert(pending, deal_index=0))
+    return 0
+
+
+async def cmd_reply_offer(args) -> int:
+    state = StateStore()
+    pending = state.get_pending_confirmation()
+    if not pending:
+        raise SystemExit("No pending deal to submit against.")
+    result = await submit_offer(listing_url=pending["listing_url"], amount_hr=args.amount, item=pending)
+    if result.get("ok"):
+        state.set_pending_confirmation(None)
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result.get("ok") else 1
 
@@ -118,6 +183,12 @@ async def main() -> int:
         return await cmd_offer(args)
     if args.command == "confirm":
         return await cmd_confirm(args)
+    if args.command == "operator-scan":
+        return await cmd_operator_scan(args)
+    if args.command == "pending":
+        return cmd_pending(args)
+    if args.command == "reply-offer":
+        return await cmd_reply_offer(args)
     if args.command == "history":
         return cmd_history()
     if args.command == "dashboard":

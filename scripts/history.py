@@ -58,6 +58,7 @@ DEFAULT_STATE = {
     "filters": {},
     "last_scan_at": None,
     "last_economy_refresh_at": None,
+    "pending_confirmation": None,
 }
 
 
@@ -246,6 +247,14 @@ class StateStore:
 
     def set_economy_refresh(self) -> None:
         self.data["last_economy_refresh_at"] = to_iso()
+
+    def set_pending_confirmation(self, deal: dict[str, Any] | None) -> None:
+        self.data["pending_confirmation"] = deepcopy(deal) if deal else None
+        self.save()
+
+    def get_pending_confirmation(self) -> dict[str, Any] | None:
+        pending = self.data.get("pending_confirmation")
+        return deepcopy(pending) if pending else None
 
     def save(self) -> None:
         write_json(self.path, self.data)
