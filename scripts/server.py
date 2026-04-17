@@ -35,6 +35,49 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 SNIPER = sys.executable + " " + str(SCRIPTS_DIR / "sniper.py")
 
 
+def _run_reset_background() -> None:
+    """Reset all sniper state for a clean slate / new season."""
+    try:
+        logger.info("Resetting sniper state...")
+        from config import (
+            SEEN_FILE, OFFER_HISTORY_FILE, SCAN_RESULTS_FILE, STATE_FILE,
+            SCREENSHOTS_DIR, ASSETS_DIR,
+        )
+        import shutil
+
+        # Clear state files
+        for f in [SEEN_FILE, OFFER_HISTORY_FILE, SCAN_RESULTS_FILE]:
+            if f.exists():
+                f.write_text("{}" if f.suffix == ".json" else "", encoding="utf-8")
+                logger.info("Cleared %s", f.name)
+
+        # Reset sniper_state.json to defaults
+        if STATE_FILE.exists():
+            STATE_FILE.write_text(json.dumps({
+                "daily_filter_count": 0,
+                "daily_reset_date": None,
+                "rotation_index": 0,
+                "filter_health": [],
+                "recent_scans": [],
+                "pending_confirmation": None,
+                "last_economy_refresh": None,
+            }, indent=2), encoding="utf-8")
+            logger.info("Reset %s", STATE_FILE.name)
+
+        # Clear screenshots
+        if SCREENSHOTS_DIR.exists():
+            for f in SCREENSHOTS_DIR.glob("*"):
+                if f.is_file():
+                    f.unlink()
+            logger.info("Cleared screenshots")
+
+        # Regenerate empty dashboard
+        _refresh_dashboard()
+        logger.info("Reset complete — clean slate")
+    except Exception as exc:
+        logger.error("Reset failed: %s", exc)
+
+
 def _refresh_dashboard() -> None:
     """Regenerate dashboard.html from current state files."""
     try:
@@ -196,6 +239,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
         elif path == "/api/refresh-dashboard":
             _refresh_dashboard()
             self._send_json({"ok": True, "message": "Dashboard refreshed"})
+        elif path == "/api/reset":
+            t = threading.Thread(target=_run_reset_background, daemon=True)
+            t.start()
+            self._send_json({"ok": True, "message": "Reset started"})
         else:
             self.send_error(404)
 

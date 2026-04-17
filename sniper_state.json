@@ -511,49 +511,54 @@
   "last_scan_at": "2026-04-17T08:50:52.822443+00:00",
   "last_economy_refresh_at": "2026-04-17T12:28:14.707066+00:00",
   "pending_confirmation": {
-    "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-    "filter_name": "passive glove +2-20p",
-    "item_name": "Rare Vampirebone Gloves",
-    "price_hr": 2.0,
-    "seller_name": "tsetso91",
+    "filter_id": "6539c93c3df75bcdae8150f9",
+    "filter_name": "CoA +skill 3os",
+    "item_name": "Unique Corona (3)",
+    "price_hr": 12.0,
+    "seller_name": "mch3551",
     "listing_id": null,
-    "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-    "posted_at": "1 day ago",
+    "listing_url": "https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778",
+    "posted_at": null,
     "stats": [
-      "20% Increased Attack Speed",
-      "10% Chance to Pierce",
-      "+66 to Attack Rating",
-      "+1 to Minimum Fire Damage",
-      "98% Enhanced Defense",
-      "Repairs 1 Durability in 0.05 Seconds"
+      "Indestructible",
+      "+1 to All Skills",
+      "30% Faster Hit Recovery",
+      "50% Reduced Curse Duration",
+      "50% Enhanced Defense",
+      "+132 Defense [100 - 150]",
+      "All Resistances +26% [20 - 30]",
+      "Physical Damage Taken Reduced by 14% [10 - 15]"
     ],
     "corruption": [
       "Corrupted"
     ],
-    "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
+    "text_preview": "CROWN OF AGES\nUnique Corona (3)\nDefense: 381\n\nCorrupted\n\nIndestructible\n\n+1 to All Skills\n\n30% Faster Hit Recovery\n\n50% Reduced Curse Duration\n\n50% Enhanced Defense\n\n+132 Defense [100 - 150]\n\nAll Resistances +26% [20 - 30]\n\nPhysical Damage Taken Reduced by 14% [10 - 15]\n\nRequired Level: 82\n\nRequired Strength: 174\n\nPrice: 12 HR\nOFFER\nmch3551\nmch3551\n[ stash ]\nabout 19 hours ago\n(softcore)(ladder)",
     "raw": {
-      "item_name": "Rare Vampirebone Gloves",
-      "price_hr": 2.0,
-      "seller_name": "tsetso91",
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-      "posted_at": "1 day ago",
+      "item_name": "Unique Corona (3)",
+      "price_hr": 12.0,
+      "seller_name": "mch3551",
+      "listing_url": "https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778",
+      "posted_at": null,
       "stats": [
-        "20% Increased Attack Speed",
-        "10% Chance to Pierce",
-        "+66 to Attack Rating",
-        "+1 to Minimum Fire Damage",
-        "98% Enhanced Defense",
-        "Repairs 1 Durability in 0.05 Seconds"
+        "Indestructible",
+        "+1 to All Skills",
+        "30% Faster Hit Recovery",
+        "50% Reduced Curse Duration",
+        "50% Enhanced Defense",
+        "+132 Defense [100 - 150]",
+        "All Resistances +26% [20 - 30]",
+        "Physical Damage Taken Reduced by 14% [10 - 15]"
       ],
       "corruption": [
         "Corrupted"
       ],
-      "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
+      "description": "CROWN OF AGES\nUnique Corona (3)\nDefense: 381\n\nCorrupted\n\nIndestructible\n\n+1 to All Skills\n\n30% Faster Hit Recovery\n\n50% Reduced Curse Duration\n\n50% Enhanced Defense\n\n+132 Defense [100 - 150]\n\nAll Resistances +26% [20 - 30]\n\nPhysical Damage Taken Reduced by 14% [10 - 15]\n\nRequired Level: 82\n\nRequired Strength: 174\n\nPrice: 12 HR\nOFFER\nmch3551\nmch3551\n[ stash ]\nabout 19 hours ago\n(softcore)(ladder)"
     },
-    "captured_at": "2026-04-17T09:02:04.842192+00:00",
+    "captured_at": "2026-04-17T12:36:22.687255+00:00",
+    "page": 1,
     "economy_value_hr": null,
-    "recent_offer_count": 1,
-    "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-    "score": -6.0
+    "recent_offer_count": 0,
+    "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-6539c93c3df75bcdae8150f9-p1-0.png",
+    "score": 17.0
   }
 }

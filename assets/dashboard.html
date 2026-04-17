@@ -162,6 +162,18 @@
     .btn-start-server { margin-left: auto; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--line); background: #0f1318; color: var(--gold); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; }
     .btn-start-server:hover { border-color: var(--gold); background: rgba(245,196,81,.08); }
     .btn-start-server:active { transform: scale(.96); }
+    .btn-reset { padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,135,135,.3); background: rgba(255,135,135,.06); color: var(--red); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; letter-spacing: .02em; }
+    .btn-reset:hover { border-color: var(--red); background: rgba(255,135,135,.12); }
+    .btn-reset:active { transform: scale(.96); }
+    .reset-confirm { position: fixed; inset: 0; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+    .reset-confirm-box { background: var(--panel); border: 1px solid var(--red); border-radius: 18px; padding: 28px; max-width: 420px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .reset-confirm-box h3 { margin: 0 0 12px; color: var(--red); font-size: 20px; }
+    .reset-confirm-box p { color: var(--muted); font-size: 14px; margin: 0 0 20px; line-height: 1.5; }
+    .reset-confirm-box .btn-row { display: flex; gap: 12px; justify-content: center; }
+    .reset-confirm-box .btn-cancel { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; }
+    .reset-confirm-box .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+    .reset-confirm-box .btn-danger { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--red); background: rgba(255,135,135,.15); color: var(--red); font-size: 14px; font-weight: 700; cursor: pointer; }
+    .reset-confirm-box .btn-danger:hover { background: rgba(255,135,135,.25); }
     @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
     @media (max-width: 980px) {
       .deal-card { grid-template-columns: 1fr; }
@@ -178,14 +190,15 @@
         <p>Live scan state, offers, pending confirmations, and clickable deal cards.</p>
       </div>
       <div class="meta-bar">
-        <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">2026-04-17T09:02:08.767483+00:00</span></span>
-        <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">1</span></span>
-        <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">1</span></span>
+        <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">2026-04-17T12:38:02.934421+00:00</span></span>
+        <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">59</span></span>
+        <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">9</span></span>
         <span class="badge badge-time"><span class="badge-label">Economy refresh</span><span class="badge-value">2026-04-17T12:28:14.706385+00:00</span></span>
         <button id="scanNow" class="btn-scan" title="Run a full scan of all PD2 market filters">
           <span class="spinner"></span>
           <span id="scanNowLabel">🔍 Scan Now</span>
         </button>
+        <button id="resetBtn" class="btn-reset" title="Clear all scan history, offers, seen items, and screenshots for a fresh start">🗑️ Reset</button>
       </div>
     </section>
 
@@ -209,12 +222,12 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">Daily filter count</div>
-        <div class="stat-value">9</div>
+        <div class="stat-value">67</div>
         <div class="stat-sub">Max price threshold: 999.0 HR</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Current results</div>
-        <div class="stat-value">1</div>
+        <div class="stat-value">9</div>
         <div class="stat-sub">Deals currently rendered as cards</div>
       </div>
     </section>
@@ -255,26 +268,194 @@
       </div>
       <div class="toolbar">
         <input id="dealSearch" class="search-input" type="search" placeholder="Search deals by item, seller, filter, stats, corruption..." />
-        <div id="dealSearchCount" class="search-hint">Showing 1 of 1 deals</div>
+        <div id="dealSearchCount" class="search-hint">Showing 9 of 9 deals</div>
       </div>
       <div id="dealGrid" class="deal-grid">
-    <article class="deal-card" data-search="rare vampirebone gloves | passive glove +2-20p | tsetso91 | https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77 | 1 day ago | 20% increased attack speed 10% chance to pierce +66 to attack rating +1 to minimum fire damage 98% enhanced defense repairs 1 durability in 0.05 seconds | corrupted">
+    <article class="deal-card" data-search="unique corona (3) | coa +skill 3os | mch3551 | https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778 |  | indestructible +1 to all skills 30% faster hit recovery 50% reduced curse duration 50% enhanced defense +132 defense [100 - 150] all resistances +26% [20 - 30] physical damage taken reduced by 14% [10 - 15] | corrupted">
       <div class="deal-media">
-        <a class="shot-link" href="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" alt="Rare Vampirebone Gloves" /></a>
+        <a class="shot-link" href="..\screenshots\deal-6539c93c3df75bcdae8150f9-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-6539c93c3df75bcdae8150f9-p1-0.png" alt="Unique Corona (3)" /></a>
       </div>
       <div class="deal-body">
         <div class="deal-head">
           <div>
-            <h3>Rare Vampirebone Gloves</h3>
-            <div class="deal-sub">passive glove +2-20p</div>
+            <h3>Unique Corona (3)</h3>
+            <div class="deal-sub">CoA +skill 3os</div>
           </div>
-          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77" target="_blank" rel="noreferrer">Open listing ↗</a>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778" target="_blank" rel="noreferrer">Open listing ↗</a>
         </div>
-        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">-6.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">2.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">tsetso91</span></span><span class="badge badge-time"><span class="badge-label">Posted</span><span class="badge-value">1 day ago</span></span><span class="badge badge-warn"><span class="badge-label">Recent offers</span><span class="badge-value">1</span></span></div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">17.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">12.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">mch3551</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
         <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
         <details>
           <summary>Stats</summary>
-          <ul class="stats-list"><li>20% Increased Attack Speed</li><li>10% Chance to Pierce</li><li>+66 to Attack Rating</li><li>+1 to Minimum Fire Damage</li><li>98% Enhanced Defense</li><li>Repairs 1 Durability in 0.05 Seconds</li></ul>
+          <ul class="stats-list"><li>Indestructible</li><li>+1 to All Skills</li><li>30% Faster Hit Recovery</li><li>50% Reduced Curse Duration</li><li>50% Enhanced Defense</li><li>+132 Defense [100 - 150]</li><li>All Resistances +26% [20 - 30]</li><li>Physical Damage Taken Reduced by 14% [10 - 15]</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="unique amulet | highlords +ed | jhm88 | https://www.projectdiablo2.com/market/listing/69cfd3abc7fc6e9d0ceb7c4b |  | desecrated corrupt +1 to all skills 20% increased attack speed 10% faster hit recovery +34% enhanced damage adds 1-300 lightning damage [1 - 300] 0.25% deadly strike (based on character level) lightning resist 36% [30 - 40] attacker takes lightning damage of 119 [100 - 150] | corrupted">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-69e0b47f9fc33c4bc7fe041d-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b47f9fc33c4bc7fe041d-p1-0.png" alt="Unique Amulet" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Unique Amulet</h3>
+            <div class="deal-sub">highlords +ED</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69cfd3abc7fc6e9d0ceb7c4b" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">13.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">25.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">jhm88</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>Desecrated</li><li>Corrupt</li><li>+1 to All Skills</li><li>20% Increased Attack Speed</li><li>10% Faster Hit Recovery</li><li>+34% Enhanced Damage</li><li>Adds 1-300 Lightning Damage [1 - 300]</li><li>0.25% Deadly Strike (Based on Character Level)</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="magic grand charm | jav lifer gc | cranky | https://www.projectdiablo2.com/market/listing/69c1e064d605593fdffcd549 | 2 days ago | +1 to javelin and spear skills (amazon only) +36 to life | ">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-1.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-1.png" alt="Magic Grand Charm" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Magic Grand Charm</h3>
+            <div class="deal-sub">jav lifer gc</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c1e064d605593fdffcd549" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">7.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">0.5 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">cranky</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span><span class="badge badge-time"><span class="badge-label">Posted</span><span class="badge-value">2 days ago</span></span></div>
+        <div class="chips"></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>+1 to Javelin and Spear Skills (Amazon Only)</li><li>+36 to Life</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="unique war boots | gore rider +20 ds | dnoexis | https://www.projectdiablo2.com/market/listing/69b4b16e571e854620813ef1 |  | 30% faster run/walk 15% chance of crushing blow 20% deadly strike [15 - 20] 10% chance of open wounds +194 open wounds damage per second 174% enhanced defense [160 - 200] 3% to maximum poison resist poison resist 10% +10 durability requirements -25% | corrupted">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-69e0b27d9fc33c4bc7fe0419-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b27d9fc33c4bc7fe0419-p1-0.png" alt="Unique War Boots" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Unique War Boots</h3>
+            <div class="deal-sub">gore rider +20 ds</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69b4b16e571e854620813ef1" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">10.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">dnoexis</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>30% Faster Run/Walk</li><li>15% Chance of Crushing Blow</li><li>20% Deadly Strike [15 - 20]</li><li>10% Chance of Open Wounds</li><li>+194 Open Wounds Damage Per Second</li><li>174% Enhanced Defense [160 - 200]</li><li>3% to Maximum Poison Resist</li><li>Poison Resist 10%</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="magic grand charm | passive lifer gc | seif | https://www.projectdiablo2.com/market/listing/69d476d64ea8758b22282fb2 |  | +44 to life | ">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-69e0b1819fc33c4bc7fe0414-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b1819fc33c4bc7fe0414-p1-0.png" alt="Magic Grand Charm" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Magic Grand Charm</h3>
+            <div class="deal-sub">passive lifer GC</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69d476d64ea8758b22282fb2" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">2.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">seif</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>+44 to Life</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="magic grand charm | jav lifer gc | izvicx | https://www.projectdiablo2.com/market/listing/69e00fedb7d7ef186ed48478 |  | +1 to javelin and spear skills (amazon only) +40 to life | ">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-0.png" alt="Magic Grand Charm" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Magic Grand Charm</h3>
+            <div class="deal-sub">jav lifer gc</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69e00fedb7d7ef186ed48478" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">3.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">izvicx</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>+1 to Javelin and Spear Skills (Amazon Only)</li><li>+40 to Life</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="unique spired helm (3) | veil +3os | jhm88 | https://www.projectdiablo2.com/market/listing/69d0ebc0c7fc6e9d0ceb865d |  | corrupted (3 sockets) +1 to all skills +210% enhanced damage [60 - 90] 208% enhanced defense [160 - 220] +140 defense +15 to strength +15 to vitality all resistances +36% [30 - 40] +20 durability requirements -45% socketed (3) ruby jewel of freedom requirements -15% +40% enhanced damage ruby jewel of freedom requirements -15% +40% enhanced damage ruby jewel of freedom requirements -15% +40% enhanced damage | corrupted">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-652dfa94ef6e111f977af738-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-652dfa94ef6e111f977af738-p1-0.png" alt="Unique Spired Helm (3)" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Unique Spired Helm (3)</h3>
+            <div class="deal-sub">veil +3os</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69d0ebc0c7fc6e9d0ceb865d" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">80.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">jhm88</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>Corrupted (3 Sockets)</li><li>+1 to All Skills</li><li>+210% Enhanced Damage [60 - 90]</li><li>208% Enhanced Defense [160 - 220]</li><li>+140 Defense</li><li>+15 to Strength</li><li>+15 to Vitality</li><li>All Resistances +36% [30 - 40]</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="unique spired helm (3) | veil +3os | dnoexis | https://www.projectdiablo2.com/market/listing/698ce837134463c766b099a6 |  | corrupted (3 sockets) +1 to all skills +194% enhanced damage [60 - 90] 204% enhanced defense [160 - 220] +140 defense +15 to strength +15 to vitality all resistances +34% [30 - 40] +20 durability requirements -45% socketed (3) ruby jewel of freedom requirements -15% +40% enhanced damage ruby jewel of freedom requirements -15% +40% enhanced damage ruby jewel of freedom requirements -15% +40% enhanced damage | corrupted">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-652dfa94ef6e111f977af738-p1-1.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-652dfa94ef6e111f977af738-p1-1.png" alt="Unique Spired Helm (3)" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Unique Spired Helm (3)</h3>
+            <div class="deal-sub">veil +3os</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/698ce837134463c766b099a6" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">45.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">dnoexis</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>Corrupted (3 Sockets)</li><li>+1 to All Skills</li><li>+194% Enhanced Damage [60 - 90]</li><li>204% Enhanced Defense [160 - 220]</li><li>+140 Defense</li><li>+15 to Strength</li><li>+15 to Vitality</li><li>All Resistances +34% [30 - 40]</li></ul>
+        </details>
+      </div>
+    </article>
+    
+    <article class="deal-card" data-search="unique ward (3) | spirit ward +3os | godlovesjoe | https://www.projectdiablo2.com/market/listing/699cd9e8ab2c973dcb11b4fa | 3 days ago | corrupted (3 sockets) 200% chance to cast level 47 chain lightning when you die 100% chance to cast level 41 nova when you level-up 35% chance to cast level 10 lesser fade when struck +2 to amazon skills 25% faster block rate 30% increased chance of blocking [20 - 30] adds 3-74 lightning damage 15% to lightning skill damage -15% to enemy lightning resistance 168% enhanced defense [130 - 180] all resistances +30% [20 - 30] +10 cold absorb [6 - 11] socketed (3) rainbow facet 100% chance to cast level 47 chain lightning when you die 5% to lightning skill damage -5% to enemy lightning resistance adds 1-74 lightning damage rainbow facet 100% chance to cast level 41 nova when you level-up 5% to lightning skill damage -5% to enemy lightning resistance adds 1-74 lightning damage rainbow facet 100% chance to cast level 47 chain lightning when you die 5% to lightning skill damage -5% to enemy lightning resistance adds 1-74 lightning damage | corrupted">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-6853c3fe872cdd8e946221b3-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-6853c3fe872cdd8e946221b3-p1-0.png" alt="Unique Ward (3)" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Unique Ward (3)</h3>
+            <div class="deal-sub">spirit ward +3os</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/699cd9e8ab2c973dcb11b4fa" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">2.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">120.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">godlovesjoe</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span><span class="badge badge-time"><span class="badge-label">Posted</span><span class="badge-value">3 days ago</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>Corrupted (3 Sockets)</li><li>200% Chance to cast level 47 Chain Lightning when you Die</li><li>100% Chance to cast level 41 Nova when you Level-Up</li><li>35% Chance to cast level 10 Lesser Fade when struck</li><li>+2 to Amazon Skills</li><li>25% Faster Block Rate</li><li>30% Increased Chance of Blocking [20 - 30]</li><li>Adds 3-74 Lightning Damage</li></ul>
         </details>
       </div>
     </article>
@@ -292,10 +473,10 @@
       <div class="panel">
         <div class="section-header"><h2>Last Scan Summary</h2><div class="section-note">Raw scan metadata</div></div>
         <code class="json">{
-  &quot;timestamp&quot;: &quot;2026-04-17T09:02:08.767483+00:00&quot;,
-  &quot;filters_scanned&quot;: 1,
-  &quot;deals_found&quot;: 1,
-  &quot;daily_filter_count&quot;: 9,
+  &quot;timestamp&quot;: &quot;2026-04-17T12:38:02.934421+00:00&quot;,
+  &quot;filters_scanned&quot;: 59,
+  &quot;deals_found&quot;: 9,
+  &quot;daily_filter_count&quot;: 67,
   &quot;max_price_hr&quot;: 999.0
 }</code>
       </div>
@@ -306,7 +487,7 @@
         <div class="section-header"><h2>Recent Scans</h2><div class="section-note">Historical scan activity</div></div>
         <table>
           <tr><th>When</th><th>Filters</th><th>Deals</th><th>Daily Count</th><th>Max HR</th></tr>
-          <tr><td>2026-04-17T09:02:08.767483+00:00</td><td>1</td><td>1</td><td>9</td><td>999.0</td></tr><tr><td>2026-04-17T08:50:52.822387+00:00</td><td>1</td><td>1</td><td>8</td><td>999.0</td></tr><tr><td>2026-04-17T08:25:17.439951+00:00</td><td>1</td><td>1</td><td>7</td><td>999.0</td></tr><tr><td>2026-04-17T08:20:51.628871+00:00</td><td>1</td><td>1</td><td>6</td><td>999.0</td></tr><tr><td>2026-04-17T08:18:06.484748+00:00</td><td>1</td><td>1</td><td>5</td><td>999.0</td></tr><tr><td>2026-04-17T08:15:55.145718+00:00</td><td>3</td><td>1</td><td>4</td><td>999.0</td></tr><tr><td>2026-04-17T08:11:32.845175+00:00</td><td>1</td><td>0</td><td>1</td><td>999.0</td></tr>
+          <tr><td>2026-04-17T12:38:02.934421+00:00</td><td>59</td><td>9</td><td>67</td><td>999.0</td></tr><tr><td>2026-04-17T08:50:52.822387+00:00</td><td>1</td><td>1</td><td>8</td><td>999.0</td></tr><tr><td>2026-04-17T08:25:17.439951+00:00</td><td>1</td><td>1</td><td>7</td><td>999.0</td></tr><tr><td>2026-04-17T08:20:51.628871+00:00</td><td>1</td><td>1</td><td>6</td><td>999.0</td></tr><tr><td>2026-04-17T08:18:06.484748+00:00</td><td>1</td><td>1</td><td>5</td><td>999.0</td></tr><tr><td>2026-04-17T08:15:55.145718+00:00</td><td>3</td><td>1</td><td>4</td><td>999.0</td></tr><tr><td>2026-04-17T08:11:32.845175+00:00</td><td>1</td><td>0</td><td>1</td><td>999.0</td></tr>
         </table>
       </div>
       <div class="panel">
@@ -516,6 +697,56 @@
             btn.classList.remove('loading');
             btnLabel.textContent = '🔄 Sync';
           }
+        });
+      }
+      // Reset button
+      const resetBtn = document.getElementById('resetBtn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          // Show confirmation modal
+          const overlay = document.createElement('div');
+          overlay.className = 'reset-confirm';
+          overlay.innerHTML = `
+            <div class="reset-confirm-box">
+              <h3>⚠️ Reset All Data?</h3>
+              <p>This will clear:
+• All scan history and results
+• Seen items tracker
+• Offer history
+• Filter health data
+• All screenshots
+
+Economy values are kept. This cannot be undone.</p>
+              <div class="btn-row">
+                <button id="resetCancel" class="btn-cancel">Cancel</button>
+                <button id="resetConfirm" class="btn-danger">Reset Everything</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+
+          document.getElementById('resetCancel').addEventListener('click', () => overlay.remove());
+          overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+          document.getElementById('resetConfirm').addEventListener('click', async () => {
+            overlay.remove();
+            resetBtn.textContent = 'Resetting...';
+            resetBtn.style.pointerEvents = 'none';
+            try {
+              const resp = await fetch('/api/reset', { method: 'POST' });
+              const data = await resp.json();
+              if (resp.ok && data.ok) {
+                showToast('🗑️ All data cleared — refreshing...', 'success', 3000);
+                setTimeout(() => location.reload(), 2000);
+              } else {
+                throw new Error(data.error || 'Failed');
+              }
+            } catch {
+              showToast('❌ Server not running — run: python sniper.py serve', 'error', 5000);
+              resetBtn.textContent = '🗑️ Reset';
+              resetBtn.style.pointerEvents = '';
+            }
+          });
         });
       }
     })();

@@ -340,6 +340,18 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
     .btn-start-server {{ margin-left: auto; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--line); background: #0f1318; color: var(--gold); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; }}
     .btn-start-server:hover {{ border-color: var(--gold); background: rgba(245,196,81,.08); }}
     .btn-start-server:active {{ transform: scale(.96); }}
+    .btn-reset {{ padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,135,135,.3); background: rgba(255,135,135,.06); color: var(--red); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; letter-spacing: .02em; }}
+    .btn-reset:hover {{ border-color: var(--red); background: rgba(255,135,135,.12); }}
+    .btn-reset:active {{ transform: scale(.96); }}
+    .reset-confirm {{ position: fixed; inset: 0; background: rgba(0,0,0,.7); display: flex; align-items: center; justify-content: center; z-index: 10000; }}
+    .reset-confirm-box {{ background: var(--panel); border: 1px solid var(--red); border-radius: 18px; padding: 28px; max-width: 420px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.5); }}
+    .reset-confirm-box h3 {{ margin: 0 0 12px; color: var(--red); font-size: 20px; }}
+    .reset-confirm-box p {{ color: var(--muted); font-size: 14px; margin: 0 0 20px; line-height: 1.5; }}
+    .reset-confirm-box .btn-row {{ display: flex; gap: 12px; justify-content: center; }}
+    .reset-confirm-box .btn-cancel {{ padding: 10px 20px; border-radius: 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; }}
+    .reset-confirm-box .btn-cancel:hover {{ border-color: var(--text); color: var(--text); }}
+    .reset-confirm-box .btn-danger {{ padding: 10px 20px; border-radius: 10px; border: 1px solid var(--red); background: rgba(255,135,135,.15); color: var(--red); font-size: 14px; font-weight: 700; cursor: pointer; }}
+    .reset-confirm-box .btn-danger:hover {{ background: rgba(255,135,135,.25); }}
     @keyframes pulse-green {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: .6; }} }}
     @media (max-width: 980px) {{
       .deal-card {{ grid-template-columns: 1fr; }}
@@ -364,6 +376,7 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
           <span class="spinner"></span>
           <span id="scanNowLabel">🔍 Scan Now</span>
         </button>
+        <button id="resetBtn" class="btn-reset" title="Clear all scan history, offers, seen items, and screenshots for a fresh start">🗑️ Reset</button>
       </div>
     </section>
 
@@ -646,6 +659,49 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
             btn.classList.remove('loading');
             btnLabel.textContent = '🔄 Sync';
           }}
+        }});
+      }}
+      // Reset button
+      const resetBtn = document.getElementById('resetBtn');
+      if (resetBtn) {{
+        resetBtn.addEventListener('click', () => {{
+          // Show confirmation modal
+          const overlay = document.createElement('div');
+          overlay.className = 'reset-confirm';
+          overlay.innerHTML = `
+            <div class="reset-confirm-box">
+              <h3>⚠️ Reset All Data?</h3>
+              <p>This will clear:\n• All scan history and results\n• Seen items tracker\n• Offer history\n• Filter health data\n• All screenshots\n\nEconomy values are kept. This cannot be undone.</p>
+              <div class="btn-row">
+                <button id="resetCancel" class="btn-cancel">Cancel</button>
+                <button id="resetConfirm" class="btn-danger">Reset Everything</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+
+          document.getElementById('resetCancel').addEventListener('click', () => overlay.remove());
+          overlay.addEventListener('click', (e) => {{ if (e.target === overlay) overlay.remove(); }});
+
+          document.getElementById('resetConfirm').addEventListener('click', async () => {{
+            overlay.remove();
+            resetBtn.textContent = 'Resetting...';
+            resetBtn.style.pointerEvents = 'none';
+            try {{
+              const resp = await fetch('/api/reset', {{ method: 'POST' }});
+              const data = await resp.json();
+              if (resp.ok && data.ok) {{
+                showToast('🗑️ All data cleared — refreshing...', 'success', 3000);
+                setTimeout(() => location.reload(), 2000);
+              }} else {{
+                throw new Error(data.error || 'Failed');
+              }}
+            }} catch {{
+              showToast('❌ Server not running — run: python sniper.py serve', 'error', 5000);
+              resetBtn.textContent = '🗑️ Reset';
+              resetBtn.style.pointerEvents = '';
+            }}
+          }});
         }});
       }}
     }})();
