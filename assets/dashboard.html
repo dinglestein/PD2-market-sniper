@@ -2,54 +2,229 @@
 <html>
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PD2 Sniper Dashboard</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; background: #111; color: #eee; }
-    h1, h2 { color: #f5c451; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-    .card { background: #1c1c1c; border: 1px solid #333; padding: 16px; border-radius: 10px; }
+    :root {
+      --bg: #0b0d10;
+      --panel: #14181f;
+      --panel-2: #1a2029;
+      --line: #283241;
+      --text: #ecf1f7;
+      --muted: #9fb0c4;
+      --gold: #f5c451;
+      --accent: #7dd3fc;
+      --green: #69db7c;
+      --red: #ff8787;
+      --amber: #ffd166;
+      --shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: linear-gradient(180deg, #0b0d10 0%, #11161d 100%);
+      color: var(--text);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 1500px; margin: 0 auto; padding: 24px; }
+    .hero { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 24px; }
+    .hero h1 { margin: 0 0 8px; font-size: 32px; color: var(--gold); }
+    .hero p { margin: 0; color: var(--muted); }
+    .meta-bar { display: flex; flex-wrap: wrap; gap: 10px; }
+    .badge { display: inline-flex; gap: 8px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; box-shadow: var(--shadow); }
+    .badge-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .badge-value { font-weight: 700; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card, .panel { background: rgba(20,24,31,.96); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); }
+    .stat-card { padding: 18px; }
+    .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+    .stat-sub { margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .section { margin-bottom: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .section-header h2 { margin: 0; color: var(--gold); font-size: 22px; }
+    .section-note { color: var(--muted); font-size: 13px; }
+    .panel { padding: 18px; overflow: hidden; }
+    .deal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
+    .deal-card { display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+    .deal-media { background: #0f1318; display: flex; align-items: center; justify-content: center; min-height: 200px; }
+    .shot-link, .shot { width: 100%; height: 100%; display: block; }
+    .shot { object-fit: cover; }
+    .shot-empty { color: var(--muted); font-size: 14px; padding: 24px; text-align: center; }
+    .deal-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .deal-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .deal-head h3 { margin: 0 0 4px; font-size: 22px; }
+    .deal-sub { color: var(--muted); font-size: 13px; }
+    .deal-link { white-space: nowrap; font-weight: 700; }
+    .badges, .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { display: inline-flex; padding: 6px 10px; border-radius: 999px; font-size: 12px; border: 1px solid var(--line); background: #10151c; color: var(--muted); }
+    .chip-corrupt { color: var(--amber); border-color: rgba(255, 209, 102, .35); background: rgba(255, 209, 102, .08); }
+    .badge-score .badge-value { color: var(--gold); }
+    .badge-price .badge-value { color: var(--green); }
+    .badge-warn .badge-value { color: var(--amber); }
+    details summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+    .stats-list { margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+    .two-col { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; }
     table { width: 100%; border-collapse: collapse; }
-    td, th { border-bottom: 1px solid #333; padding: 6px; text-align: left; vertical-align: top; }
-    code { white-space: pre-wrap; display: block; }
-    a { color: #8fc7ff; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,.06); text-align: left; vertical-align: top; font-size: 14px; }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .status { display: inline-block; padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .status-healthy { background: rgba(105,219,124,.12); color: var(--green); }
+    .status-slow { background: rgba(255,135,135,.12); color: var(--red); }
+    .muted, .empty-state { color: var(--muted); }
+    .empty-state { padding: 18px; border: 1px dashed var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }
+    code.json { white-space: pre-wrap; display: block; margin: 0; color: #d9e2ef; background: #0f1318; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    @media (max-width: 980px) {
+      .deal-card { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .hero { flex-direction: column; align-items: start; }
+    }
   </style>
 </head>
 <body>
-  <h1>PD2 Market Sniper Dashboard</h1>
-  <div class="grid">
-    <div class="card"><h2>Last Scan</h2><code>{&quot;timestamp&quot;: &quot;2026-04-17T09:02:08.767483+00:00&quot;, &quot;filters_scanned&quot;: 1, &quot;deals_found&quot;: 1, &quot;daily_filter_count&quot;: 9, &quot;max_price_hr&quot;: 999.0}</code></div>
-    <div class="card"><h2>Offer Stats</h2><code>{&quot;total&quot;: 1, &quot;status_counts&quot;: {&quot;submitted&quot;: 1}, &quot;recent&quot;: [{&quot;timestamp&quot;: &quot;2026-04-17T08:51:07.901737+00:00&quot;, &quot;status&quot;: &quot;submitted&quot;, &quot;amount_hr&quot;: 0.3, &quot;item_name&quot;: &quot;Rare Vampirebone Gloves&quot;, &quot;seller_name&quot;: &quot;tsetso91&quot;, &quot;listing_id&quot;: null, &quot;listing_url&quot;: &quot;https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77&quot;, &quot;filter_id&quot;: &quot;69e0b9fd9fc33c4bc7fe043a&quot;, &quot;filter_name&quot;: &quot;passive glove +2-20p&quot;, &quot;price_hr&quot;: 2.0, &quot;note&quot;: &quot;screenshot=offer-listing.png&quot;}]}</code></div>
-    <div class="card"><h2>Economy Refresh</h2><code>2026-04-17T08:14:38.895239+00:00</code></div>
-  </div>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>PD2 Market Sniper Dashboard</h1>
+        <p>Live scan state, offers, pending confirmations, and clickable deal cards.</p>
+      </div>
+      <div class="meta-bar">
+        <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">2026-04-17T09:02:08.767483+00:00</span></span>
+        <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">1</span></span>
+        <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">1</span></span>
+        <span class="badge badge-time"><span class="badge-label">Economy refresh</span><span class="badge-value">2026-04-17T08:14:38.895239+00:00</span></span>
+      </div>
+    </section>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Recent Deals</h2>
-      <table><tr><th>Score</th><th>Item</th><th>Price</th><th>Seller</th></tr>
-      <tr><td>-6.0</td><td><a href='https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77'>Rare Vampirebone Gloves</a></td><td>2.0</td><td>tsetso91</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h2>Recent Scans</h2>
-      <table><tr><th>When</th><th>Filters</th><th>Deals</th></tr>
-      <tr><td>2026-04-17T08:11:32.845175+00:00</td><td>1</td><td>0</td></tr><tr><td>2026-04-17T08:15:55.145718+00:00</td><td>3</td><td>1</td></tr><tr><td>2026-04-17T08:18:06.484748+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:20:51.628871+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:25:17.439951+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:50:52.822387+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T09:02:08.767483+00:00</td><td>1</td><td>1</td></tr>
-      </table>
-    </div>
-  </div>
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Pending confirmation</div>
+        <div class="stat-value">Yes</div>
+        <div class="stat-sub">Rare Vampirebone Gloves</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Offer history</div>
+        <div class="stat-value">1</div>
+        <div class="stat-sub">{&#x27;submitted&#x27;: 1}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Daily filter count</div>
+        <div class="stat-value">9</div>
+        <div class="stat-sub">Max price threshold: 999.0 HR</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Current results</div>
+        <div class="stat-value">1</div>
+        <div class="stat-sub">Deals currently rendered as cards</div>
+      </div>
+    </section>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Filter Health</h2>
-      <table><tr><th>Filter</th><th>Status</th><th>Scans</th><th>Days Since Hit</th></tr>
-      <tr><td>highlords cbf pierce</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>passive GC +GF</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>tombsong +skill</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>passive glove +2-20p</td><td>healthy</td><td>5</td><td>0.1</td></tr>
-      </table>
+    <section class="section">
+      <div class="section-header">
+        <h2>Pending Deal</h2>
+        <div class="section-note">This is the listing `reply-offer` will target.</div>
+      </div>
+      <div class="panel">
+    <article class="deal-card">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" alt="Rare Vampirebone Gloves" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Rare Vampirebone Gloves</h3>
+            <div class="deal-sub">passive glove +2-20p</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">-6.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">2.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">tsetso91</span></span><span class="badge badge-time"><span class="badge-label">Posted</span><span class="badge-value">1 day ago</span></span><span class="badge badge-warn"><span class="badge-label">Recent offers</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>20% Increased Attack Speed</li><li>10% Chance to Pierce</li><li>+66 to Attack Rating</li><li>+1 to Minimum Fire Damage</li><li>98% Enhanced Defense</li><li>Repairs 1 Durability in 0.05 Seconds</li></ul>
+        </details>
+      </div>
+    </article>
     </div>
-    <div class="card">
-      <h2>Economy Values</h2>
-      <table><tr><th>Item</th><th>HR</th></tr>
-      <tr><td>Token of Absolution</td><td>0.75</td></tr><tr><td>Twisted Essence of Suffering</td><td>0.02</td></tr><tr><td>Charged Essence of Hatred</td><td>0.25</td></tr><tr><td>Burning Essence of Terror</td><td>0.07</td></tr><tr><td>Festering Essence of Destruction</td><td>0.25</td></tr><tr><td>WIKI</td><td>0.75</td></tr><tr><td>Larzuk&#x27;s Puzzlebox</td><td>0.75</td></tr><tr><td>Catalyst Shard</td><td>0.2</td></tr><tr><td>Demonic Cube</td><td>1.25</td></tr><tr><td>Larzuk&#x27;s Puzzlepiece</td><td>0.05</td></tr><tr><td>Zod Rune</td><td>4.5</td></tr><tr><td>Cham Rune</td><td>2.25</td></tr><tr><td>Jah Rune</td><td>2.0</td></tr><tr><td>Ber Rune</td><td>3.0</td></tr><tr><td>Sur Rune</td><td>1.5</td></tr><tr><td>Lo Rune</td><td>1.0</td></tr><tr><td>Ohm Rune</td><td>0.75</td></tr><tr><td>Tainted Worldstone Shard</td><td>0.65</td></tr><tr><td>Black Soulstone</td><td>0.35</td></tr><tr><td>Pure Demonic Essence</td><td>0.04</td></tr><tr><td>Prime Evil Soul</td><td>0.45</td></tr><tr><td>Trang-Oul&#x27;s Jawbone</td><td>0.05</td></tr><tr><td>Splinter of the Void</td><td>0.5</td></tr><tr><td>Hellfire Ashes</td><td>0.45</td></tr><tr><td>Relic of the Ancients</td><td>0.2</td></tr><tr><td>Sigil of Madawc</td><td>0.07</td></tr><tr><td>Sigil of Talic</td><td>0.1</td></tr><tr><td>Sigil of Korlic</td><td>0.04</td></tr><tr><td>Demonic Insignia</td><td>0.5</td></tr><tr><td>Talisman of Transgression</td><td>0.25</td></tr><tr><td>Flesh of Malic</td><td>0.1</td></tr><tr><td>Blood Moon Map</td><td>0.1</td></tr><tr><td>Outer Void</td><td>0.5</td></tr><tr><td>Imperial Palace</td><td>1.25</td></tr><tr><td>Fallen Gardens</td><td>1.25</td></tr><tr><td>Warlord of Blood</td><td>0.4</td></tr><tr><td>Zhar&#x27;s Sanctum</td><td>0.15</td></tr>
-      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2>Current Deal Cards</h2>
+        <div class="section-note">Clickable cards with screenshots, links, page numbers, and stats.</div>
+      </div>
+      <div class="deal-grid">
+    <article class="deal-card">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" alt="Rare Vampirebone Gloves" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Rare Vampirebone Gloves</h3>
+            <div class="deal-sub">passive glove +2-20p</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">-6.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">2.0 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">tsetso91</span></span><span class="badge badge-time"><span class="badge-label">Posted</span><span class="badge-value">1 day ago</span></span><span class="badge badge-warn"><span class="badge-label">Recent offers</span><span class="badge-value">1</span></span></div>
+        <div class="chips"><span class="chip chip-corrupt">Corrupted</span></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>20% Increased Attack Speed</li><li>10% Chance to Pierce</li><li>+66 to Attack Rating</li><li>+1 to Minimum Fire Damage</li><li>98% Enhanced Defense</li><li>Repairs 1 Durability in 0.05 Seconds</li></ul>
+        </details>
+      </div>
+    </article>
     </div>
+    </section>
+
+    <section class="section two-col">
+      <div class="panel">
+        <div class="section-header"><h2>Recent Offers</h2><div class="section-note">Latest tracked submissions</div></div>
+        <table>
+          <tr><th>When</th><th>Status</th><th>Item</th><th>Seller</th><th>Offer</th><th>Link</th></tr>
+          <tr><td>2026-04-17T08:51:07.901737+00:00</td><td>submitted</td><td>Rare Vampirebone Gloves</td><td>tsetso91</td><td>0.3 HR</td><td><a href='https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77' target='_blank' rel='noreferrer'>listing</a></td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="section-header"><h2>Last Scan Summary</h2><div class="section-note">Raw scan metadata</div></div>
+        <code class="json">{
+  &quot;timestamp&quot;: &quot;2026-04-17T09:02:08.767483+00:00&quot;,
+  &quot;filters_scanned&quot;: 1,
+  &quot;deals_found&quot;: 1,
+  &quot;daily_filter_count&quot;: 9,
+  &quot;max_price_hr&quot;: 999.0
+}</code>
+      </div>
+    </section>
+
+    <section class="section two-col">
+      <div class="panel">
+        <div class="section-header"><h2>Recent Scans</h2><div class="section-note">Historical scan activity</div></div>
+        <table>
+          <tr><th>When</th><th>Filters</th><th>Deals</th><th>Daily Count</th><th>Max HR</th></tr>
+          <tr><td>2026-04-17T09:02:08.767483+00:00</td><td>1</td><td>1</td><td>9</td><td>999.0</td></tr><tr><td>2026-04-17T08:50:52.822387+00:00</td><td>1</td><td>1</td><td>8</td><td>999.0</td></tr><tr><td>2026-04-17T08:25:17.439951+00:00</td><td>1</td><td>1</td><td>7</td><td>999.0</td></tr><tr><td>2026-04-17T08:20:51.628871+00:00</td><td>1</td><td>1</td><td>6</td><td>999.0</td></tr><tr><td>2026-04-17T08:18:06.484748+00:00</td><td>1</td><td>1</td><td>5</td><td>999.0</td></tr><tr><td>2026-04-17T08:15:55.145718+00:00</td><td>3</td><td>1</td><td>4</td><td>999.0</td></tr><tr><td>2026-04-17T08:11:32.845175+00:00</td><td>1</td><td>0</td><td>1</td><td>999.0</td></tr>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="section-header"><h2>Filter Health</h2><div class="section-note">Slow filters stay in rotation</div></div>
+        <table>
+          <tr><th>Filter</th><th>Status</th><th>Scans</th><th>Deals</th><th>Days Since Hit</th><th>Last Scan</th></tr>
+          <tr><td>highlords cbf pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:11:29.428180+00:00</td></tr><tr><td>passive GC +GF</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:41.466007+00:00</td></tr><tr><td>tombsong +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:32.050840+00:00</td></tr><tr><td>passive glove +2-20p</td><td><span class='status status-healthy'>healthy</span></td><td>5</td><td>5</td><td>0.1</td><td>2026-04-17T08:50:50.532846+00:00</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="panel">
+        <div class="section-header"><h2>Economy Values</h2><div class="section-note">Top cached values from pd2.tools</div></div>
+        <table>
+          <tr><th>Item</th><th>HR</th></tr>
+          <tr><td>Token of Absolution</td><td>0.75</td></tr><tr><td>Twisted Essence of Suffering</td><td>0.02</td></tr><tr><td>Charged Essence of Hatred</td><td>0.25</td></tr><tr><td>Burning Essence of Terror</td><td>0.07</td></tr><tr><td>Festering Essence of Destruction</td><td>0.25</td></tr><tr><td>WIKI</td><td>0.75</td></tr><tr><td>Larzuk&#x27;s Puzzlebox</td><td>0.75</td></tr><tr><td>Catalyst Shard</td><td>0.2</td></tr><tr><td>Demonic Cube</td><td>1.25</td></tr><tr><td>Larzuk&#x27;s Puzzlepiece</td><td>0.05</td></tr><tr><td>Zod Rune</td><td>4.5</td></tr><tr><td>Cham Rune</td><td>2.25</td></tr><tr><td>Jah Rune</td><td>2.0</td></tr><tr><td>Ber Rune</td><td>3.0</td></tr><tr><td>Sur Rune</td><td>1.5</td></tr><tr><td>Lo Rune</td><td>1.0</td></tr><tr><td>Ohm Rune</td><td>0.75</td></tr><tr><td>Tainted Worldstone Shard</td><td>0.65</td></tr><tr><td>Black Soulstone</td><td>0.35</td></tr><tr><td>Pure Demonic Essence</td><td>0.04</td></tr><tr><td>Prime Evil Soul</td><td>0.45</td></tr><tr><td>Trang-Oul&#x27;s Jawbone</td><td>0.05</td></tr><tr><td>Splinter of the Void</td><td>0.5</td></tr><tr><td>Hellfire Ashes</td><td>0.45</td></tr><tr><td>Relic of the Ancients</td><td>0.2</td></tr><tr><td>Sigil of Madawc</td><td>0.07</td></tr><tr><td>Sigil of Talic</td><td>0.1</td></tr><tr><td>Sigil of Korlic</td><td>0.04</td></tr><tr><td>Demonic Insignia</td><td>0.5</td></tr><tr><td>Talisman of Transgression</td><td>0.25</td></tr><tr><td>Flesh of Malic</td><td>0.1</td></tr><tr><td>Blood Moon Map</td><td>0.1</td></tr><tr><td>Outer Void</td><td>0.5</td></tr><tr><td>Imperial Palace</td><td>1.25</td></tr><tr><td>Fallen Gardens</td><td>1.25</td></tr><tr><td>Warlord of Blood</td><td>0.4</td></tr><tr><td>Zhar&#x27;s Sanctum</td><td>0.15</td></tr>
+        </table>
+      </div>
+    </section>
   </div>
 </body>
 </html>
