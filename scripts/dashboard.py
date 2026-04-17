@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from config import DASHBOARD_FILE
+from config import DASHBOARD_FILE, ECONOMY_REFRESH_HOURS
 
 
 def _json(obj: Any) -> str:
@@ -268,6 +268,65 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
     .muted, .empty-state {{ color: var(--muted); }}
     .empty-state {{ padding: 18px; border: 1px dashed var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }}
     .hidden {{ display: none !important; }}
+    .btn-refresh {{ display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 12px; border: 1px solid var(--line); background: #0f1318; color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }}
+    .btn-refresh:hover {{ border-color: var(--accent); background: rgba(125,211,252,.06); }}
+    .btn-refresh:active {{ transform: scale(.96); }}
+    .btn-refresh.loading {{ opacity: .5; pointer-events: none; }}
+    .btn-refresh .spinner {{ display: none; width: 14px; height: 14px; border: 2px solid rgba(125,211,252,.3); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }}
+    .btn-refresh.loading .spinner {{ display: inline-block; }}
+    @keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+    .btn-scan {{
+      position: relative;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      border-radius: 16px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      background: #0f1318;
+      color: var(--gold);
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      cursor: pointer;
+      transition: all .2s;
+      box-shadow: 0 0 20px rgba(245,196,81,.15);
+    }}
+    .btn-scan:hover {{ background: rgba(245,196,81,.08); transform: translateY(-1px); box-shadow: 0 0 30px rgba(245,196,81,.25); }}
+    .btn-scan:active {{ transform: scale(.97); }}
+    .btn-scan.loading {{ opacity: .5; pointer-events: none; }}
+    .btn-scan.loading .spinner {{ display: inline-block; }}
+    .btn-scan .spinner {{ display: none; width: 18px; height: 18px; border: 3px solid rgba(245,196,81,.3); border-top-color: var(--gold); border-radius: 50%; animation: spin .6s linear infinite; }}
+    .btn-scan::before {{
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 18px;
+      background: conic-gradient(from var(--glow-angle, 0deg), var(--gold), #ff8787, var(--accent), #69db7c, var(--gold));
+      z-index: -1;
+      animation: glow-spin 3s linear infinite;
+      opacity: .7;
+      transition: opacity .2s;
+    }}
+    .btn-scan:hover::before {{ opacity: 1; }}
+    .btn-scan::after {{
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 18px;
+      background: conic-gradient(from var(--glow-angle, 0deg), var(--gold), #ff8787, var(--accent), #69db7c, var(--gold));
+      z-index: -1;
+      animation: glow-spin 3s linear infinite;
+      filter: blur(12px);
+      opacity: .4;
+      transition: opacity .2s;
+    }}
+    .btn-scan:hover::after {{ opacity: .7; }}
+    @property --glow-angle {{ syntax: '<angle>'; inherits: false; initial-value: 0deg; }}
+    @keyframes glow-spin {{ to {{ --glow-angle: 360deg; }} }}
+    .toast {{ position: fixed; bottom: 24px; right: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 20px; color: var(--text); font-size: 14px; box-shadow: var(--shadow); z-index: 9999; transform: translateY(100px); opacity: 0; transition: all .3s ease; }}
+    .toast.show {{ transform: translateY(0); opacity: 1; }}
+    .toast.success {{ border-color: rgba(105,219,124,.4); }}
+    .toast.error {{ border-color: rgba(255,135,135,.4); }}
     code.json {{ white-space: pre-wrap; display: block; margin: 0; color: #d9e2ef; background: #0f1318; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }}
     @media (max-width: 980px) {{
       .deal-card {{ grid-template-columns: 1fr; }}
@@ -288,6 +347,10 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
         {_badge('Filters scanned', summary.get('filters_scanned') or 0, 'page')}
         {_badge('Deals found', summary.get('deals_found') or 0, 'score')}
         {_badge('Economy refresh', economy.get('refreshed_at') or '-', 'time')}
+        <button id="scanNow" class="btn-scan" title="Run a full scan of all PD2 market filters">
+          <span class="spinner"></span>
+          <span id="scanNowLabel">🔍 Scan Now</span>
+        </button>
       </div>
     </section>
 
@@ -367,7 +430,16 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
 
     <section class="section">
       <div class="panel">
-        <div class="section-header"><h2>Economy Values</h2><div class="section-note">Top cached values from pd2.tools</div></div>
+        <div class="section-header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <h2>Economy Values</h2>
+            <button id="econRefresh" class="btn-refresh" title="Refresh economy values from pd2.tools (requires Chrome CDP)">
+              <span class="spinner"></span>
+              <span id="econRefreshLabel">🔄 Sync</span>
+            </button>
+          </div>
+          <div class="section-note">Cached values from pd2.tools · Auto-refreshes every {_esc(ECONOMY_REFRESH_HOURS)}h during scans</div>
+        </div>
         <table>
           <tr><th>Item</th><th>HR</th></tr>
           {_render_economy_rows(economy_values)}
@@ -377,25 +449,114 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
   </div>
   <script>
     (() => {{
+      // Deal search
       const input = document.getElementById('dealSearch');
       const count = document.getElementById('dealSearchCount');
       const cards = Array.from(document.querySelectorAll('#dealGrid .deal-card'));
-      if (!input || !count || !cards.length) return;
+      if (input && count && cards.length) {{
+        const update = () => {{
+          const query = input.value.trim().toLowerCase();
+          let visible = 0;
+          for (const card of cards) {{
+            const haystack = (card.dataset.search || '').toLowerCase();
+            const match = !query || haystack.includes(query);
+            card.classList.toggle('hidden', !match);
+            if (match) visible += 1;
+          }}
+          count.textContent = `Showing ${{visible}} of ${{cards.length}} deals`;
+        }};
+        input.addEventListener('input', update);
+        update();
+      }}
 
-      const update = () => {{
-        const query = input.value.trim().toLowerCase();
-        let visible = 0;
-        for (const card of cards) {{
-          const haystack = (card.dataset.search || '').toLowerCase();
-          const match = !query || haystack.includes(query);
-          card.classList.toggle('hidden', !match);
-          if (match) visible += 1;
-        }}
-        count.textContent = `Showing ${{visible}} of ${{cards.length}} deals`;
-      }};
+      // Toast helper
+      function showToast(msg, type = 'success', duration = 3000) {{
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+        const t = document.createElement('div');
+        t.className = `toast ${{type}}`;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+        setTimeout(() => {{
+          t.classList.remove('show');
+          setTimeout(() => t.remove(), 300);
+        }}, duration);
+      }}
 
-      input.addEventListener('input', update);
-      update();
+      // Scan Now button
+      const scanBtn = document.getElementById('scanNow');
+      const scanLabel = document.getElementById('scanNowLabel');
+      if (scanBtn) {{
+        scanBtn.addEventListener('click', async () => {{
+          scanBtn.classList.add('loading');
+          scanLabel.textContent = 'Scanning...';
+          try {{
+            const resp = await fetch('/__openclaw__/api/session/send', {{
+              method: 'POST',
+              headers: {{ 'Content-Type': 'application/json' }},
+              body: JSON.stringify({{ message: 'run a full PD2 market scan: python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3' }})
+            }});
+            if (resp.ok) {{
+              showToast('🔍 Full scan kicked off via Sir Claw — dashboard will update when done', 'success', 5000);
+            }} else throw new Error();
+          }} catch {{
+            const cmd = 'python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3';
+            try {{
+              await navigator.clipboard.writeText(cmd);
+              showToast('📋 Scan command copied! Paste to Sir Claw to run it', 'success', 5000);
+            }} catch {{
+              showToast('❌ Run: ' + cmd, 'error', 8000);
+            }}
+          }} finally {{
+            scanBtn.classList.remove('loading');
+            scanLabel.textContent = '🔍 Scan Now';
+          }}
+        }});
+      }}
+
+      // Economy refresh button
+      const btn = document.getElementById('econRefresh');
+      const btnLabel = document.getElementById('econRefreshLabel');
+      if (btn) {{
+        btn.addEventListener('click', async () => {{
+          btn.classList.add('loading');
+          btnLabel.textContent = 'Syncing...';
+          try {{
+            const resp = await fetch('/api/economy-refresh', {{ method: 'POST' }});
+            if (resp.ok) {{
+              showToast('✅ Economy values refreshed! Reloading...', 'success');
+              setTimeout(() => location.reload(), 1500);
+            }} else {{
+              throw new Error('API not available');
+            }}
+          }} catch {{
+            // Fallback: try to run the command via the gateway's agent API
+            try {{
+              const gwResp = await fetch('/__openclaw__/api/session/send', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify({{ message: 'pd2 economy refresh' }})
+              }});
+              if (gwResp.ok) {{
+                showToast('🔄 Refresh requested via Sir Claw — will update shortly', 'success', 4000);
+              }} else throw new Error();
+            }} catch {{
+              // Final fallback: copy command to clipboard
+              const cmd = 'python scripts/sniper.py economy --force && python scripts/sniper.py dashboard';
+              try {{
+                await navigator.clipboard.writeText(cmd);
+                showToast('📋 Command copied! Paste to Sir Claw to run the refresh', 'success', 5000);
+              }} catch {{
+                showToast('❌ Run in terminal: ' + cmd, 'error', 8000);
+              }}
+            }}
+          }} finally {{
+            btn.classList.remove('loading');
+            btnLabel.textContent = '🔄 Sync';
+          }}
+        }});
+      }}
     }})();
   </script>
 </body>
