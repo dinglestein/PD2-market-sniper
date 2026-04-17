@@ -2,10 +2,10 @@
 name: pd2-market-sniper
 description: >
   Automated item sniper for Project Diablo 2 market. Scans saved market filters for cheap items,
-  alerts on matching items and asks user what to offer before sending.
-  Use when the user asks to scan the PD2 market, snipe items, check filters, make offers,
-  or monitor the marketplace. Targets softcore ladder. Triggers on phrases like "check market",
-  "snipe items", "scan filters", "PD2 market", "make offers", "any cheap items".
+  ranks deals, captures screenshots + direct links, and waits for the user to choose offer amounts
+  before submitting through the website. Use when the user asks to scan the PD2 market, snipe items,
+  check filters, make offers, or monitor the marketplace. Targets softcore ladder. Triggers on phrases
+  like "check market", "snipe items", "scan filters", "PD2 market", "make offers", "any cheap items".
 ---
 
 # PD2 Market Sniper
@@ -15,105 +15,117 @@ Account: d1ngl3 on projectdiablo2.com
 
 ## Prerequisites
 
-Chrome must be running with remote debugging:
+Chrome must be running with remote debugging and logged into the d1ngl3 PD2 account:
 
 ```powershell
 Stop-Process -Name chrome -Force -ErrorAction SilentlyContinue
 Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList "--remote-debugging-port=9222","--user-data-dir=C:\Users\jding\AppData\Local\Google\Chrome\User Data"
 ```
 
-## Commands
+## Main Workflows
 
-### List Saved Filters
+### 1) Safe Scan Cycle
+```bash
+python scripts/sniper.py scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200
+```
+
+What it does:
+- Rotates through only part of the saved filter list each cycle (default 12 filters)
+- Enforces conservative pacing with 2.0-3.5s randomized delays between filters
+- Caps daily checks (default 200) via `sniper_state.json`
+- Intercepts market XHR/fetch JSON when available, with DOM fallback if the API shape changes
+- Expires old seen items after 36h so relists can surface again
+- Auto-refreshes pd2.tools economy data daily
+- Produces structured `scan_results.json`
+- Writes `assets/dashboard.html`
+
+### 2) Scan a Specific Filter
+```bash
+python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0.5
+```
+
+### 3) Alert-Then-Offer Flow
+1. Run a scan.
+2. Inspect ranked deals in `scan_results.json` or console output.
+3. Pick the listing and decide your own offer amount.
+4. Submit it with either command below.
+
+Direct offer by URL:
+```bash
+python scripts/sniper.py offer --listing-url "https://www.projectdiablo2.com/market/listing/abc123..." --amount 0.3
+```
+
+One-click confirm using the last scan result:
+```bash
+python scripts/sniper.py confirm --deal-index 0 --amount 0.3
+```
+
+The scanner does **not** auto-price. It alerts, ranks, screenshots, and waits for the user to choose the number.
+
+## Other Commands
+
+List saved filters:
 ```bash
 python scripts/sniper.py filters
 ```
 
-### Scan a Single Filter
+Show offer history stats:
 ```bash
-python scripts/sniper.py scan --filter-id 6945027864537e558cdc2199 --max-price 0.5
+python scripts/sniper.py history
 ```
 
-### Scan All Filters
+Refresh economy cache:
 ```bash
-python scripts/sniper.py scan --max-price 0.5
+python scripts/sniper.py economy --force
 ```
-Scans all 59 saved filters for items at or below the max price (in HR).
 
-### Make an Offer
+Regenerate dashboard from saved data:
 ```bash
-python scripts/sniper.py offer --amount 0.25
+python scripts/sniper.py dashboard
 ```
-Clicks OFFER on the first visible listing and submits a lowball offer.
 
-## How It Works
+## Files and Data
 
-1. **Scan:** Navigates to each saved filter URL, waits for listings to load
-2. **Parse:** Extracts item name, price (in HR), and seller from each listing
-3. **Filter:** Keeps only items at or below max_price_hr threshold
-4. **Dedup:** Tracks seen items in `seen_items.json` to avoid repeat alerts
-5. **Alert:** Returns deal items and items that need price review
-6. **Offer:** Can auto-click OFFER and submit a lowball amount
+- `scripts/sniper.py` - CLI entry point
+- `scripts/scanner.py` - scan orchestration, pacing, API interception, deal collection
+- `scripts/offers.py` - offer submission flow
+- `scripts/alerts.py` - scoring and alert formatting
+- `scripts/economy.py` - pd2.tools refresh and lookup
+- `scripts/history.py` - seen item expiry, offer history, scan state, filter health
+- `scripts/dashboard.py` - HTML dashboard generation
+- `scripts/parsers.py` - API/DOM listing parsers
+- `scripts/config.py` - shared config and filter list
+- `seen_items.json` - dedup tracker with timestamps
+- `offer_history.json` - offer log and status history
+- `sniper_state.json` - cadence counters, rotation state, filter health, recent scans
+- `scan_results.json` - latest structured scan output
+- `assets/all_economy.json` - cached economy values
+- `assets/dashboard.html` - scan dashboard
+- `screenshots/` - deal and offer screenshots
 
-## Currency Reference
+## Scan Result Shape
 
-Live economy pages (scrape these for current values before making offers):
-- Currency: https://pd2.tools/economy/currency
-- Runes: https://pd2.tools/economy/runes
-- Ubers: https://pd2.tools/economy/ubers
-- Maps: https://pd2.tools/economy/maps
+Each scan returns structured JSON with:
+- `summary`: timing, filter count, daily count, deal count
+- `filters`: per-filter results, API endpoints hit, errors if any
+- `deals`: ranked deals with score, direct link, screenshot path, seller, price, and economy context
+- `review`: listings that need manual review because no HR price was parsed
+- `state`: recent scan history and filter-health data
 
-All items priced in HR (High Rune) equivalent. Key rune values: Vex=0.5, Gul=0.25, Ist=0.15, Mal=0.1, Um=0.05, Pul=0.03, Lem=0.01
+## Filter Health
 
-Use `scripts/scrape_economy.py` to refresh all values.
-Cached values stored in `assets/all_economy.json`.
+The sniper tracks whether filters return listings over time:
+- Filters with no hits for 7+ days are marked `slow`
+- Slow filters are still kept in rotation
+- Nothing is auto-removed
 
-## Price Thresholds
+## Safe Usage Notes
 
-Default max price: **0.5 HR** (adjustable via --max-price)
-For big-ticket items, the user will provide price guidance per item.
+- Conservative cadence is deliberate to reduce ban risk
+- Keep cycles limited instead of hammering all 59 filters at once
+- Avoid spamming the same listing, use `offer_history.json` as a sanity check
+- Season 13 ladder resets April 24, 2026
 
-## Saved Filters (59 total)
+## Saved Filters
 
-Includes filters for:
-- **Amazon:** jav lifer gc, bow amp, spear +amp, war pike +amp, tombsong variants (+skill, +IAS, +40 pierce), valkyrie wing variants, dooms finger +pierce, passive amulet +3/+4/+5, passive glove variants, passive GC variants (lifer, frw, +GF)
-- **Assassin:** lite +fhr gc, claw lower res
-- **Barbarian:** arachnid +20 FCR, string variants, BK variants, steelrend +deadly, gore rider +20 ds, metalgrid variants, CoA +skill 3os, nosferatu +30 ias, headhunter variants, war trav +frw
-- **Necromancer:** wraithskin +3os, veil +2sk, veil +3os, ebonbane variants (+CB, +DS, +5os), undead crown +1skill, tombstone variants
-- **Paladin:** atmas variants, rising sun +skill, tyreals
-- **Druid:** highlords cbf pierce, highlords +ED, spirit ward +3os, ebonbane variants
-- **Sorceress:** quad res booties, construct 30fcr
-- **Other:** fcr dual leach ring, half freeze trires b, witchwild +4OS, gravepalm +15 DS, windforce +6os, gface +3os
-
-All filter IDs are hardcoded in `scripts/sniper.py` and loaded from the user's saved filters page.
-
-### Season 13 Changes
-**Removed (25):** shadow FHR/FRW/LIFE, martial variants, dungos variants, ASTREON, WW blade, arachs +30fcr, infernostride, steel carapace, claw amp, claw lower res, lower res proc, eth ed deadly glove, sick maek/mleach javglov, 2-30 pierce jav glov, 5os widow multi, atmas +ias, warcry goldfind GC, steelrend -target d, string +frw
-
-**Added (29):** tombsong variants (3), valkyrie wing variants (2), passive amulet +3/+4/+5, passive glove variants (3), passive GC variants (3), arachnid +20 FCR, ebonbane variants (3), highlords +ED, atmas +ED, atmas +pierce, witchwild +4OS, gravepalm +15 DS, war trav +frw, gore rider +20 ds, gface +3os, windforce +6os, undead crown +1skill, wraithskin +3os
-
-## Offer Flow
-
-1. Navigate to a filter with results
-2. Script clicks the **OFFER** button on a listing
-3. Fills in the HR amount (default 0.25)
-4. Clicks **SUBMIT**
-
-## Files
-
-- `scripts/sniper.py` — Main scanner + offer script
-- `scripts/explore_*.py` — Debug/exploration scripts
-- `seen_items.json` — Dedup tracker for seen items
-- `scan_results.json` — Last scan results
-- `screenshots/` — Debug screenshots
-
-## Season 13 Note
-
-Ladder resets April 24, 2026. 29 new filters added for S13, 25 old filters removed. Heavy focus on Amazon (passive/tombsong builds) and new S13 items like ebonbane, wraithskin, valkyrie wing, witchwild. Market will be sparse until players start trading — schedule regular scans starting after reset.
-
-## Dependencies
-
-- Python 3.8+
-- playwright (`pip install playwright`)
-- Chrome with remote debugging on port 9222
-- d1ngl3 account logged into projectdiablo2.com
+All existing saved filter IDs are preserved in `scripts/config.py`.

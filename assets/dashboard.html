@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>PD2 Sniper Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background: #111; color: #eee; }
+    h1, h2 { color: #f5c451; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .card { background: #1c1c1c; border: 1px solid #333; padding: 16px; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { border-bottom: 1px solid #333; padding: 6px; text-align: left; vertical-align: top; }
+    code { white-space: pre-wrap; display: block; }
+    a { color: #8fc7ff; }
+  </style>
+</head>
+<body>
+  <h1>PD2 Market Sniper Dashboard</h1>
+  <div class="grid">
+    <div class="card"><h2>Last Scan</h2><code>{&quot;timestamp&quot;: &quot;2026-04-17T08:50:52.822387+00:00&quot;, &quot;filters_scanned&quot;: 1, &quot;deals_found&quot;: 1, &quot;daily_filter_count&quot;: 8, &quot;max_price_hr&quot;: 999.0}</code></div>
+    <div class="card"><h2>Offer Stats</h2><code>{&quot;total&quot;: 1, &quot;status_counts&quot;: {&quot;submitted&quot;: 1}, &quot;recent&quot;: [{&quot;timestamp&quot;: &quot;2026-04-17T08:51:07.901737+00:00&quot;, &quot;status&quot;: &quot;submitted&quot;, &quot;amount_hr&quot;: 0.3, &quot;item_name&quot;: &quot;Rare Vampirebone Gloves&quot;, &quot;seller_name&quot;: &quot;tsetso91&quot;, &quot;listing_id&quot;: null, &quot;listing_url&quot;: &quot;https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77&quot;, &quot;filter_id&quot;: &quot;69e0b9fd9fc33c4bc7fe043a&quot;, &quot;filter_name&quot;: &quot;passive glove +2-20p&quot;, &quot;price_hr&quot;: 2.0, &quot;note&quot;: &quot;screenshot=offer-listing.png&quot;}]}</code></div>
+    <div class="card"><h2>Economy Refresh</h2><code>2026-04-17T08:14:38.895239+00:00</code></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Recent Deals</h2>
+      <table><tr><th>Score</th><th>Item</th><th>Price</th><th>Seller</th></tr>
+      <tr><td>2.0</td><td><a href='https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77'>Rare Vampirebone Gloves</a></td><td>2.0</td><td>tsetso91</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Recent Scans</h2>
+      <table><tr><th>When</th><th>Filters</th><th>Deals</th></tr>
+      <tr><td>2026-04-17T08:11:32.845175+00:00</td><td>1</td><td>0</td></tr><tr><td>2026-04-17T08:15:55.145718+00:00</td><td>3</td><td>1</td></tr><tr><td>2026-04-17T08:18:06.484748+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:20:51.628871+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:25:17.439951+00:00</td><td>1</td><td>1</td></tr><tr><td>2026-04-17T08:50:52.822387+00:00</td><td>1</td><td>1</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Filter Health</h2>
+      <table><tr><th>Filter</th><th>Status</th><th>Scans</th><th>Days Since Hit</th></tr>
+      <tr><td>highlords cbf pierce</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>passive GC +GF</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>tombsong +skill</td><td>slow</td><td>1</td><td>None</td></tr><tr><td>passive glove +2-20p</td><td>healthy</td><td>5</td><td>0.0</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Economy Values</h2>
+      <table><tr><th>Item</th><th>HR</th></tr>
+      <tr><td>Token of Absolution</td><td>0.75</td></tr><tr><td>Twisted Essence of Suffering</td><td>0.02</td></tr><tr><td>Charged Essence of Hatred</td><td>0.25</td></tr><tr><td>Burning Essence of Terror</td><td>0.07</td></tr><tr><td>Festering Essence of Destruction</td><td>0.25</td></tr><tr><td>WIKI</td><td>0.75</td></tr><tr><td>Larzuk&#x27;s Puzzlebox</td><td>0.75</td></tr><tr><td>Catalyst Shard</td><td>0.2</td></tr><tr><td>Demonic Cube</td><td>1.25</td></tr><tr><td>Larzuk&#x27;s Puzzlepiece</td><td>0.05</td></tr><tr><td>Zod Rune</td><td>4.5</td></tr><tr><td>Cham Rune</td><td>2.25</td></tr><tr><td>Jah Rune</td><td>2.0</td></tr><tr><td>Ber Rune</td><td>3.0</td></tr><tr><td>Sur Rune</td><td>1.5</td></tr><tr><td>Lo Rune</td><td>1.0</td></tr><tr><td>Ohm Rune</td><td>0.75</td></tr><tr><td>Tainted Worldstone Shard</td><td>0.65</td></tr><tr><td>Black Soulstone</td><td>0.35</td></tr><tr><td>Pure Demonic Essence</td><td>0.04</td></tr><tr><td>Prime Evil Soul</td><td>0.45</td></tr><tr><td>Trang-Oul&#x27;s Jawbone</td><td>0.05</td></tr><tr><td>Splinter of the Void</td><td>0.5</td></tr><tr><td>Hellfire Ashes</td><td>0.45</td></tr><tr><td>Relic of the Ancients</td><td>0.2</td></tr><tr><td>Sigil of Madawc</td><td>0.07</td></tr><tr><td>Sigil of Talic</td><td>0.1</td></tr><tr><td>Sigil of Korlic</td><td>0.04</td></tr><tr><td>Demonic Insignia</td><td>0.5</td></tr><tr><td>Talisman of Transgression</td><td>0.25</td></tr><tr><td>Flesh of Malic</td><td>0.1</td></tr><tr><td>Blood Moon Map</td><td>0.1</td></tr><tr><td>Outer Void</td><td>0.5</td></tr><tr><td>Imperial Palace</td><td>1.25</td></tr><tr><td>Fallen Gardens</td><td>1.25</td></tr><tr><td>Warlord of Blood</td><td>0.4</td></tr><tr><td>Zhar&#x27;s Sanctum</td><td>0.15</td></tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "offers": [
+    {
+      "timestamp": "2026-04-17T08:51:07.901737+00:00",
+      "status": "submitted",
+      "amount_hr": 0.3,
+      "item_name": "Rare Vampirebone Gloves",
+      "seller_name": "tsetso91",
+      "listing_id": null,
+      "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
+      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
+      "filter_name": "passive glove +2-20p",
+      "price_hr": 2.0,
+      "note": "screenshot=offer-listing.png"
+    }
+  ]
+}

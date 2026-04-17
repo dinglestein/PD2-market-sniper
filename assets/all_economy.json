@@ -1,18 +1,106 @@
 {
-  "currency": {
-    "url": "https://pd2.tools/economy/currency",
-    "text": "Enjoying pd2.tools?\n\nIf you wanted to show your support, starring the pd2.tools GitHub repository would really help us out!\n\nStar on GitHub\n\nPlayers in Game: 212\n\nServer: ONLINE\n\nCorrupted Zone: Outer Cloister and Barracks (12m)\n\nCharacters Tracked: 147,246\n\npd2.tools\nBuilds\nEconomy\nTools\nStatistics\nLeaderboard\n66\n100\nPrices may be inaccurate, especially for items with a low amount of listings. Use your own discretion when determining item values. Only available for softcore.\n\nGeneral\n\nCurrency\nRunes\nUbers\nMaps\n\nEconomy\n\n>\n\nCurrency\n\nCurrency\nName\n\t\nPrice\n\t\nLast 7 days\n\t\n# Listed\n\t\n\n\nToken of Absolution\n\nWIKI\n\n\t0.75 HR\t\n\n+0%\n\n\t100+\t\nTrade\n\n\n\nLarzuk's Puzzlebox\n\n\t0.75 HR\t\n\n+0%\n\n\t100+\t\nTrade\n\n\n\nCatalyst Shard\n\n\t0.20 HR\t\n\n+0%\n\n\t~56\t\nTrade\n\n\n\nDemonic Cube\n\n\t1.25 HR\t\n\n+0%\n\n\t~39\t\nTrade\n\n\n\nLarzuk's Puzzlepiece\n\n\t0.05 HR\t\n\n+0%\n\n\t~37\t\nTrade\n\n\n\nTwisted Essence of Suffering\n\nWIKI\n\n\t0.02 HR \t\n\n+0%\n\n\t~9\t\nTrade\n\n\n\nCharged Essence of Hatred\n\nWIKI\n\n\t0.25 HR \t\n\n+0%\n\n\t~19\t\nTrade\n\n\n\nBurning Essence of Terror\n\nWIKI\n\n\t0.07 HR \t\n\n+0%\n\n\t~12\t\nTrade\n\n\n\nFestering Essence of Destruction\n\nWIKI\n\n\t0.25 HR \t\n\n+0%\n\n\t~15\t\nTrade\nInspired by poe.ninja\nPrivacy Policy\nAbout\nA RAPTIVE PARTNER SITE"
+  "refreshed_at": "2026-04-17T08:14:38.895239+00:00",
+  "sources": {
+    "currency": {
+      "url": "https://pd2.tools/economy/currency",
+      "values": {
+        "Token of Absolution": 0.75,
+        "Twisted Essence of Suffering": 0.02,
+        "Charged Essence of Hatred": 0.25,
+        "Burning Essence of Terror": 0.07,
+        "Festering Essence of Destruction": 0.25,
+        "WIKI": 0.25,
+        "Larzuk's Puzzlebox": 0.75,
+        "Catalyst Shard": 0.2,
+        "Demonic Cube": 1.25,
+        "Larzuk's Puzzlepiece": 0.05
+      },
+      "value_count": 10
+    },
+    "runes": {
+      "url": "https://pd2.tools/economy/runes",
+      "values": {
+        "Zod Rune": 4.5,
+        "Cham Rune": 2.25,
+        "Jah Rune": 2.0,
+        "Ber Rune": 3.0,
+        "Sur Rune": 1.5,
+        "Lo Rune": 1.0,
+        "Ohm Rune": 0.75,
+        "WIKI": 0.75
+      },
+      "value_count": 8
+    },
+    "ubers": {
+      "url": "https://pd2.tools/economy/ubers",
+      "values": {
+        "Tainted Worldstone Shard": 0.65,
+        "Black Soulstone": 0.35,
+        "Pure Demonic Essence": 0.04,
+        "Prime Evil Soul": 0.45,
+        "Trang-Oul's Jawbone": 0.05,
+        "Splinter of the Void": 0.5,
+        "Hellfire Ashes": 0.45,
+        "Relic of the Ancients": 0.2,
+        "Sigil of Madawc": 0.07,
+        "Sigil of Talic": 0.1,
+        "Sigil of Korlic": 0.04,
+        "Demonic Insignia": 0.5,
+        "Talisman of Transgression": 0.25,
+        "Flesh of Malic": 0.1
+      },
+      "value_count": 14
+    },
+    "maps": {
+      "url": "https://pd2.tools/economy/maps",
+      "values": {
+        "Blood Moon Map": 0.1,
+        "Outer Void": 0.5,
+        "Imperial Palace": 1.25,
+        "Fallen Gardens": 1.25,
+        "Warlord of Blood": 0.4,
+        "Zhar's Sanctum": 0.15
+      },
+      "value_count": 6
+    }
   },
-  "runes": {
-    "url": "https://pd2.tools/economy/runes",
-    "text": "Enjoying pd2.tools?\n\nIf you wanted to show your support, starring the pd2.tools GitHub repository would really help us out!\n\nStar on GitHub\n\nPlayers in Game: 212\n\nServer: ONLINE\n\nCorrupted Zone: Outer Cloister and Barracks (12m)\n\nCharacters Tracked: 147,246\n\npd2.tools\nBuilds\nEconomy\nTools\nStatistics\nLeaderboard\n66\n100\nPrices may be inaccurate, especially for items with a low amount of listings. Use your own discretion when determining item values. Only available for softcore.\n\nGeneral\n\nCurrency\nRunes\nUbers\nMaps\n\nEconomy\n\n>\n\nRunes\n\nRunes\n\nThe price of Vex and below generally does not change. Vex = 0.5, Gul = 0.25, Ist = 0.15, Mal = 0.1, Um = 0.05, Pul = 0.03, Lem = 0.01\n\nName\n\t\nPrice\n\t\nLast 7 days\n\t\n# Listed\n\t\n\n\nZod Rune\n\nWIKI\n\n\t4.50 HR\t\n\n+0%\n\n\t~32\t\nTrade\n\n\n\nCham Rune\n\nWIKI\n\n\t2.25 HR\t\n\n+0%\n\n\t~30\t\nTrade\n\n\n\nJah Rune\n\nWIKI\n\n\t2.00 HR\t\n\n+0%\n\n\t~30\t\nTrade\n\n\n\nBer Rune\n\nWIKI\n\n\t3.00 HR\t\n\n+0%\n\n\t~25\t\nTrade\n\n\n\nSur Rune\n\nWIKI\n\n\t1.50 HR\t\n\n+0%\n\n\t~39\t\nTrade\n\n\n\nLo Rune\n\nWIKI\n\n\t1.00 HR\t\n\n+0%\n\n\t~37\t\nTrade\n\n\n\nOhm Rune\n\nWIKI\n\n\t0.75 HR\t\n\n+0%\n\n\t~32\t\nTrade\nInspired by poe.ninja\nPrivacy Policy\nAbout\nA RAPTIVE PARTNER SITE"
-  },
-  "ubers": {
-    "url": "https://pd2.tools/economy/ubers",
-    "text": "Enjoying pd2.tools?\n\nIf you wanted to show your support, starring the pd2.tools GitHub repository would really help us out!\n\nStar on GitHub\n\nPlayers in Game: 212\n\nServer: ONLINE\n\nCorrupted Zone: Outer Cloister and Barracks (12m)\n\nCharacters Tracked: 147,246\n\npd2.tools\nBuilds\nEconomy\nTools\nStatistics\nLeaderboard\n66\n100\nPrices may be inaccurate, especially for items with a low amount of listings. Use your own discretion when determining item values. Only available for softcore.\n\nGeneral\n\nCurrency\nRunes\nUbers\nMaps\n\nEconomy\n\n>\n\nUbers\n\nUbers\nName\n\t\nPrice\n\t\nLast 7 days\n\t\n# Listed\n\t\n\n\nTainted Worldstone Shard\n\n\t0.65 HR\t\n\n+0%\n\n\t~89\t\nTrade\n\n\n\nBlack Soulstone\n\n\t0.35 HR\t\n\n+0%\n\n\t~54\t\nTrade\n\n\n\nPure Demonic Essence\n\n\t0.04 HR\t\n\n+0%\n\n\t~88\t\nTrade\n\n\n\nPrime Evil Soul\n\n\t0.45 HR\t\n\n+0%\n\n\t100+\t\nTrade\n\n\n\nTrang-Oul's Jawbone\n\n\t0.05 HR\t\n\n+0%\n\n\t~48\t\nTrade\n\n\n\nSplinter of the Void\n\n\t0.50 HR\t\n\n+0%\n\n\t100+\t\nTrade\n\n\n\nHellfire Ashes\n\n\t0.45 HR\t\n\n+0%\n\n\t~41\t\nTrade\n\n\n\nRelic of the Ancients\n\n\t0.20 HR \t\n\n+0%\n\n\t~12\t\nTrade\n\n\n\nSigil of Madawc\n\n\t0.07 HR\t\n\n+0%\n\n\t~44\t\nTrade\n\n\n\nSigil of Talic\n\n\t0.10 HR\t\n\n+0%\n\n\t~31\t\nTrade\n\n\n\nSigil of Korlic\n\n\t0.04 HR\t\n\n+0%\n\n\t~40\t\nTrade\n\n\n\nDemonic Insignia\n\n\t0.50 HR\t\n\n+0%\n\n\t~90\t\nTrade\n\n\n\nTalisman of Transgression\n\n\t0.25 HR\t\n\n+0%\n\n\t100+\t\nTrade\n\n\n\nFlesh of Malic\n\n\t0.10 HR\t\n\n+0%\n\n\t~54\t\nTrade\nInspired by poe.ninja\nPrivacy Policy\nAbout\nA RAPTIVE PARTNER SITE"
-  },
-  "maps": {
-    "url": "https://pd2.tools/economy/maps",
-    "text": "Enjoying pd2.tools?\n\nIf you wanted to show your support, starring the pd2.tools GitHub repository would really help us out!\n\nStar on GitHub\n\nPlayers in Game: 212\n\nServer: ONLINE\n\nCorrupted Zone: Outer Cloister and Barracks (12m)\n\nCharacters Tracked: 147,246\n\npd2.tools\nBuilds\nEconomy\nTools\nStatistics\nLeaderboard\n66\n100\nPrices may be inaccurate, especially for items with a low amount of listings. Use your own discretion when determining item values. Only available for softcore.\n\nGeneral\n\nCurrency\nRunes\nUbers\nMaps\n\nEconomy\n\n>\n\nMaps\n\nMaps\nName\n\t\nPrice\n\t\nLast 7 days\n\t\n# Listed\n\t\n\n\nBlood Moon Map\n\n\t0.10 HR\t\n\n+0%\n\n\t~52\t\nTrade\n\n\n\nOuter Void\n\n\t0.50 HR\t\n\n+0%\n\n\t~48\t\nTrade\n\n\n\nImperial Palace\n\n\t1.25 HR\t\n\n+0%\n\n\t~55\t\nTrade\n\n\n\nFallen Gardens\n\n\t1.25 HR\t\n\n+0%\n\n\t~25\t\nTrade\n\n\n\nWarlord of Blood\n\n\t0.40 HR\t\n\n+0%\n\n\t~53\t\nTrade\n\n\n\nZhar's Sanctum\n\n\t0.15 HR\t\n\n+0%\n\n\t~27\t\nTrade\nInspired by poe.ninja\nPrivacy Policy\nAbout\nA RAPTIVE PARTNER SITE"
+  "values": {
+    "Token of Absolution": 0.75,
+    "Twisted Essence of Suffering": 0.02,
+    "Charged Essence of Hatred": 0.25,
+    "Burning Essence of Terror": 0.07,
+    "Festering Essence of Destruction": 0.25,
+    "WIKI": 0.75,
+    "Larzuk's Puzzlebox": 0.75,
+    "Catalyst Shard": 0.2,
+    "Demonic Cube": 1.25,
+    "Larzuk's Puzzlepiece": 0.05,
+    "Zod Rune": 4.5,
+    "Cham Rune": 2.25,
+    "Jah Rune": 2.0,
+    "Ber Rune": 3.0,
+    "Sur Rune": 1.5,
+    "Lo Rune": 1.0,
+    "Ohm Rune": 0.75,
+    "Tainted Worldstone Shard": 0.65,
+    "Black Soulstone": 0.35,
+    "Pure Demonic Essence": 0.04,
+    "Prime Evil Soul": 0.45,
+    "Trang-Oul's Jawbone": 0.05,
+    "Splinter of the Void": 0.5,
+    "Hellfire Ashes": 0.45,
+    "Relic of the Ancients": 0.2,
+    "Sigil of Madawc": 0.07,
+    "Sigil of Talic": 0.1,
+    "Sigil of Korlic": 0.04,
+    "Demonic Insignia": 0.5,
+    "Talisman of Transgression": 0.25,
+    "Flesh of Malic": 0.1,
+    "Blood Moon Map": 0.1,
+    "Outer Void": 0.5,
+    "Imperial Palace": 1.25,
+    "Fallen Gardens": 1.25,
+    "Warlord of Blood": 0.4,
+    "Zhar's Sanctum": 0.15
   }
 }

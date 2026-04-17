@@ -1,35 +1,12 @@
-import asyncio
+#!/usr/bin/env python3
+from __future__ import annotations
+
 import json
-from playwright.async_api import async_playwright
 
-async def scrape_all():
-    urls = {
-        "currency": "https://pd2.tools/economy/currency",
-        "runes": "https://pd2.tools/economy/runes",
-        "ubers": "https://pd2.tools/economy/ubers",
-        "maps": "https://pd2.tools/economy/maps",
-    }
-    
-    async with async_playwright() as p:
-        browser = await p.chromium.connect_over_cdp('http://localhost:9222')
-        ctx = browser.contexts[0]
-        page = await ctx.new_page()
-        
-        all_data = {}
-        
-        for name, url in urls.items():
-            print(f"Scraping {name}...")
-            await page.goto(url, wait_until='domcontentloaded', timeout=30000)
-            await asyncio.sleep(5)
-            text = await page.inner_text('body')
-            all_data[name] = {"url": url, "text": text}
-            print(text[:2000])
-            print("---")
-        
-        await page.close()
-        
-        with open(r'C:\Users\jding\.agents\skills\pd2-market-sniper\assets\all_economy.json', 'w', encoding='utf-8') as f:
-            json.dump(all_data, f, indent=2, ensure_ascii=False)
-        print("Saved to all_economy.json")
+from economy import EconomyManager
+from history import StateStore
 
-asyncio.run(scrape_all())
+
+if __name__ == "__main__":
+    payload = EconomyManager(StateStore()).refresh(force=True)
+    print(json.dumps({"refreshed_at": payload.get("refreshed_at"), "value_count": len(payload.get("values", {}))}, indent=2))
