@@ -492,21 +492,31 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
           scanBtn.classList.add('loading');
           scanLabel.textContent = 'Scanning...';
           try {{
-            const resp = await fetch('/__openclaw__/api/session/send', {{
-              method: 'POST',
-              headers: {{ 'Content-Type': 'application/json' }},
-              body: JSON.stringify({{ message: 'run a full PD2 market scan: python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3' }})
-            }});
-            if (resp.ok) {{
-              showToast('🔍 Full scan kicked off via Sir Claw — dashboard will update when done', 'success', 5000);
-            }} else throw new Error();
-          }} catch {{
+            const resp = await fetch('/api/scan', {{ method: 'POST' }});
+            const data = await resp.json();
+            if (resp.ok && data.ok) {{
+              showToast('🔍 Scan started — dashboard will auto-refresh', 'success', 4000);
+              // Poll for completion
+              const poll = setInterval(async () => {{
+                try {{
+                  const s = await (await fetch('/api/status')).json();
+                  if (!s.scan_running) {{
+                    clearInterval(poll);
+                    showToast('✅ Scan complete! ' + (s.pending_deal ? 'Deal: ' + s.pending_deal : 'No new deals'), 'success', 5000);
+                    location.reload();
+                  }}
+                }} catch {{}}
+              }}, 5000);
+            }} else {{
+              showToast(data.error || 'Scan already in progress', 'error', 4000);
+            }}
+          }} catch (e) {{
             const cmd = 'python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3';
             try {{
               await navigator.clipboard.writeText(cmd);
-              showToast('📋 Scan command copied! Paste to Sir Claw to run it', 'success', 5000);
+              showToast('📋 Server not running — command copied! Paste to Sir Claw', 'success', 5000);
             }} catch {{
-              showToast('❌ Run: ' + cmd, 'error', 8000);
+              showToast('❌ Server not reachable. Run: python sniper.py serve', 'error', 8000);
             }}
           }} finally {{
             scanBtn.classList.remove('loading');
@@ -524,32 +534,20 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
           btnLabel.textContent = 'Syncing...';
           try {{
             const resp = await fetch('/api/economy-refresh', {{ method: 'POST' }});
-            if (resp.ok) {{
-              showToast('✅ Economy values refreshed! Reloading...', 'success');
+            const data = await resp.json();
+            if (resp.ok && data.ok) {{
+              showToast('🔄 Economy values refreshed!', 'success');
               setTimeout(() => location.reload(), 1500);
             }} else {{
-              throw new Error('API not available');
+              throw new Error(data.error || 'Failed');
             }}
           }} catch {{
-            // Fallback: try to run the command via the gateway's agent API
+            const cmd = 'python scripts/sniper.py economy --force && python scripts/sniper.py dashboard';
             try {{
-              const gwResp = await fetch('/__openclaw__/api/session/send', {{
-                method: 'POST',
-                headers: {{ 'Content-Type': 'application/json' }},
-                body: JSON.stringify({{ message: 'pd2 economy refresh' }})
-              }});
-              if (gwResp.ok) {{
-                showToast('🔄 Refresh requested via Sir Claw — will update shortly', 'success', 4000);
-              }} else throw new Error();
+              await navigator.clipboard.writeText(cmd);
+              showToast('📋 Server not running — command copied! Paste to Sir Claw', 'success', 5000);
             }} catch {{
-              // Final fallback: copy command to clipboard
-              const cmd = 'python scripts/sniper.py economy --force && python scripts/sniper.py dashboard';
-              try {{
-                await navigator.clipboard.writeText(cmd);
-                showToast('📋 Command copied! Paste to Sir Claw to run the refresh', 'success', 5000);
-              }} catch {{
-                showToast('❌ Run in terminal: ' + cmd, 'error', 8000);
-              }}
+              showToast('❌ Server not reachable. Run: python sniper.py serve', 'error', 8000);
             }}
           }} finally {{
             btn.classList.remove('loading');

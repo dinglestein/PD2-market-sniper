@@ -168,7 +168,7 @@
         <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">2026-04-17T09:02:08.767483+00:00</span></span>
         <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">1</span></span>
         <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">1</span></span>
-        <span class="badge badge-time"><span class="badge-label">Economy refresh</span><span class="badge-value">2026-04-17T08:14:38.895239+00:00</span></span>
+        <span class="badge badge-time"><span class="badge-label">Economy refresh</span><span class="badge-value">2026-04-17T12:28:14.706385+00:00</span></span>
         <button id="scanNow" class="btn-scan" title="Run a full scan of all PD2 market filters">
           <span class="spinner"></span>
           <span id="scanNowLabel">🔍 Scan Now</span>
@@ -293,7 +293,7 @@
         <div class="section-header"><h2>Filter Health</h2><div class="section-note">Slow filters stay in rotation</div></div>
         <table>
           <tr><th>Filter</th><th>Status</th><th>Scans</th><th>Deals</th><th>Days Since Hit</th><th>Last Scan</th></tr>
-          <tr><td>highlords cbf pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:11:29.428180+00:00</td></tr><tr><td>passive GC +GF</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:41.466007+00:00</td></tr><tr><td>tombsong +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:32.050840+00:00</td></tr><tr><td>passive glove +2-20p</td><td><span class='status status-healthy'>healthy</span></td><td>5</td><td>5</td><td>0.1</td><td>2026-04-17T08:50:50.532846+00:00</td></tr>
+          <tr><td>highlords cbf pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:11:29.428180+00:00</td></tr><tr><td>passive GC +GF</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:41.466007+00:00</td></tr><tr><td>tombsong +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-17T08:15:32.050840+00:00</td></tr><tr><td>passive glove +2-20p</td><td><span class='status status-healthy'>healthy</span></td><td>5</td><td>5</td><td>0.2</td><td>2026-04-17T08:50:50.532846+00:00</td></tr>
         </table>
       </div>
     </section>
@@ -362,21 +362,31 @@
           scanBtn.classList.add('loading');
           scanLabel.textContent = 'Scanning...';
           try {
-            const resp = await fetch('/__openclaw__/api/session/send', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: 'run a full PD2 market scan: python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3' })
-            });
-            if (resp.ok) {
-              showToast('🔍 Full scan kicked off via Sir Claw — dashboard will update when done', 'success', 5000);
-            } else throw new Error();
-          } catch {
+            const resp = await fetch('/api/scan', { method: 'POST' });
+            const data = await resp.json();
+            if (resp.ok && data.ok) {
+              showToast('🔍 Scan started — dashboard will auto-refresh', 'success', 4000);
+              // Poll for completion
+              const poll = setInterval(async () => {
+                try {
+                  const s = await (await fetch('/api/status')).json();
+                  if (!s.scan_running) {
+                    clearInterval(poll);
+                    showToast('✅ Scan complete! ' + (s.pending_deal ? 'Deal: ' + s.pending_deal : 'No new deals'), 'success', 5000);
+                    location.reload();
+                  }
+                } catch {}
+              }, 5000);
+            } else {
+              showToast(data.error || 'Scan already in progress', 'error', 4000);
+            }
+          } catch (e) {
             const cmd = 'python scripts/sniper.py operator-scan --max-price 999 --filters-per-cycle 100 --daily-limit 200 --max-pages 50 --top 3';
             try {
               await navigator.clipboard.writeText(cmd);
-              showToast('📋 Scan command copied! Paste to Sir Claw to run it', 'success', 5000);
+              showToast('📋 Server not running — command copied! Paste to Sir Claw', 'success', 5000);
             } catch {
-              showToast('❌ Run: ' + cmd, 'error', 8000);
+              showToast('❌ Server not reachable. Run: python sniper.py serve', 'error', 8000);
             }
           } finally {
             scanBtn.classList.remove('loading');
@@ -394,32 +404,20 @@
           btnLabel.textContent = 'Syncing...';
           try {
             const resp = await fetch('/api/economy-refresh', { method: 'POST' });
-            if (resp.ok) {
-              showToast('✅ Economy values refreshed! Reloading...', 'success');
+            const data = await resp.json();
+            if (resp.ok && data.ok) {
+              showToast('🔄 Economy values refreshed!', 'success');
               setTimeout(() => location.reload(), 1500);
             } else {
-              throw new Error('API not available');
+              throw new Error(data.error || 'Failed');
             }
           } catch {
-            // Fallback: try to run the command via the gateway's agent API
+            const cmd = 'python scripts/sniper.py economy --force && python scripts/sniper.py dashboard';
             try {
-              const gwResp = await fetch('/__openclaw__/api/session/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: 'pd2 economy refresh' })
-              });
-              if (gwResp.ok) {
-                showToast('🔄 Refresh requested via Sir Claw — will update shortly', 'success', 4000);
-              } else throw new Error();
+              await navigator.clipboard.writeText(cmd);
+              showToast('📋 Server not running — command copied! Paste to Sir Claw', 'success', 5000);
             } catch {
-              // Final fallback: copy command to clipboard
-              const cmd = 'python scripts/sniper.py economy --force && python scripts/sniper.py dashboard';
-              try {
-                await navigator.clipboard.writeText(cmd);
-                showToast('📋 Command copied! Paste to Sir Claw to run the refresh', 'success', 5000);
-              } catch {
-                showToast('❌ Run in terminal: ' + cmd, 'error', 8000);
-              }
+              showToast('❌ Server not reachable. Run: python sniper.py serve', 'error', 8000);
             }
           } finally {
             btn.classList.remove('loading');

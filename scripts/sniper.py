@@ -67,6 +67,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("dashboard", help="Regenerate dashboard from current state")
     economy = sub.add_parser("economy", help="Refresh economy cache")
     economy.add_argument("--force", action="store_true")
+    serve = sub.add_parser("serve", help="Start dashboard HTTP server")
+    serve.add_argument("--port", type=int, default=8420, help="Port to serve on (default: 8420)")
+    serve.add_argument("--no-browser", action="store_true", help="Don't open browser automatically")
     return parser
 
 
@@ -206,9 +209,20 @@ async def main() -> int:
         return cmd_dashboard()
     if args.command == "economy":
         return await cmd_economy(args)
+    if args.command == "serve":
+        from server import serve
+        serve(args.port, open_browser=not args.no_browser)
+        return 0
     parser.print_help()
     return 1
 
 
 if __name__ == "__main__":
-    raise SystemExit(asyncio.run(main()))
+    parser = build_parser()
+    args = parser.parse_args()
+    # 'serve' has its own event loop, bypass asyncio.run
+    if args.command == "serve":
+        from server import serve
+        serve(args.port, open_browser=not args.no_browser)
+    else:
+        raise SystemExit(asyncio.run(main()))
