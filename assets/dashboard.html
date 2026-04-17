@@ -150,6 +150,19 @@
     .toast.success { border-color: rgba(105,219,124,.4); }
     .toast.error { border-color: rgba(255,135,135,.4); }
     code.json { white-space: pre-wrap; display: block; margin: 0; color: #d9e2ef; background: #0f1318; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    .server-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding: 10px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+    .server-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .server-dot.online { background: var(--green); box-shadow: 0 0 8px rgba(105,219,124,.5); animation: pulse-green 2s ease-in-out infinite; }
+    .server-dot.offline { background: var(--red); box-shadow: 0 0 6px rgba(255,135,135,.3); }
+    .server-label { font-size: 13px; font-weight: 600; }
+    .server-label.online { color: var(--green); }
+    .server-label.offline { color: var(--red); }
+    .server-url { font-size: 12px; color: var(--muted); }
+    .server-url a { color: var(--accent); font-weight: 600; }
+    .btn-start-server { margin-left: auto; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--line); background: #0f1318; color: var(--gold); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; }
+    .btn-start-server:hover { border-color: var(--gold); background: rgba(245,196,81,.08); }
+    .btn-start-server:active { transform: scale(.96); }
+    @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
     @media (max-width: 980px) {
       .deal-card { grid-template-columns: 1fr; }
       .two-col { grid-template-columns: 1fr; }
@@ -175,6 +188,13 @@
         </button>
       </div>
     </section>
+
+    <div id="serverBar" class="server-bar">
+      <span id="serverDot" class="server-dot offline"></span>
+      <span id="serverLabel" class="server-label offline">Server offline</span>
+      <span id="serverUrl" class="server-url" style="display:none">Live at <a href="http://localhost:8420" target="_blank">localhost:8420</a></span>
+      <button id="startServer" class="btn-start-server" title="Start the dashboard server (python sniper.py serve)">⚡ Start Server</button>
+    </div>
 
     <section class="stats-grid">
       <div class="stat-card">
@@ -352,6 +372,79 @@
           t.classList.remove('show');
           setTimeout(() => t.remove(), 300);
         }, duration);
+      }
+
+      // Server status check
+      const serverDot = document.getElementById('serverDot');
+      const serverLabel = document.getElementById('serverLabel');
+      const serverUrl = document.getElementById('serverUrl');
+      const startBtn = document.getElementById('startServer');
+      let serverOnline = false;
+
+      async function checkServer() {
+        try {
+          const resp = await fetch('/api/status', { signal: AbortSignal.timeout(2000) });
+          if (resp.ok) {
+            serverOnline = true;
+            serverDot.className = 'server-dot online';
+            serverLabel.className = 'server-label online';
+            serverLabel.textContent = '✅ Server online';
+            serverUrl.style.display = '';
+            if (startBtn) startBtn.style.display = 'none';
+            return true;
+          }
+        } catch {}
+        serverOnline = false;
+        serverDot.className = 'server-dot offline';
+        serverLabel.className = 'server-label offline';
+        serverLabel.textContent = 'Server offline';
+        serverUrl.style.display = 'none';
+        if (startBtn) startBtn.style.display = '';
+        return false;
+      }
+
+      // Check on load and every 30s
+      checkServer();
+      setInterval(checkServer, 30000);
+
+      // Start Server button
+      if (startBtn) {
+        startBtn.addEventListener('click', async () => {
+          startBtn.textContent = 'Starting...';
+          startBtn.style.pointerEvents = 'none';
+          try {
+            // Try opening the serve URL which triggers the server launch
+            // This only works if the page is served through OpenClaw or similar
+            // Otherwise copy the command
+            const cmd = 'python scripts/sniper.py serve';
+            try {
+              await navigator.clipboard.writeText(cmd);
+              showToast('📋 Run this in a terminal: ' + cmd, 'success', 6000);
+            } catch {
+              showToast('⚡ Run in terminal: python sniper.py serve --port 8420', 'success', 6000);
+            }
+            // Poll for server coming online
+            startBtn.textContent = 'Waiting...';
+            let attempts = 0;
+            const poll = setInterval(async () => {
+              attempts++;
+              const online = await checkServer();
+              if (online) {
+                clearInterval(poll);
+                showToast('✅ Server is live! Switching to live dashboard...', 'success', 3000);
+                setTimeout(() => window.location.href = 'http://localhost:8420', 2000);
+              } else if (attempts > 30) {
+                clearInterval(poll);
+                startBtn.textContent = '⚡ Start Server';
+                startBtn.style.pointerEvents = '';
+                showToast('⏰ Timed out waiting for server', 'error', 4000);
+              }
+            }, 2000);
+          } catch {
+            startBtn.textContent = '⚡ Start Server';
+            startBtn.style.pointerEvents = '';
+          }
+        });
       }
 
       // Scan Now button
