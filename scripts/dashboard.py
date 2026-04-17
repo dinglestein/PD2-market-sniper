@@ -47,6 +47,19 @@ def _badge(label: str, value: Any, kind: str = "default") -> str:
     return f'<span class="badge badge-{_esc(kind)}"><span class="badge-label">{_esc(label)}</span><span class="badge-value">{_esc(value)}</span></span>'
 
 
+def _deal_search_text(deal: dict[str, Any]) -> str:
+    parts = [
+        deal.get("item_name"),
+        deal.get("filter_name"),
+        deal.get("seller_name"),
+        deal.get("listing_url"),
+        deal.get("posted_at"),
+        " ".join(str(v) for v in deal.get("stats") or []),
+        " ".join(str(v) for v in deal.get("corruption") or []),
+    ]
+    return " | ".join(str(p or "") for p in parts).lower()
+
+
 def _render_deal_card(deal: dict[str, Any]) -> str:
     stats = deal.get("stats") or []
     corruption = deal.get("corruption") or []
@@ -66,8 +79,9 @@ def _render_deal_card(deal: dict[str, Any]) -> str:
     stats_html = "".join(f"<li>{_esc(stat)}</li>" for stat in stats[:8]) or "<li>No parsed stats</li>"
     corr_html = "".join(f'<span class="chip chip-corrupt">{_esc(c)}</span>' for c in corruption)
 
+    search_text = _esc(_deal_search_text(deal))
     return f"""
-    <article class="deal-card">
+    <article class="deal-card" data-search="{search_text}">
       <div class="deal-media">
         {_screenshot_img(deal.get('screenshot'), deal.get('item_name') or 'deal screenshot')}
       </div>
@@ -211,6 +225,20 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
     .section-header h2 {{ margin: 0; color: var(--gold); font-size: 22px; }}
     .section-note {{ color: var(--muted); font-size: 13px; }}
     .panel {{ padding: 18px; overflow: hidden; }}
+    .toolbar {{ display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }}
+    .search-input {{
+      width: min(560px, 100%);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0f1318;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      box-shadow: var(--shadow);
+    }}
+    .search-input:focus {{ border-color: var(--accent); }}
+    .search-hint {{ color: var(--muted); font-size: 13px; }}
     .deal-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }}
     .deal-card {{ display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }}
     .deal-media {{ background: #0f1318; display: flex; align-items: center; justify-content: center; min-height: 200px; }}
@@ -239,6 +267,7 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
     .status-slow {{ background: rgba(255,135,135,.12); color: var(--red); }}
     .muted, .empty-state {{ color: var(--muted); }}
     .empty-state {{ padding: 18px; border: 1px dashed var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }}
+    .hidden {{ display: none !important; }}
     code.json {{ white-space: pre-wrap; display: block; margin: 0; color: #d9e2ef; background: #0f1318; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }}
     @media (max-width: 980px) {{
       .deal-card {{ grid-template-columns: 1fr; }}
@@ -298,7 +327,11 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
         <h2>Current Deal Cards</h2>
         <div class="section-note">Clickable cards with screenshots, links, page numbers, and stats.</div>
       </div>
-      <div class="deal-grid">{deal_cards}</div>
+      <div class="toolbar">
+        <input id="dealSearch" class="search-input" type="search" placeholder="Search deals by item, seller, filter, stats, corruption..." />
+        <div id="dealSearchCount" class="search-hint">Showing {len(deals)} of {len(deals)} deals</div>
+      </div>
+      <div id="dealGrid" class="deal-grid">{deal_cards}</div>
     </section>
 
     <section class="section two-col">
@@ -342,6 +375,29 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
       </div>
     </section>
   </div>
+  <script>
+    (() => {{
+      const input = document.getElementById('dealSearch');
+      const count = document.getElementById('dealSearchCount');
+      const cards = Array.from(document.querySelectorAll('#dealGrid .deal-card'));
+      if (!input || !count || !cards.length) return;
+
+      const update = () => {{
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+        for (const card of cards) {{
+          const haystack = (card.dataset.search || '').toLowerCase();
+          const match = !query || haystack.includes(query);
+          card.classList.toggle('hidden', !match);
+          if (match) visible += 1;
+        }}
+        count.textContent = `Showing ${{visible}} of ${{cards.length}} deals`;
+      }};
+
+      input.addEventListener('input', update);
+      update();
+    }})();
+  </script>
 </body>
 </html>
 """

@@ -47,6 +47,20 @@
     .section-header h2 { margin: 0; color: var(--gold); font-size: 22px; }
     .section-note { color: var(--muted); font-size: 13px; }
     .panel { padding: 18px; overflow: hidden; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .search-input {
+      width: min(560px, 100%);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0f1318;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      box-shadow: var(--shadow);
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-hint { color: var(--muted); font-size: 13px; }
     .deal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; }
     .deal-card { display: grid; grid-template-columns: 220px 1fr; gap: 16px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
     .deal-media { background: #0f1318; display: flex; align-items: center; justify-content: center; min-height: 200px; }
@@ -75,6 +89,7 @@
     .status-slow { background: rgba(255,135,135,.12); color: var(--red); }
     .muted, .empty-state { color: var(--muted); }
     .empty-state { padding: 18px; border: 1px dashed var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }
+    .hidden { display: none !important; }
     code.json { white-space: pre-wrap; display: block; margin: 0; color: #d9e2ef; background: #0f1318; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
     @media (max-width: 980px) {
       .deal-card { grid-template-columns: 1fr; }
@@ -127,7 +142,7 @@
         <div class="section-note">This is the listing `reply-offer` will target.</div>
       </div>
       <div class="panel">
-    <article class="deal-card">
+    <article class="deal-card" data-search="rare vampirebone gloves | passive glove +2-20p | tsetso91 | https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77 | 1 day ago | 20% increased attack speed 10% chance to pierce +66 to attack rating +1 to minimum fire damage 98% enhanced defense repairs 1 durability in 0.05 seconds | corrupted">
       <div class="deal-media">
         <a class="shot-link" href="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" alt="Rare Vampirebone Gloves" /></a>
       </div>
@@ -155,8 +170,12 @@
         <h2>Current Deal Cards</h2>
         <div class="section-note">Clickable cards with screenshots, links, page numbers, and stats.</div>
       </div>
-      <div class="deal-grid">
-    <article class="deal-card">
+      <div class="toolbar">
+        <input id="dealSearch" class="search-input" type="search" placeholder="Search deals by item, seller, filter, stats, corruption..." />
+        <div id="dealSearchCount" class="search-hint">Showing 1 of 1 deals</div>
+      </div>
+      <div id="dealGrid" class="deal-grid">
+    <article class="deal-card" data-search="rare vampirebone gloves | passive glove +2-20p | tsetso91 | https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77 | 1 day ago | 20% increased attack speed 10% chance to pierce +66 to attack rating +1 to minimum fire damage 98% enhanced defense repairs 1 durability in 0.05 seconds | corrupted">
       <div class="deal-media">
         <a class="shot-link" href="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-69e0b9fd9fc33c4bc7fe043a-0.png" alt="Rare Vampirebone Gloves" /></a>
       </div>
@@ -226,5 +245,28 @@
       </div>
     </section>
   </div>
+  <script>
+    (() => {
+      const input = document.getElementById('dealSearch');
+      const count = document.getElementById('dealSearchCount');
+      const cards = Array.from(document.querySelectorAll('#dealGrid .deal-card'));
+      if (!input || !count || !cards.length) return;
+
+      const update = () => {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+        for (const card of cards) {
+          const haystack = (card.dataset.search || '').toLowerCase();
+          const match = !query || haystack.includes(query);
+          card.classList.toggle('hidden', !match);
+          if (match) visible += 1;
+        }
+        count.textContent = `Showing ${visible} of ${cards.length} deals`;
+      };
+
+      input.addEventListener('input', update);
+      update();
+    })();
+  </script>
 </body>
 </html>
