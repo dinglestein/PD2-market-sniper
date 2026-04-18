@@ -202,6 +202,14 @@ export default function App() {
     ? Object.entries(economy.values).sort(([, a], [, b]) => (b as number) - (a as number))
     : [];
 
+  const killServer = async () => {
+    if (!confirm("Stop the Python server? The app will go offline until restarted.")) return;
+    try {
+      await fetch(`${API}/api/shutdown`, { method: "POST" });
+    } catch { /* server already gone */ }
+    setStatus(null);
+  };
+
   return (
     <div className="app">
       <header className="header">
@@ -211,6 +219,9 @@ export default function App() {
           <span className="status-text">
             {serverStarting ? "Starting Server..." : status ? "Server Online" : "Server Offline"}
           </span>
+          {status && !serverStarting && (
+            <button className="btn btn-xs" onClick={killServer} title="Stop server" style={{ marginLeft: 6 }}>✕</button>
+          )}
         </div>
         <div className="header-actions">
           <button className={`btn ${loading ? "btn-stop" : "btn-gold"}`} onClick={handleScan} disabled={!status && !loading}>

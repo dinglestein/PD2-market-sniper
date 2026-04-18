@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import subprocess
 import sys
 import threading
@@ -295,6 +296,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
         elif path == "/api/refresh-dashboard":
             _refresh_dashboard()
             self._send_json({"ok": True, "message": "Dashboard refreshed"})
+        elif path == "/api/shutdown":
+            logger.info("Shutdown requested — stopping server")
+            self._send_json({"ok": True, "message": "Shutting down"})
+            threading.Thread(target=lambda: os._exit(0), daemon=True).start()
         elif path == "/api/reset":
             t = threading.Thread(target=_run_reset_background, daemon=True)
             t.start()
