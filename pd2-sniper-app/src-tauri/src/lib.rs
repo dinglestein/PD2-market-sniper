@@ -1,6 +1,6 @@
+use std::os::windows::process::CommandExt;
 use std::process::{Command, Child};
 use std::sync::Mutex;
-use tauri::Manager;
 
 static PYTHON_SERVER: Mutex<Option<Child>> = Mutex::new(None);
 
@@ -11,6 +11,7 @@ fn start_python_server(scripts_dir: &str) {
         .arg("--no-browser")
         .arg("--port")
         .arg("8420")
+        .creation_flags(0x08000000) // CREATE_NO_WINDOW
         .spawn()
         .expect("Failed to start Python server");
 
@@ -56,7 +57,7 @@ pub fn run() {
 
             Ok(())
         })
-        .on_window_event(|window, event| {
+        .on_window_event(|_window, event| {
             // Clean up Python server when window closes
             if let tauri::WindowEvent::Destroyed = event {
                 if let Ok(mut server) = PYTHON_SERVER.lock() {
