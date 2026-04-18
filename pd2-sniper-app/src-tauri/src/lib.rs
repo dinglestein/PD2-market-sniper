@@ -182,18 +182,19 @@ pub fn run() {
             // Start Python server in background
             start_python_server(&scripts_dir);
 
-            // Wait for server to be ready (poll up to 15 seconds)
-            println!("Waiting for server to be ready...");
-            for i in 0..30 {
-                std::thread::sleep(std::time::Duration::from_millis(500));
-                if std::net::TcpStream::connect("127.0.0.1:8420").is_ok() {
-                    println!("Server ready after {}ms", (i + 1) * 500);
-                    break;
+            // Poll for server readiness in a background thread (don't block window)
+            std::thread::spawn(move || {
+                for i in 0..30 {
+                    std::thread::sleep(std::time::Duration::from_millis(500));
+                    if std::net::TcpStream::connect("127.0.0.1:8420").is_ok() {
+                        println!("Server ready after {}ms", (i + 1) * 500);
+                        break;
+                    }
+                    if i == 29 {
+                        println!("WARNING: Server did not become ready after 15s");
+                    }
                 }
-                if i == 29 {
-                    println!("WARNING: Server did not become ready after 15s");
-                }
-            }
+            });
 
             Ok(())
         })
