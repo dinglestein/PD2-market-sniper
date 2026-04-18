@@ -4,20 +4,36 @@ Project Diablo 2 marketplace scanner and deal hunter for softcore ladder.
 
 Scans saved PD2 market filters, ranks deals using live price data from PD2Trader, captures screenshots and direct listing links, and submits offers through chat — you just say the amount.
 
-Account used in testing: `d1ngl3`
+## Features
 
-## What It Does
+### Web Dashboard
+- ✅ Live dashboard at `localhost:8420`
+- ✅ Scan / economy refresh / reset buttons
+- ✅ Search bar with live deal filtering
+- ✅ Deal cards with price check, discount badges, offer input
+- ✅ Server status indicator (online/offline)
+- ✅ Chat-based deal notifications via OpenClaw assistant
+- ✅ Works on any device on the network
 
+### Core Scanner
 - Scans saved market filters with randomized delays and conservative cadence
 - Finds listings under a configurable HR threshold
-- **Fetches live economy data from PD2Trader API** — median prices, 7-day trends, sample counts
+- **Fetches live economy data from PD2Trader API** — median prices, 7-day trends, sample counts (no browser needed)
 - Ranks deals with price confidence scoring (high/medium/low based on listing volume)
 - Captures screenshots of found listings
 - Submits offers via REST API (browser fallback) — no manual clicking needed
 - Presents deal cards in chat, you reply with an amount like `0.4`
 - Tracks offer history, seen items, scan rotation, filter health
-- Generates an HTML dashboard with search, economy sync, scan controls, and server status
 - Notifies the AI assistant when scans complete for interactive deal review
+
+### Desktop App *(Coming Soon)*
+- 🟢 System tray — minimize to tray, background scanning
+- 🟢 Global hotkeys — `Ctrl+Shift+S` to quick-scan without opening browser
+- 🟢 Native notifications — Windows toast when deals are found
+- 🟢 Auto-update — ship new versions seamlessly
+- 🟢 Clipboard monitoring — detect PD2 items copied to clipboard for instant price check
+- 🟢 Chat log monitoring — watch PD2's chat.log for trade whispers
+- 🟢 Window overlay — price overlay on top of the game
 
 ## Architecture
 
