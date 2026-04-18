@@ -458,6 +458,7 @@ function SettingsTab() {
   const [token, setToken] = useState("");
   const [saved, setSaved] = useState(false);
   const [tokenVisible, setTokenVisible] = useState(false);
+  const [hotkeyResetKey, setHotkeyResetKey] = useState(0);
   const [tokenStatus, setTokenStatus] = useState<"none" | "checking" | "valid" | "invalid">("none");
   const [testData, setTestData] = useState<{valid?: boolean; username?: string; error?: string} | null>(null);
 
@@ -518,7 +519,7 @@ function SettingsTab() {
 
   const copyTokenSnippet = async () => {
     // Copy a simple one-liner that shows the token and copies it
-    const snippet = `copy(localStorage.getItem('pd2-token')||localStorage.getItem('pd2Token'))`;
+    const snippet = `copy(localStorage.getItem('pd2Token')||localStorage.getItem('pd2-token')||localStorage.getItem('token'))`;
     try {
       await navigator.clipboard.writeText(snippet);
       setLoginStatus("copied");
@@ -601,11 +602,11 @@ function SettingsTab() {
         <p className="hint">Click a hotkey to rebind it. Press your desired key combo.</p>
 
         <div className="hotkey-list">
-          <HotkeyRow action="scan" label="Start / Stop Scan" defaultKeys="Ctrl+Shift+S" onTrigger={handleHotkey} />
-          <HotkeyRow action="economy" label="Refresh Economy" defaultKeys="Ctrl+Shift+E" onTrigger={handleHotkey} />
-          <HotkeyRow action="dashboard" label="Show Dashboard" defaultKeys="Ctrl+Shift+D" onTrigger={handleHotkey} />
+          <HotkeyRow key={`scan-${hotkeyResetKey}`} action="scan" label="Start / Stop Scan" defaultKeys="Ctrl+Shift+S" onTrigger={handleHotkey} />
+          <HotkeyRow key={`econ-${hotkeyResetKey}`} action="economy" label="Refresh Economy" defaultKeys="Ctrl+Shift+E" onTrigger={handleHotkey} />
+          <HotkeyRow key={`dash-${hotkeyResetKey}`} action="dashboard" label="Show Dashboard" defaultKeys="Ctrl+Shift+D" onTrigger={handleHotkey} />
         </div>
-        <button className="btn btn-secondary" style={{ marginTop: 10 }} onClick={() => { saveHotkeys({...DEFAULT_HOTKEYS}); window.location.reload(); }}>
+        <button className="btn btn-secondary" style={{ marginTop: 10 }} onClick={() => { saveHotkeys({...DEFAULT_HOTKEYS}); setHotkeyResetKey(k => k + 1); }}>
           🔄 Reset to Defaults
         </button>
       </div>

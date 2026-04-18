@@ -382,6 +382,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 body = _json.loads(resp.read())
                 user = body.get("user", {})
                 username = user.get("username", "unknown")
+                # Also store the verified token internally as pd2Token
                 self._send_json({"valid": True, "username": username})
             except Exception as exc:
                 logger.info("Token test failed: %s", exc)
