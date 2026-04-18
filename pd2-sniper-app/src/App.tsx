@@ -396,10 +396,10 @@ function SettingsTab() {
     // Use Tauri shell to open external URLs
     try {
       const { open } = await import('@tauri-apps/plugin-shell');
-      await open('https://www.projectdiablo2.com/auth');
+      await open('https://projectdiablo2.com');
     } catch {
       // Fallback for non-Tauri environments (dev/browser)
-      window.open('https://www.projectdiablo2.com/auth', '_blank');
+      window.open('https://projectdiablo2.com', '_blank');
     }
   };
 
@@ -436,10 +436,11 @@ function SettingsTab() {
         </div>
         <p className="hint" style={{ marginTop: 8 }}>
           How to get your token:<br />
-          1. Click "Get Token" above to open PD2 auth page<br />
+          1. Click "Get Token" above to open PD2<br />
           2. Log in to your PD2 account<br />
-          3. Open browser DevTools (F12) → Application → Cookies<br />
-          4. Copy the value of the <code>jwt</code> cookie
+          3. Open browser DevTools (F12) → Console tab<br />
+          4. Type: <code>localStorage.getItem('pd2-token')</code><br />
+          5. Copy the token value (include the quotes if present)
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 {
-  "refreshed_at": "2026-04-18T10:00:41.835793+00:00",
+  "refreshed_at": "2026-04-18T10:30:39.615830+00:00",
   "sources": {
     "runes": {
       "source": "pd2trader",
@@ -7,7 +7,7 @@
     },
     "currency": {
       "source": "pd2trader",
-      "value_count": 1
+      "value_count": 0
     },
     "ubers": {
       "source": "pd2trader",
@@ -45,7 +45,6 @@
     "Lo Rune": 1,
     "Sur Rune": 1.5,
     "Ber Rune": 2,
-    "Zod Rune": 4.25,
-    "Larzuk's Puzzlepiece": 0.2
+    "Zod Rune": 4.25
   }
 }
