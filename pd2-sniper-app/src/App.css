@@ -185,6 +185,23 @@
   padding: 16px 20px;
 }
 
+/* Centered empty states */
+.center-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.center-state p { color: var(--text-secondary); }
+.hint { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.hint a { color: var(--accent-blue); }
+.hint code {
+  background: var(--bg-card);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
 /* Search bar */
 .search-bar {
   display: flex;
@@ -203,24 +220,8 @@
   font-size: 14px;
   outline: none;
 }
-
 .search-bar input:focus { border-color: var(--accent-gold); }
-
-.result-count {
-  font-size: 12px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-}
-
-/* Empty state */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.empty-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state p { color: var(--text-secondary); }
-.hint { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.result-count { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
 
 /* Deal grid */
 .deal-grid {
@@ -238,7 +239,6 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-
 .deal-card:hover { border-color: var(--accent-gold-dim); }
 .deal-card.expanded { border-color: var(--accent-gold); }
 
@@ -248,13 +248,7 @@
   align-items: flex-start;
   gap: 12px;
 }
-
-.deal-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+.deal-title { display: flex; align-items: center; gap: 10px; }
 .deal-score {
   background: var(--accent-gold);
   color: #000;
@@ -263,21 +257,9 @@
   padding: 2px 8px;
   border-radius: 4px;
 }
-
 .deal-name { font-weight: 600; font-size: 15px; }
-
-.deal-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.price-hr {
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--accent-gold);
-}
-
+.deal-price { display: flex; align-items: center; gap: 8px; }
+.price-hr { font-weight: 700; font-size: 16px; color: var(--accent-gold); }
 .discount {
   background: rgba(76, 175, 80, 0.2);
   color: var(--accent-green);
@@ -286,12 +268,7 @@
   padding: 2px 6px;
   border-radius: 4px;
 }
-
-.econ-val {
-  font-size: 12px;
-  color: var(--text-secondary);
-}
-
+.econ-val { font-size: 12px; color: var(--text-secondary); }
 .deal-meta {
   display: flex;
   gap: 16px;
@@ -300,34 +277,20 @@
   color: var(--text-secondary);
 }
 
-/* Deal details (expanded) */
+/* Deal details */
 .deal-details {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--border);
 }
-
-.deal-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 10px;
-}
-
+.deal-stats { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
 .stat-line {
   font-size: 13px;
   color: #b0b0b0;
   padding-left: 8px;
   border-left: 2px solid var(--accent-gold-dim);
 }
-
-.deal-corruption {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
+.deal-corruption { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .corruption-tag {
   background: rgba(156, 39, 176, 0.2);
   color: var(--accent-purple);
@@ -335,13 +298,7 @@
   padding: 2px 8px;
   border-radius: 4px;
 }
-
-.deal-actions {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
+.deal-actions { display: flex; gap: 8px; margin-bottom: 10px; }
 .price-check-result {
   background: var(--bg-secondary);
   padding: 10px 14px;
@@ -352,12 +309,7 @@
   flex-direction: column;
   gap: 4px;
 }
-
-.offer-input-row {
-  display: flex;
-  gap: 8px;
-}
-
+.offer-input-row { display: flex; gap: 8px; }
 .offer-input-row input {
   flex: 1;
   padding: 8px 12px;
@@ -368,30 +320,19 @@
   font-size: 14px;
   outline: none;
 }
-
 .offer-input-row input:focus { border-color: var(--accent-gold); }
 
 /* Economy panel */
-.economy-panel {
-  max-width: 700px;
-}
-
+.economy-panel { max-width: 700px; }
 .economy-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-
 .economy-header h2 { font-size: 18px; }
 .refreshed { font-size: 12px; color: var(--text-secondary); }
-
-.economy-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
+.economy-grid { display: flex; flex-direction: column; gap: 4px; }
 .econ-row {
   display: flex;
   justify-content: space-between;
@@ -400,20 +341,95 @@
   border-radius: 4px;
   font-size: 13px;
 }
-
 .econ-name { color: var(--text-primary); }
 .econ-price { color: var(--accent-gold); font-weight: 600; }
 
-/* Offers panel */
-.offers-panel {
-  padding: 40px 20px;
+/* Settings panel */
+.settings-panel {
+  max-width: 600px;
+}
+
+.settings-panel h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.setting-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.setting-section h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: var(--accent-gold);
+}
+
+.token-row {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.token-input {
+  flex: 1;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+  font-family: monospace;
+}
+.token-input:focus { border-color: var(--accent-gold); }
+
+.setting-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.saved-msg { color: var(--accent-green); font-size: 13px; font-weight: 600; }
+.error-msg { color: var(--accent-red); font-size: 13px; font-weight: 600; }
+
+/* Hotkeys */
+.hotkey-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.hotkey-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+kbd {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: monospace;
+  color: var(--accent-gold);
+  min-width: 130px;
   text-align: center;
 }
 
-.offers-panel .hint { margin-top: 8px; }
-.offers-panel code {
-  background: var(--bg-card);
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 12px;
+/* Code block */
+.code-block {
+  background: var(--bg-secondary);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
 }

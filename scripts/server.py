@@ -329,6 +329,40 @@ class DashboardHandler(BaseHTTPRequestHandler):
             result = search_listings(query)
             self._send_json(result or {"error": "search failed"})
 
+        elif path == "/api/settings/token":
+            # GET: read token, POST: save token
+            if self.command == "GET":
+                token_file = SCRIPTS_DIR.parent / ".pd2_token"
+                token = ""
+                if token_file.exists():
+                    token = token_file.read_text(encoding="utf-8").strip()
+                self._send_json({"token": token})
+            elif self.command == "POST":
+                content_length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(content_length).decode("utf-8")) if content_length else {}
+                token = body.get("token", "").strip()
+                token_file = SCRIPTS_DIR.parent / ".pd2_token"
+                token_file.write_text(token, encoding="utf-8")
+                logger.info("PD2 token saved (%d chars)", len(token))
+                self._send_json({"ok": True})
+
+        elif path == "/api/settings/token/test":
+            # Test if the saved token works
+            try:
+                from pd2_api import get_auth_headers
+                headers = get_auth_headers()
+                import urllib.request
+                req = urllib.request.Request(
+                    "https://api.projectdiablo2.com/market/listing",
+                    headers=headers,
+                    method="GET",
+                )
+                urllib.request.urlopen(req, timeout=10)
+                self._send_json({"valid": True})
+            except Exception as exc:
+                logger.info("Token test failed: %s", exc)
+                self._send_json({"valid": False, "error": str(exc)})
+
         else:
             self.send_error(404)
 

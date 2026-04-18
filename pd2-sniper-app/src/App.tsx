@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 
-// Backend API base URL (Python server on port 8420)
 const API = "http://localhost:8420";
 
 interface ServerStatus {
@@ -28,6 +27,8 @@ interface EconomyValue {
   values: Record<string, number>;
 }
 
+type Tab = "deals" | "economy" | "offers" | "settings";
+
 export default function App() {
   const [status, setStatus] = useState<ServerStatus | null>(null);
   const [deals, setDeals] = useState<DealCard[]>([]);
@@ -35,7 +36,7 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"deals" | "economy" | "offers">("deals");
+  const [activeTab, setActiveTab] = useState<Tab>("deals");
   const [offerAmounts, setOfferAmounts] = useState<Record<number, string>>({});
   const [selectedDeal, setSelectedDeal] = useState<number | null>(null);
   const [serverStarting, setServerStarting] = useState(true);
@@ -50,15 +51,12 @@ export default function App() {
         if (res.ok) {
           const data = await res.json();
           setStatus(data);
-          if (data.scan_running) {
-            setLoading(true);
-          }
+          if (data.scan_running) setLoading(true);
           setServerStarting(false);
         }
       } catch {
         setStatus(null);
         attempts++;
-        // Keep trying for up to 30 seconds (server might be starting)
         if (attempts > 30) setServerStarting(false);
       }
     };
@@ -69,52 +67,40 @@ export default function App() {
 
   const loadDeals = useCallback(async () => {
     try {
+      // Refresh dashboard first
       await fetch(`${API}/api/refresh-dashboard`, { method: "POST" });
-      const dataRes = await fetch(`${API}/assets/scan_results.json`);
-      if (!dataRes.ok) {
-        // Try alternate path
-        const altRes = await fetch(`${API}/scan_results.json`);
-        if (altRes.ok) {
-          const data = await altRes.json();
-          setDeals(data.deals || []);
-          return;
-        }
-      } else {
-        const data = await dataRes.json();
-        setDeals(data.deals || []);
-        return;
+
+      // Try loading scan results via multiple paths
+      for (const path of ["/assets/scan_results.json", "/scan_results.json"]) {
+        try {
+          const res = await fetch(`${API}${path}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.deals && data.deals.length > 0) {
+              setDeals(data.deals);
+              return;
+            }
+          }
+        } catch { /* next path */ }
       }
-      // Final fallback: try reading directly
-      const dataRes2 = await fetch(`${API}/api/deals`);
-      if (dataRes2.ok) {
-        const data = await dataRes2.json();
-        setDeals(data.deals || []);
-      }
-    } catch {
-      // server not available
-    }
+    } catch { /* ignore */ }
   }, []);
 
   const loadEconomy = useCallback(async () => {
     try {
-      // Try multiple paths to find economy data
-      const paths = [
-        `${API}/assets/all_economy.json`,
-        `${API}/all_economy.json`,
-      ];
-      for (const url of paths) {
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.values && Object.keys(data.values).length > 0) {
-            setEconomy(data);
-            return;
+      for (const path of ["/assets/all_economy.json", "/all_economy.json"]) {
+        try {
+          const res = await fetch(`${API}${path}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.values && Object.keys(data.values).length > 0) {
+              setEconomy(data);
+              return;
+            }
           }
-        }
+        } catch { /* next path */ }
       }
-    } catch {
-      // server not available
-    }
+    } catch { /* ignore */ }
   }, []);
 
   useEffect(() => {
@@ -124,7 +110,6 @@ export default function App() {
     }
   }, [status, loadDeals, loadEconomy]);
 
-  // Cleanup scan poll on unmount
   useEffect(() => {
     return () => {
       if (scanPollRef.current) clearInterval(scanPollRef.current);
@@ -133,31 +118,17 @@ export default function App() {
 
   const handleScan = async () => {
     if (loading) {
-      // Stop the scan
-      try {
-        await fetch(`${API}/api/scan-stop`, { method: "POST" });
-        setLoading(false);
-        if (scanPollRef.current) {
-          clearInterval(scanPollRef.current);
-          scanPollRef.current = null;
-        }
-      } catch {
-        // ignore
-      }
+      try { await fetch(`${API}/api/scan-stop`, { method: "POST" }); } catch { /* */ }
+      setLoading(false);
+      if (scanPollRef.current) { clearInterval(scanPollRef.current); scanPollRef.current = null; }
       return;
     }
-
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`${API}/api/scan`, { method: "POST" });
       const data = await res.json();
-      if (!data.ok) {
-        setError(data.error || "Scan failed");
-        setLoading(false);
-        return;
-      }
-      // Poll until scan completes
+      if (!data.ok) { setError(data.error || "Scan failed"); setLoading(false); return; }
       scanPollRef.current = setInterval(async () => {
         try {
           const s = await (await fetch(`${API}/api/status`)).json();
@@ -167,31 +138,34 @@ export default function App() {
             setLoading(false);
             await loadDeals();
           }
-        } catch {
-          // server might restart
-        }
+        } catch { /* */ }
       }, 3000);
-    } catch (exc: any) {
-      setError(exc.message);
-      setLoading(false);
-    }
+    } catch (exc: any) { setError(exc.message); setLoading(false); }
   };
 
   const handleEconomyRefresh = async () => {
     try {
       await fetch(`${API}/api/economy-refresh`, { method: "POST" });
-      // Poll for economy data to refresh
-      let attempts = 0;
-      const checkEcon = setInterval(async () => {
-        attempts++;
-        await loadEconomy();
-        if (economy && economy.refreshed_at || attempts > 20) {
-          clearInterval(checkEcon);
+      // Poll for updated data
+      let tries = 0;
+      const poll = setInterval(async () => {
+        tries++;
+        for (const path of ["/assets/all_economy.json", "/all_economy.json"]) {
+          try {
+            const res = await fetch(`${API}${path}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data.values && Object.keys(data.values).length > 0) {
+                setEconomy(data);
+                clearInterval(poll);
+                return;
+              }
+            }
+          } catch { /* */ }
         }
+        if (tries > 30) clearInterval(poll);
       }, 2000);
-    } catch {
-      // ignore
-    }
+    } catch { /* */ }
   };
 
   const handleReset = async () => {
@@ -209,13 +183,10 @@ export default function App() {
         body: JSON.stringify({ item_name: itemName, listed_price: 0 }),
       });
       if (res.ok) return await res.json();
-    } catch {
-      // ignore
-    }
+    } catch { /* */ }
     return null;
   };
 
-  // Filter deals by search
   const filteredDeals = deals.filter((d) => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -227,14 +198,12 @@ export default function App() {
     );
   });
 
-  // Sort economy values by price descending
   const econEntries = economy
     ? Object.entries(economy.values).sort(([, a], [, b]) => (b as number) - (a as number))
     : [];
 
   return (
     <div className="app">
-      {/* Header */}
       <header className="header">
         <div className="header-left">
           <h1 className="logo">🎯 PD2 Market Sniper</h1>
@@ -244,27 +213,14 @@ export default function App() {
           </span>
         </div>
         <div className="header-actions">
-          <button
-            className={`btn ${loading ? "btn-stop" : "btn-gold"}`}
-            onClick={handleScan}
-            disabled={!status && !loading}
-          >
-            {loading ? (
-              <><span className="spinner-red" /> ⏹ Stop Scan</>
-            ) : (
-              "🔍 Scan Now"
-            )}
+          <button className={`btn ${loading ? "btn-stop" : "btn-gold"}`} onClick={handleScan} disabled={!status && !loading}>
+            {loading ? <><span className="spinner-red" /> ⏹ Stop</> : "🔍 Scan Now"}
           </button>
-          <button className="btn btn-secondary" onClick={handleEconomyRefresh} disabled={!status}>
-            🔄 Economy
-          </button>
-          <button className="btn btn-danger" onClick={handleReset}>
-            🗑️
-          </button>
+          <button className="btn btn-secondary" onClick={handleEconomyRefresh} disabled={!status}>🔄 Econ</button>
+          <button className="btn btn-danger" onClick={handleReset}>🗑️</button>
         </div>
       </header>
 
-      {/* Error bar */}
       {error && (
         <div className="error-bar">
           {error}
@@ -272,51 +228,40 @@ export default function App() {
         </div>
       )}
 
-      {/* Tab bar */}
       <nav className="tabs">
-        <button className={`tab ${activeTab === "deals" && "active"}`} onClick={() => setActiveTab("deals")}>
-          Deals {deals.length > 0 && <span className="badge">{deals.length}</span>}
-        </button>
-        <button className={`tab ${activeTab === "economy" && "active"}`} onClick={() => setActiveTab("economy")}>
-          Economy {economy && <span className="badge">{Object.keys(economy.values).length}</span>}
-        </button>
-        <button className={`tab ${activeTab === "offers" && "active"}`} onClick={() => setActiveTab("offers")}>
-          Offers
-        </button>
+        {(["deals", "economy", "offers", "settings"] as Tab[]).map((tab) => (
+          <button key={tab} className={`tab ${activeTab === tab && "active"}`} onClick={() => setActiveTab(tab)}>
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {tab === "deals" && deals.length > 0 && <span className="badge">{deals.length}</span>}
+            {tab === "economy" && economy && <span className="badge">{Object.keys(economy.values).length}</span>}
+          </button>
+        ))}
       </nav>
 
-      {/* Content */}
       <main className="content">
         {!status && !serverStarting && (
-          <div className="empty-state">
+          <div className="center-state">
             <div className="empty-icon">🔌</div>
             <p>Server Offline</p>
-            <p className="hint">Start the Python server with: python scripts/sniper.py serve</p>
+            <p className="hint">Make sure Python is installed and sniper.py is accessible</p>
           </div>
         )}
 
         {serverStarting && !status && (
-          <div className="empty-state">
+          <div className="center-state">
             <div className="empty-icon">⏳</div>
             <p>Starting Python backend...</p>
-            <p className="hint">This may take a few seconds</p>
           </div>
         )}
 
         {status && activeTab === "deals" && (
           <>
             <div className="search-bar">
-              <input
-                type="text"
-                placeholder="Search deals by name, seller, stat..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+              <input type="text" placeholder="Search deals by name, seller, stat..." value={search} onChange={(e) => setSearch(e.target.value)} />
               {search && <span className="result-count">{filteredDeals.length} results</span>}
             </div>
-
             {filteredDeals.length === 0 ? (
-              <div className="empty-state">
+              <div className="center-state">
                 <div className="empty-icon">🎯</div>
                 <p>No deals found yet</p>
                 <p className="hint">Click "Scan Now" to search the market</p>
@@ -324,15 +269,11 @@ export default function App() {
             ) : (
               <div className="deal-grid">
                 {filteredDeals.map((deal, i) => (
-                  <DealCardView
-                    key={i}
-                    deal={deal}
-                    expanded={selectedDeal === i}
+                  <DealCardView key={i} deal={deal} expanded={selectedDeal === i}
                     onExpand={() => setSelectedDeal(selectedDeal === i ? null : i)}
                     offerAmount={offerAmounts[i] || ""}
                     onOfferChange={(val) => setOfferAmounts({ ...offerAmounts, [i]: val })}
-                    onPriceCheck={handlePriceCheck}
-                  />
+                    onPriceCheck={handlePriceCheck} />
                 ))}
               </div>
             )}
@@ -344,16 +285,14 @@ export default function App() {
             <div className="economy-header">
               <h2>Economy Values</h2>
               {economy?.refreshed_at && (
-                <span className="refreshed">
-                  Last refreshed: {new Date(economy.refreshed_at).toLocaleString()}
-                </span>
+                <span className="refreshed">Last refreshed: {new Date(economy.refreshed_at).toLocaleString()}</span>
               )}
             </div>
             {!economy || econEntries.length === 0 ? (
-              <div className="empty-state">
+              <div className="center-state">
                 <div className="empty-icon">📊</div>
                 <p>No economy data loaded</p>
-                <p className="hint">Click "🔄 Economy" in the header to fetch prices</p>
+                <p className="hint">Click "🔄 Econ" in the header to fetch prices from PD2Trader</p>
               </div>
             ) : (
               <div className="economy-grid">
@@ -368,43 +307,176 @@ export default function App() {
           </div>
         )}
 
-        {status && activeTab === "offers" && (
-          <div className="offers-panel">
-            <p className="hint">Offer tracking will show incoming/outgoing offers when PD2 auth is configured.</p>
-            <p className="hint">Save your PD2 token in <code>.pd2_token</code> to enable REST API offer management.</p>
-          </div>
-        )}
+        {status && activeTab === "offers" && <OffersTab />}
+
+        {activeTab === "settings" && <SettingsTab />}
       </main>
     </div>
   );
 }
 
-// Deal card component
-function DealCardView({
-  deal,
-  expanded,
-  onExpand,
-  offerAmount,
-  onOfferChange,
-  onPriceCheck,
-}: {
-  deal: DealCard;
-  expanded: boolean;
-  onExpand: () => void;
-  offerAmount: string;
-  onOfferChange: (val: string) => void;
+// ── Offers Tab ────────────────────────────────────────────────────────────
+
+function OffersTab() {
+  const [offers, setOffers] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const loadOffers = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/api/offer-status`);
+      if (res.ok) setOffers(await res.json());
+    } catch { /* */ }
+    setLoading(false);
+  };
+
+  return (
+    <div className="settings-panel">
+      <h2>Trade Offers</h2>
+      <p className="hint" style={{ marginBottom: 16 }}>
+        View incoming and outgoing offers. Requires PD2 auth token in Settings.
+      </p>
+      <button className="btn btn-gold" onClick={loadOffers} disabled={loading}>
+        {loading ? "Loading..." : "🔄 Check Offers"}
+      </button>
+      {offers && (
+        <div style={{ marginTop: 16 }}>
+          <h3>Outgoing ({offers.outgoing?.length || 0})</h3>
+          <h3>Incoming ({offers.incoming?.length || 0})</h3>
+          <pre className="code-block">{JSON.stringify(offers, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Settings Tab ──────────────────────────────────────────────────────────
+
+function SettingsTab() {
+  const [token, setToken] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [tokenStatus, setTokenStatus] = useState<"none" | "checking" | "valid" | "invalid">("none");
+
+  // Load existing token on mount
+  useEffect(() => {
+    fetch(`${API}/api/settings/token`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.token) setToken(data.token); })
+      .catch(() => {});
+  }, []);
+
+  const saveToken = async () => {
+    try {
+      await fetch(`${API}/api/settings/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch { /* */ }
+  };
+
+  const testToken = async () => {
+    setTokenStatus("checking");
+    try {
+      const res = await fetch(`${API}/api/settings/token/test`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setTokenStatus(data.valid ? "valid" : "invalid");
+      } else {
+        setTokenStatus("invalid");
+      }
+    } catch {
+      setTokenStatus("invalid");
+    }
+  };
+
+  const openAuthPage = () => {
+    window.open("https://www.projectdiablo2.com/auth", "_blank");
+  };
+
+  return (
+    <div className="settings-panel">
+      <h2>Settings</h2>
+
+      <div className="setting-section">
+        <h3>🔑 PD2 Authentication</h3>
+        <p className="hint">
+          Required for: direct offer submission, incoming/outgoing offers, market search via API.
+        </p>
+        <div className="token-row">
+          <input
+            type="password"
+            placeholder="Paste your PD2 JWT token here..."
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            className="token-input"
+          />
+          <button className="btn btn-secondary" onClick={openAuthPage}>
+            Get Token ↗
+          </button>
+        </div>
+        <div className="setting-actions">
+          <button className="btn btn-gold" onClick={saveToken}>Save Token</button>
+          <button className="btn btn-secondary" onClick={testToken} disabled={!token}>
+            Test Connection
+          </button>
+          {saved && <span className="saved-msg">✅ Saved!</span>}
+          {tokenStatus === "checking" && <span className="hint">Checking...</span>}
+          {tokenStatus === "valid" && <span className="saved-msg">✅ Token valid!</span>}
+          {tokenStatus === "invalid" && <span className="error-msg">❌ Invalid token</span>}
+        </div>
+        <p className="hint" style={{ marginTop: 8 }}>
+          How to get your token:<br />
+          1. Click "Get Token" above to open PD2 auth page<br />
+          2. Log in to your PD2 account<br />
+          3. Open browser DevTools (F12) → Application → Cookies<br />
+          4. Copy the value of the <code>jwt</code> cookie
+        </p>
+      </div>
+
+      <div className="setting-section">
+        <h3>⌨️ Hotkeys</h3>
+        <p className="hint">Keyboard shortcuts (coming in future update)</p>
+        <div className="hotkey-list">
+          <div className="hotkey-row">
+            <kbd>Ctrl+Shift+S</kbd>
+            <span>Start / Stop Scan</span>
+          </div>
+          <div className="hotkey-row">
+            <kbd>Ctrl+Shift+E</kbd>
+            <span>Refresh Economy</span>
+          </div>
+          <div className="hotkey-row">
+            <kbd>Ctrl+Shift+D</kbd>
+            <span>Show Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="setting-section">
+        <h3>ℹ️ About</h3>
+        <p>PD2 Market Sniper v0.1.0</p>
+        <p className="hint">
+          Price data from <a href="https://pd2trader.com" target="_blank" rel="noreferrer">PD2Trader</a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ── Deal Card ─────────────────────────────────────────────────────────────
+
+function DealCardView({ deal, expanded, onExpand, offerAmount, onOfferChange, onPriceCheck }: {
+  deal: DealCard; expanded: boolean; onExpand: () => void;
+  offerAmount: string; onOfferChange: (val: string) => void;
   onPriceCheck: (name: string) => Promise<any>;
 }) {
   const [priceCheck, setPriceCheck] = useState<any>(null);
-
-  const doPriceCheck = async () => {
-    const result = await onPriceCheck(deal.item_name);
-    setPriceCheck(result);
-  };
-
+  const doPriceCheck = async () => { setPriceCheck(await onPriceCheck(deal.item_name)); };
   const discountPct = deal.economy_value_hr && deal.economy_value_hr > 0
-    ? Math.round((1 - deal.price_hr / deal.economy_value_hr) * 100)
-    : null;
+    ? Math.round((1 - deal.price_hr / deal.economy_value_hr) * 100) : null;
 
   return (
     <div className={`deal-card ${expanded ? "expanded" : ""}`} onClick={onExpand}>
@@ -415,42 +487,29 @@ function DealCardView({
         </div>
         <div className="deal-price">
           <span className="price-hr">{deal.price_hr} HR</span>
-          {discountPct !== null && discountPct > 0 && (
-            <span className="discount">-{discountPct}%</span>
-          )}
-          {deal.economy_value_hr && (
-            <span className="econ-val">Econ: {deal.economy_value_hr} HR</span>
-          )}
+          {discountPct !== null && discountPct > 0 && <span className="discount">-{discountPct}%</span>}
+          {deal.economy_value_hr && <span className="econ-val">Econ: {deal.economy_value_hr} HR</span>}
         </div>
       </div>
       <div className="deal-meta">
         <span>👤 {deal.seller_name}</span>
         <span>🏷️ {deal.filter_name}</span>
       </div>
-
       {expanded && (
         <div className="deal-details">
           {deal.stats && deal.stats.length > 0 && (
             <div className="deal-stats">
-              {deal.stats.map((s, i) => (
-                <div key={i} className="stat-line">{s}</div>
-              ))}
+              {deal.stats.map((s, i) => <div key={i} className="stat-line">{s}</div>)}
             </div>
           )}
           {deal.corruption && deal.corruption.length > 0 && (
             <div className="deal-corruption">
-              {deal.corruption.map((c, i) => (
-                <span key={i} className="corruption-tag">{c}</span>
-              ))}
+              {deal.corruption.map((c, i) => <span key={i} className="corruption-tag">{c}</span>)}
             </div>
           )}
           <div className="deal-actions">
-            <a href={deal.listing_url} target="_blank" className="btn btn-link" rel="noreferrer">
-              Open Listing ↗
-            </a>
-            <button className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); doPriceCheck(); }}>
-              📊 Price Check
-            </button>
+            <a href={deal.listing_url} target="_blank" className="btn btn-link" rel="noreferrer">Open Listing ↗</a>
+            <button className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); doPriceCheck(); }}>📊 Price Check</button>
           </div>
           {priceCheck && (
             <div className="price-check-result">
@@ -461,22 +520,9 @@ function DealCardView({
             </div>
           )}
           <div className="offer-input-row">
-            <input
-              type="number"
-              step="0.05"
-              placeholder="Offer amount (HR)"
-              value={offerAmount}
-              onChange={(e) => onOfferChange(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <button
-              className="btn btn-gold"
-              onClick={(e) => {
-                e.stopPropagation();
-                alert(`Offer ${offerAmount} HR — send this through chat and I'll submit it!`);
-              }}
-              disabled={!offerAmount}
-            >
+            <input type="number" step="0.05" placeholder="Offer amount (HR)" value={offerAmount}
+              onChange={(e) => onOfferChange(e.target.value)} onClick={(e) => e.stopPropagation()} />
+            <button className="btn btn-gold" onClick={(e) => { e.stopPropagation(); alert(`Offer ${offerAmount} HR — send this through chat!`); }} disabled={!offerAmount}>
               Submit Offer
             </button>
           </div>
