@@ -236,6 +236,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 "scan_running": running,
                 "pending_deal": pending.get("item_name") if pending else None,
             })
+        elif path == "/api/settings/token":
+            token_file = SCRIPTS_DIR.parent / ".pd2_token"
+            token = ""
+            if token_file.exists():
+                token = token_file.read_text(encoding="utf-8").strip()
+            self._send_json({"token": token})
         else:
             # Serve screenshots and other assets relative to skill dir
             skill_dir = ASSETS_DIR.parent
