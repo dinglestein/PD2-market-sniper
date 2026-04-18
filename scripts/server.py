@@ -291,6 +291,36 @@ class DashboardHandler(BaseHTTPRequestHandler):
             t = threading.Thread(target=_run_reset_background, daemon=True)
             t.start()
             self._send_json({"ok": True, "message": "Reset started"})
+
+        elif path == "/api/price-check":
+            # Price check an item using PD2Trader API
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(content_length).decode("utf-8")) if content_length else {}
+            item_name = body.get("item_name", "")
+            if not item_name:
+                self._send_json({"error": "item_name required"}, 400)
+                return
+            from alerts import price_confidence
+            result = price_confidence(item_name, body.get("listed_price", 0))
+            self._send_json(result)
+
+        elif path == "/api/offer-status":
+            # Get incoming/outgoing offer status
+            from offers import get_my_outgoing_offers, get_my_incoming_offers
+            self._send_json({
+                "outgoing": get_my_outgoing_offers(),
+                "incoming": get_my_incoming_offers(),
+            })
+
+        elif path == "/api/market-search":
+            # Direct market search via API
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = json.loads(self.rfile.read(content_length).decode("utf-8")) if content_length else {}
+            from market_search import build_search_query, search_listings
+            query = build_search_query(**body)
+            result = search_listings(query)
+            self._send_json(result or {"error": "search failed"})
+
         else:
             self.send_error(404)
 

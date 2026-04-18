@@ -22,6 +22,8 @@ PD2_TOOLS_ECONOMY_URLS = {
     "ubers": "https://pd2.tools/economy/ubers",
     "maps": "https://pd2.tools/economy/maps",
 }
+PD2TRADER_API = "https://pd2trader.com"
+PD2_API = "https://api.projectdiablo2.com"
 
 SCAN_DELAY_MIN_SECONDS = 2.0
 SCAN_DELAY_MAX_SECONDS = 3.5

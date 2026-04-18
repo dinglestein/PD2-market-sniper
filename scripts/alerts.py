@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from history import parse_iso, utc_now
+from pd2_api import fetch_item_price_by_name, fetch_batch_prices, fetch_corruption_prices
 
 
 CORRUPTION_KEYWORDS = {
@@ -101,3 +102,54 @@ def format_operator_alert(item: dict[str, Any], *, deal_index: int = 0) -> str:
         lines.append(f"Screenshot: {screenshot}")
     lines.append("Reply with just an HR amount like `0.4` and I can submit the offer.")
     return "\n".join(lines)
+
+
+def price_confidence(item_name: str, listed_price: float) -> dict[str, Any]:
+    """Check how good a deal is using PD2Trader price data.
+
+    Returns confidence info: median price, sample count, 7-day trend,
+    and whether the listed price is actually a good deal.
+    """
+    price_data = fetch_item_price_by_name(item_name)
+    if not price_data:
+        return {"confidence": "unknown", "reason": "no price data available"}
+
+    median = price_data.get("medianPrice", 0)
+    samples = price_data.get("sampleCount", 0)
+    avg_7d = price_data.get("movingAverage7Days", 0)
+    change = price_data.get("priceChange7Days", {})
+
+    result = {
+        "item_name": item_name,
+        "listed_price": listed_price,
+        "median_price": median,
+        "sample_count": samples,
+        "avg_7d": avg_7d,
+        "price_change_7d": change.get("changePercent"),
+        "discount_pct": round((1 - listed_price / median) * 100, 1) if median > 0 else None,
+    }
+
+    # Confidence scoring
+    if samples < 5:
+        result["confidence"] = "low"
+        result["reason"] = f"only {samples} recent listings"
+    elif samples < 20:
+        result["confidence"] = "medium"
+        result["reason"] = f"{samples} listings, moderate data"
+    else:
+        result["confidence"] = "high"
+        result["reason"] = f"{samples} listings, strong data"
+
+    # Trend analysis
+    if change.get("changePercent") is not None:
+        pct = change["changePercent"]
+        if pct < -10:
+            result["trend"] = "falling"
+            result["note"] = "prices dropping — may want to wait"
+        elif pct > 10:
+            result["trend"] = "rising"
+            result["note"] = "prices rising — buy sooner"
+        else:
+            result["trend"] = "stable"
+
+    return result

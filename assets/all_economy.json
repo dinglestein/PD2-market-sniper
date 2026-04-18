@@ -1,26 +1,51 @@
 {
-  "refreshed_at": "2026-04-17T18:24:41.354464+00:00",
+  "refreshed_at": "2026-04-18T05:44:06.556309+00:00",
   "sources": {
-    "currency": {
-      "url": "https://pd2.tools/economy/currency",
-      "error": "Page.inner_text: Target page, context or browser has been closed",
-      "values": {}
-    },
     "runes": {
-      "url": "https://pd2.tools/economy/runes",
-      "error": "Page.goto: Target page, context or browser has been closed",
-      "values": {}
+      "source": "pd2trader",
+      "value_count": 31
+    },
+    "currency": {
+      "source": "pd2trader",
+      "value_count": 1
     },
     "ubers": {
-      "url": "https://pd2.tools/economy/ubers",
-      "error": "Page.goto: Target page, context or browser has been closed",
-      "values": {}
-    },
-    "maps": {
-      "url": "https://pd2.tools/economy/maps",
-      "error": "Page.goto: Target page, context or browser has been closed",
-      "values": {}
+      "source": "pd2trader",
+      "value_count": 0
     }
   },
-  "values": {}
+  "values": {
+    "El Rune": 0.001,
+    "Eld Rune": 0.001,
+    "Tir Rune": 0.001,
+    "Nef Rune": 0.001,
+    "Eth Rune": 0.001,
+    "Ith Rune": 0.001,
+    "Tal Rune": 0.001,
+    "Ral Rune": 0.001,
+    "Ort Rune": 0.001,
+    "Thul Rune": 0.001,
+    "Amn Rune": 0.001,
+    "Sol Rune": 0.001,
+    "Shael Rune": 0.001,
+    "Dol Rune": 0.001,
+    "Hel Rune": 0.001,
+    "Io Rune": 0.001,
+    "Lum Rune": 0.001,
+    "Ko Rune": 0.001,
+    "Fal Rune": 0.001,
+    "Lem Rune": 0.002,
+    "Pul Rune": 0.005,
+    "Um Rune": 0.01,
+    "Mal Rune": 0.015,
+    "Ist Rune": 0.02,
+    "Gul Rune": 0.025,
+    "Vex Rune": 0.03,
+    "Ohm Rune": 0.75,
+    "Lo Rune": 1,
+    "Sur Rune": 1.5,
+    "Ber Rune": 2,
+    "Zod Rune": 4.25,
+    "Larzuk's Puzzlepiece": 0.2
+  }
 }
