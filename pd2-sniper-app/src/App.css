@@ -397,6 +397,23 @@
 .saved-msg { color: var(--accent-green); font-size: 13px; font-weight: 600; }
 .error-msg { color: var(--accent-red); font-size: 13px; font-weight: 600; }
 
+/* Manual token collapsible section */
+.manual-token-section {
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.manual-token-section summary {
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.manual-token-section summary:hover {
+  color: var(--text-primary);
+}
+
 /* Hotkeys */
 .hotkey-list {
   display: flex;

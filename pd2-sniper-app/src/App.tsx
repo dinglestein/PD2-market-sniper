@@ -392,13 +392,38 @@ function SettingsTab() {
     }
   };
 
+  const [loginStatus, setLoginStatus] = useState<"idle" | "logging-in" | "success" | "error">("idle");
+
+  const autoLogin = async () => {
+    setLoginStatus("logging-in");
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      const result = await invoke<string>('open_pd2_login');
+      if (result) {
+        setToken(result);
+        // Auto-save
+        await fetch(`${API}/api/settings/token`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: result }),
+        });
+        setSaved(true);
+        setLoginStatus("success");
+        setTimeout(() => { setSaved(false); setLoginStatus("idle"); }, 3000);
+      } else {
+        setLoginStatus("error");
+      }
+    } catch (e) {
+      // Not running in Tauri or failed — fall back to manual
+      setLoginStatus("error");
+    }
+  };
+
   const openAuthPage = async () => {
-    // Use Tauri shell to open external URLs
     try {
       const { open } = await import('@tauri-apps/plugin-shell');
       await open('https://projectdiablo2.com');
     } catch {
-      // Fallback for non-Tauri environments (dev/browser)
       window.open('https://projectdiablo2.com', '_blank');
     }
   };
@@ -412,36 +437,50 @@ function SettingsTab() {
         <p className="hint">
           Required for: direct offer submission, incoming/outgoing offers, market search via API.
         </p>
-        <div className="token-row">
-          <input
-            type="password"
-            placeholder="Paste your PD2 JWT token here..."
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            className="token-input"
-          />
-          <button className="btn btn-secondary" onClick={openAuthPage}>
-            Get Token ↗
+        <div className="setting-actions" style={{ marginBottom: 12 }}>
+          <button
+            className="btn btn-gold"
+            onClick={autoLogin}
+            disabled={loginStatus === "logging-in"}
+          >
+            {loginStatus === "logging-in" ? "⏳ Waiting for login..." : "🔐 Auto-Login to PD2"}
           </button>
+          {loginStatus === "success" && <span className="saved-msg">✅ Token captured & saved!</span>}
+          {loginStatus === "error" && <span className="hint">Auto-login unavailable — use manual method below</span>}
         </div>
-        <div className="setting-actions">
-          <button className="btn btn-gold" onClick={saveToken}>Save Token</button>
-          <button className="btn btn-secondary" onClick={testToken} disabled={!token}>
-            Test Connection
-          </button>
-          {saved && <span className="saved-msg">✅ Saved!</span>}
-          {tokenStatus === "checking" && <span className="hint">Checking...</span>}
-          {tokenStatus === "valid" && <span className="saved-msg">✅ Token valid!</span>}
-          {tokenStatus === "invalid" && <span className="error-msg">❌ Invalid token</span>}
-        </div>
-        <p className="hint" style={{ marginTop: 8 }}>
-          How to get your token:<br />
-          1. Click "Get Token" above to open PD2<br />
-          2. Log in to your PD2 account<br />
-          3. Open browser DevTools (F12) → Console tab<br />
-          4. Type: <code>localStorage.getItem('pd2-token')</code><br />
-          5. Copy the token value (include the quotes if present)
-        </p>
+        <details className="manual-token-section">
+          <summary>Manual token entry</summary>
+          <div className="token-row">
+            <input
+              type="password"
+              placeholder="Paste your PD2 JWT token here..."
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              className="token-input"
+            />
+            <button className="btn btn-secondary" onClick={openAuthPage}>
+              Open PD2 ↗
+            </button>
+          </div>
+          <div className="setting-actions">
+            <button className="btn btn-gold" onClick={saveToken}>Save Token</button>
+            <button className="btn btn-secondary" onClick={testToken} disabled={!token}>
+              Test Connection
+            </button>
+            {saved && <span className="saved-msg">✅ Saved!</span>}
+            {tokenStatus === "checking" && <span className="hint">Checking...</span>}
+            {tokenStatus === "valid" && <span className="saved-msg">✅ Token valid!</span>}
+            {tokenStatus === "invalid" && <span className="error-msg">❌ Invalid token</span>}
+          </div>
+          <p className="hint" style={{ marginTop: 8 }}>
+            How to get your token manually:<br />
+            1. Click "Open PD2" above<br />
+            2. Log in to your PD2 account<br />
+            3. Press F12 → Console tab<br />
+            4. Type: <code>localStorage.getItem('pd2-token')</code><br />
+            5. Copy the token value and paste above
+          </p>
+        </details>
       </div>
 
       <div className="setting-section">

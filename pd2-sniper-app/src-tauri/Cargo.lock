@@ -2499,6 +2499,7 @@ dependencies = [
  "tauri-plugin-autostart",
  "tauri-plugin-notification",
  "tauri-plugin-shell",
+ "tokio",
 ]
 
 [[package]]
