@@ -1,1 +1,17 @@
-{}
+{
+  "offers": [
+    {
+      "timestamp": "2026-04-18T13:50:16.519757+00:00",
+      "status": "submitted",
+      "amount_hr": 0.0,
+      "item_name": null,
+      "seller_name": null,
+      "listing_id": null,
+      "listing_url": "https://www.projectdiablo2.com/market/listing/69de4773b7d7ef186ed47b0c",
+      "filter_id": null,
+      "filter_name": null,
+      "price_hr": null,
+      "note": "screenshot=offer-listing.png, method=browser"
+    }
+  ]
+}

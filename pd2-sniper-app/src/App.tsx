@@ -457,7 +457,9 @@ function HotkeyRow({ action, label, defaultKeys, onTrigger: _onTrigger }: {
 function SettingsTab() {
   const [token, setToken] = useState("");
   const [saved, setSaved] = useState(false);
+  const [tokenVisible, setTokenVisible] = useState(false);
   const [tokenStatus, setTokenStatus] = useState<"none" | "checking" | "valid" | "invalid">("none");
+  const [testData, setTestData] = useState<{valid?: boolean; username?: string; error?: string} | null>(null);
 
   const handleHotkey = (action: HotkeyAction) => {
     if (action === "scan") {
@@ -488,19 +490,21 @@ function SettingsTab() {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       } else {
-        alert("Failed to save token — server returned error. Is the Python server running?");
+        alert("Failed to save token - server returned error. Is the Python server running?");
       }
     } catch {
-      alert("Failed to save token — can't reach server. Is the app running?");
+      alert("Failed to save token - can't reach server. Is the app running?");
     }
   };
 
   const testToken = async () => {
     setTokenStatus("checking");
+    setTestData(null);
     try {
       const res = await fetch(`${API}/api/settings/token/test`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
+        setTestData(data);
         setTokenStatus(data.valid ? "valid" : "invalid");
       } else {
         setTokenStatus("invalid");
@@ -513,8 +517,8 @@ function SettingsTab() {
   const [loginStatus, setLoginStatus] = useState<"idle" | "copied" | "error">("idle");
 
   const copyTokenSnippet = async () => {
-    // Copy a JS snippet that extracts the token and copies it to clipboard
-    const snippet = `void(async()=>{const t=localStorage.getItem('pd2-token')||localStorage.getItem('pd2Token');if(t){await navigator.clipboard.writeText(t);alert('Token copied! Paste it into PD2 Sniper Settings.')}else{alert('No token found — are you logged in to PD2?')}})()`;
+    // Copy a simple one-liner that shows the token and copies it
+    const snippet = `copy(localStorage.getItem('pd2-token')||localStorage.getItem('pd2Token'))`;
     try {
       await navigator.clipboard.writeText(snippet);
       setLoginStatus("copied");
@@ -551,18 +555,21 @@ function SettingsTab() {
           >
             {loginStatus === "copied" ? "✅ Snippet copied!" : "📋 Copy Token Extractor"}
           </button>
-          {loginStatus === "error" && <span className="error-msg">Failed to copy — use manual method below</span>}
+          {loginStatus === "error" && <span className="error-msg">Failed to copy - use manual method below</span>}
         </div>
         <details className="manual-token-section">
           <summary>Manual token entry</summary>
           <div className="token-row">
             <input
-              type="password"
+              type={tokenVisible ? "text" : "password"}
               placeholder="Paste your PD2 JWT token here..."
               value={token}
               onChange={(e) => setToken(e.target.value)}
               className="token-input"
             />
+            <button className="btn btn-xs" onClick={() => setTokenVisible(!tokenVisible)} title={tokenVisible ? "Hide" : "Show"}>
+              {tokenVisible ? "🙈" : "👁️"}
+            </button>
             <button className="btn btn-secondary" onClick={openAuthPage}>
               Open PD2 ↗
             </button>
@@ -575,15 +582,16 @@ function SettingsTab() {
             {saved && <span className="saved-msg">✅ Saved!</span>}
             {tokenStatus === "checking" && <span className="hint">Checking...</span>}
             {tokenStatus === "valid" && <span className="saved-msg">✅ Token valid!</span>}
+            {tokenStatus === "valid" && testData?.username && <span className="hint">(logged in as {testData.username})</span>}
             {tokenStatus === "invalid" && <span className="error-msg">❌ Invalid token</span>}
           </div>
           <p className="hint" style={{ marginTop: 8 }}>
-            <strong>Quickest way:</strong><br />
-            1. Click "📋 Copy Token Extractor" above<br />
+            <strong>Get your token:</strong><br />
+            1. Click "📋 Copy Token Extractor" above (copies a snippet)<br />
             2. PD2 opens in your browser — log in<br />
-            3. Press F12 → Console tab → paste → press Enter<br />
-            4. Token auto-copied! Come back here and paste into the box below<br />
-            5. Click "Save Token"
+            3. Press <strong>F12</strong> → <strong>Console</strong> tab<br />
+            4. Press <strong>Ctrl+V</strong> then <strong>Enter</strong> — token is copied to clipboard<br />
+            5. Come back here, paste into the box below, click "Save Token"
           </p>
         </details>
       </div>
@@ -603,7 +611,7 @@ function SettingsTab() {
       </div>
 
       <div className="setting-section">
-        <h3>ℹ️ About</h3>
+        <h3>i️ About</h3>
         <p>PD2 Market Sniper v0.1.0</p>
         <p className="hint">
           Price data from <a href="https://pd2trader.com" target="_blank" rel="noreferrer">PD2Trader</a>
@@ -669,7 +677,7 @@ function DealCardView({ deal, expanded, onExpand, offerAmount, onOfferChange, on
           <div className="offer-input-row">
             <input type="number" step="0.05" placeholder="Offer amount (HR)" value={offerAmount}
               onChange={(e) => onOfferChange(e.target.value)} onClick={(e) => e.stopPropagation()} />
-            <button className="btn btn-gold" onClick={(e) => { e.stopPropagation(); alert(`Offer ${offerAmount} HR — send this through chat!`); }} disabled={!offerAmount}>
+            <button className="btn btn-gold" onClick={(e) => { e.stopPropagation(); alert(`Offer ${offerAmount} HR - send this through chat!`); }} disabled={!offerAmount}>
               Submit Offer
             </button>
           </div>

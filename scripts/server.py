@@ -360,16 +360,29 @@ class DashboardHandler(BaseHTTPRequestHandler):
         elif path == "/api/settings/token/test":
             # Test if the saved token works
             try:
-                from pd2_api import get_auth_headers
-                headers = get_auth_headers()
+                from pd2_api import get_pd2_token
+                token = get_pd2_token()
+                if not token:
+                    self._send_json({"valid": False, "error": "No token saved"})
+                    return
                 import urllib.request
+                import json as _json
+                # Authenticate via the session endpoint (same as PD2 Trader)
+                data = _json.dumps({"strategy": "jwt", "accessToken": token}).encode()
                 req = urllib.request.Request(
-                    "https://api.projectdiablo2.com/market/listing",
-                    headers=headers,
-                    method="GET",
+                    "https://api.projectdiablo2.com/security/session",
+                    data=data,
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json",
+                    },
+                    method="POST",
                 )
-                urllib.request.urlopen(req, timeout=10)
-                self._send_json({"valid": True})
+                resp = urllib.request.urlopen(req, timeout=10)
+                body = _json.loads(resp.read())
+                user = body.get("user", {})
+                username = user.get("username", "unknown")
+                self._send_json({"valid": True, "username": username})
             except Exception as exc:
                 logger.info("Token test failed: %s", exc)
                 self._send_json({"valid": False, "error": str(exc)})

@@ -192,9 +192,9 @@
         <p>Live scan state, offers, pending confirmations, and clickable deal cards.</p>
       </div>
       <div class="meta-bar">
-        <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">-</span></span>
-        <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">0</span></span>
-        <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">0</span></span>
+        <span class="badge badge-time"><span class="badge-label">Last scan</span><span class="badge-value">2026-04-18T13:33:28.621570+00:00</span></span>
+        <span class="badge badge-page"><span class="badge-label">Filters scanned</span><span class="badge-value">59</span></span>
+        <span class="badge badge-score"><span class="badge-label">Deals found</span><span class="badge-value">1</span></span>
         <span class="badge badge-time"><span class="badge-label">Economy refresh</span><span class="badge-value">2026-04-18T10:40:14.295015+00:00</span></span>
         <button id="scanNow" class="btn-scan" title="Run a full scan of all PD2 market filters">
           <span class="spinner"></span>
@@ -220,17 +220,17 @@
       </div>
       <div class="stat-card">
         <div class="stat-label">Offer history</div>
-        <div class="stat-value">0</div>
-        <div class="stat-sub">{}</div>
+        <div class="stat-value">1</div>
+        <div class="stat-sub">{&#x27;submitted&#x27;: 1}</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Daily filter count</div>
-        <div class="stat-value">0</div>
-        <div class="stat-sub">Max price threshold:  HR</div>
+        <div class="stat-value">59</div>
+        <div class="stat-sub">Max price threshold: 1.0 HR</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Current results</div>
-        <div class="stat-value">0</div>
+        <div class="stat-value">1</div>
         <div class="stat-sub">Deals currently rendered as cards</div>
       </div>
     </section>
@@ -250,9 +250,30 @@
       </div>
       <div class="toolbar">
         <input id="dealSearch" class="search-input" type="search" placeholder="Search deals by item, seller, filter, stats, corruption..." />
-        <div id="dealSearchCount" class="search-hint">Showing 0 of 0 deals</div>
+        <div id="dealSearchCount" class="search-hint">Showing 1 of 1 deals</div>
       </div>
-      <div id="dealGrid" class="deal-grid"><div class="empty-state">No deals in the current scan results.</div></div>
+      <div id="dealGrid" class="deal-grid">
+    <article class="deal-card" data-search="magic grand charm | jav lifer gc | cranky | https://www.projectdiablo2.com/market/listing/69c1e064d605593fdffcd549 |  | +1 to javelin and spear skills (amazon only) +36 to life | ">
+      <div class="deal-media">
+        <a class="shot-link" href="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-0.png" target="_blank" rel="noreferrer"><img class="shot" src="..\screenshots\deal-6950f46ee7a71fc913434b2e-p1-0.png" alt="Magic Grand Charm" /></a>
+      </div>
+      <div class="deal-body">
+        <div class="deal-head">
+          <div>
+            <h3>Magic Grand Charm</h3>
+            <div class="deal-sub">jav lifer gc</div>
+          </div>
+          <a class="deal-link" href="https://www.projectdiablo2.com/market/listing/69c1e064d605593fdffcd549" target="_blank" rel="noreferrer">Open listing ↗</a>
+        </div>
+        <div class="badges"><span class="badge badge-score"><span class="badge-label">Score</span><span class="badge-value">7.0</span></span><span class="badge badge-price"><span class="badge-label">Price</span><span class="badge-value">0.5 HR</span></span><span class="badge badge-seller"><span class="badge-label">Seller</span><span class="badge-value">cranky</span></span><span class="badge badge-page"><span class="badge-label">Page</span><span class="badge-value">1</span></span></div>
+        <div class="chips"></div>
+        <details>
+          <summary>Stats</summary>
+          <ul class="stats-list"><li>+1 to Javelin and Spear Skills (Amazon Only)</li><li>+36 to Life</li></ul>
+        </details>
+      </div>
+    </article>
+    </div>
     </section>
 
     <section class="section two-col">
@@ -260,12 +281,18 @@
         <div class="section-header"><h2>Recent Offers</h2><div class="section-note">Latest tracked submissions</div></div>
         <table>
           <tr><th>When</th><th>Status</th><th>Item</th><th>Seller</th><th>Offer</th><th>Link</th></tr>
-          <tr><td colspan="6" class="muted">No offers yet</td></tr>
+          <tr><td>2026-04-18T13:50:16.519757+00:00</td><td>submitted</td><td></td><td></td><td>0.0 HR</td><td><a href='https://www.projectdiablo2.com/market/listing/69de4773b7d7ef186ed47b0c' target='_blank' rel='noreferrer'>listing</a></td></tr>
         </table>
       </div>
       <div class="panel">
         <div class="section-header"><h2>Last Scan Summary</h2><div class="section-note">Raw scan metadata</div></div>
-        <code class="json">{}</code>
+        <code class="json">{
+  &quot;timestamp&quot;: &quot;2026-04-18T13:33:28.621570+00:00&quot;,
+  &quot;filters_scanned&quot;: 59,
+  &quot;deals_found&quot;: 1,
+  &quot;daily_filter_count&quot;: 59,
+  &quot;max_price_hr&quot;: 1.0
+}</code>
       </div>
     </section>
 
@@ -274,14 +301,14 @@
         <div class="section-header"><h2>Recent Scans</h2><div class="section-note">Historical scan activity</div></div>
         <table>
           <tr><th>When</th><th>Filters</th><th>Deals</th><th>Daily Count</th><th>Max HR</th></tr>
-          <tr><td colspan="5" class="muted">No scans yet</td></tr>
+          <tr><td>2026-04-18T13:33:28.621570+00:00</td><td>59</td><td>1</td><td>59</td><td>1.0</td></tr>
         </table>
       </div>
       <div class="panel">
         <div class="section-header"><h2>Filter Health</h2><div class="section-note">Slow filters stay in rotation</div></div>
         <table>
           <tr><th>Filter</th><th>Status</th><th>Scans</th><th>Deals</th><th>Days Since Hit</th><th>Last Scan</th></tr>
-          <tr><td colspan="6" class="muted">No filter health data yet</td></tr>
+          <tr><td>BK dual leech</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:30:46.808272+00:00</td></tr><tr><td>arachnid +20 FCR</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:40.848017+00:00</td></tr><tr><td>atmas +ED</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:28:43.590363+00:00</td></tr><tr><td>atmas +cbf</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:31:40.264557+00:00</td></tr><tr><td>atmas +pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:28:52.597717+00:00</td></tr><tr><td>atmas +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:31:30.958165+00:00</td></tr><tr><td>bk deathband +leech</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:30:55.550952+00:00</td></tr><tr><td>bow amp</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:45.815391+00:00</td></tr><tr><td>construct 30fcr</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:33:16.640052+00:00</td></tr><tr><td>dooms finger +pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:36.257794+00:00</td></tr><tr><td>ebonbane +5os</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:27:32.656263+00:00</td></tr><tr><td>fcr dual leach ring</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:49.560007+00:00</td></tr><tr><td>half freeze trires b</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:33:06.981242+00:00</td></tr><tr><td>headhunter +1 3os</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:24.218768+00:00</td></tr><tr><td>headhunters +1skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:32.319808+00:00</td></tr><tr><td>highlords cbf pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:27.790411+00:00</td></tr><tr><td>lite +fhr gc</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:20.047921+00:00</td></tr><tr><td>metalgrid +IAS</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:41.320301+00:00</td></tr><tr><td>metalgrid +cbf</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:31:22.594521+00:00</td></tr><tr><td>nosferatu +30 ias</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:06.950899+00:00</td></tr><tr><td>passive GC +GF</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:05.533719+00:00</td></tr><tr><td>passive amulet +3</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:49.654240+00:00</td></tr><tr><td>passive amulet +4</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:40.761173+00:00</td></tr><tr><td>passive amulet +5</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:32.918012+00:00</td></tr><tr><td>passive frw GC</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:28:26.601526+00:00</td></tr><tr><td>passive glove +2-20p</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:14.021395+00:00</td></tr><tr><td>passive glove +3-30</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:31.630573+00:00</td></tr><tr><td>passive lifer GC</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:28:35.122188+00:00</td></tr><tr><td>quad res booties</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:32:58.567582+00:00</td></tr><tr><td>rising sun +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:31:57.425857+00:00</td></tr><tr><td>spear +amp</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:54.196476+00:00</td></tr><tr><td>spirit ward +3os</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:33:25.200226+00:00</td></tr><tr><td>string +all res</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:30:10.975611+00:00</td></tr><tr><td>string +max</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:31:48.977926+00:00</td></tr><tr><td>tombsong +40 pierce</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:24.812905+00:00</td></tr><tr><td>tombsong +IAS</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:15.966950+00:00</td></tr><tr><td>tombsong +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:24:57.867926+00:00</td></tr><tr><td>tyreals</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:30:28.461868+00:00</td></tr><tr><td>undead crown +1skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:07.643469+00:00</td></tr><tr><td>valkyrie wing +3 OS</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:50.297386+00:00</td></tr><tr><td>valkyrie wing +skill</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:25:59.156364+00:00</td></tr><tr><td>war pike +amp</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:30:03.065375+00:00</td></tr><tr><td>war trav +frw</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:27:51.853816+00:00</td></tr><tr><td>windforce +6os</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:28:18.400718+00:00</td></tr><tr><td>witchwild +4OS</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:26:58.032721+00:00</td></tr><tr><td>wraithskin +3os</td><td><span class='status status-slow'>slow</span></td><td>1</td><td>0</td><td></td><td>2026-04-18T13:29:00.419181+00:00</td></tr><tr><td>CoA +skill 3os</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:32:14.969073+00:00</td></tr><tr><td>ebonbane +CB</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:27:17.118692+00:00</td></tr><tr><td>ebonbane +DS</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:27:24.922892+00:00</td></tr><tr><td>gface +3os</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:28:09.792872+00:00</td></tr><tr><td>gore rider +20 ds</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:28:00.249489+00:00</td></tr><tr><td>gravepalm +15 DS</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:27:07.694493+00:00</td></tr><tr><td>highlords +ED</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:27:42.960225+00:00</td></tr><tr><td>jav lifer gc</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>1</td><td>0.2</td><td>2026-04-18T13:29:11.790347+00:00</td></tr><tr><td>metalgrid +skill</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:31:13.122975+00:00</td></tr><tr><td>passive glove +3-20</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:25:23.038861+00:00</td></tr><tr><td>steelrend +deadly</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:31:04.280977+00:00</td></tr><tr><td>veil +2sk</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:30:19.525101+00:00</td></tr><tr><td>veil +3os</td><td><span class='status status-healthy'>healthy</span></td><td>1</td><td>0</td><td>0.2</td><td>2026-04-18T13:30:37.137283+00:00</td></tr>
         </table>
       </div>
     </section>
