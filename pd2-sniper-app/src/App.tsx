@@ -390,24 +390,37 @@ function HotkeyRow({ action, label, defaultKeys, onTrigger: _onTrigger }: {
 }) {
   const [hotkeys, setHotkeys] = useState(loadHotkeys);
   const [recording, setRecording] = useState(false);
+  const kbdRef = useRef<HTMLDivElement>(null);
 
   const currentKeys = hotkeys[action] || defaultKeys;
 
-  const startRecording = () => setRecording(true);
+  const startRecording = () => {
+    setRecording(true);
+    // Focus the kbd element so it receives key events
+    setTimeout(() => kbdRef.current?.focus(), 0);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!recording) return;
     e.preventDefault();
     e.stopPropagation();
 
+    // Build combo from modifier state + the actual key pressed
     const parts: string[] = [];
     if (e.ctrlKey || e.metaKey) parts.push("Ctrl");
     if (e.altKey) parts.push("Alt");
     if (e.shiftKey) parts.push("Shift");
-    if (e.key !== "Control" && e.key !== "Alt" && e.key !== "Shift" && e.key !== "Meta") {
-      parts.push(e.key.length === 1 ? e.key.toUpperCase() : e.key);
-    }
-    if (parts.length === 0 || (parts.length === 1 && !e.ctrlKey && !e.altKey && !e.shiftKey)) return;
+
+    // Ignore bare modifier key presses (Ctrl alone, Shift alone, etc)
+    const isModifier = ["Control", "Alt", "Shift", "Meta"].includes(e.key);
+    if (isModifier) return; // Wait for the actual key
+
+    // Add the main key
+    const mainKey = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+    parts.push(mainKey);
+
+    // Must have at least one modifier + one key
+    if (parts.length < 2) return;
 
     const combo = parts.join("+");
     const updated = { ...hotkeys, [action]: combo };
@@ -418,15 +431,16 @@ function HotkeyRow({ action, label, defaultKeys, onTrigger: _onTrigger }: {
 
   return (
     <div className="hotkey-row">
-      <kbd
+      <div
+        ref={kbdRef}
         className={recording ? "hotkey-recording" : "hotkey-display"}
         onClick={startRecording}
         onKeyDown={handleKeyDown}
         tabIndex={0}
-        style={{ cursor: "pointer", outline: recording ? "2px solid var(--accent-gold)" : "none" }}
+        style={{ cursor: "pointer", outline: recording ? "2px solid var(--accent-gold)" : "none", display: "inline-block" }}
       >
         {recording ? "Press keys..." : currentKeys}
-      </kbd>
+      </div>
       <span>{label}</span>
       {!recording && (
         <button className="btn btn-xs" onClick={startRecording} title="Rebind">✏️</button>
@@ -583,6 +597,9 @@ function SettingsTab() {
           <HotkeyRow action="economy" label="Refresh Economy" defaultKeys="Ctrl+Shift+E" onTrigger={handleHotkey} />
           <HotkeyRow action="dashboard" label="Show Dashboard" defaultKeys="Ctrl+Shift+D" onTrigger={handleHotkey} />
         </div>
+        <button className="btn btn-secondary" style={{ marginTop: 10 }} onClick={() => { saveHotkeys({...DEFAULT_HOTKEYS}); window.location.reload(); }}>
+          🔄 Reset to Defaults
+        </button>
       </div>
 
       <div className="setting-section">
