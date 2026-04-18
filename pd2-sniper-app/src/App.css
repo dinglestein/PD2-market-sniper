@@ -397,6 +397,12 @@
 .saved-msg { color: var(--accent-green); font-size: 13px; font-weight: 600; }
 .error-msg { color: var(--accent-red); font-size: 13px; font-weight: 600; }
 
+.hotkey-display { cursor: pointer; transition: all 0.15s; }
+.hotkey-display:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+.hotkey-recording { animation: pulse-gold 0.8s infinite; border-color: var(--accent-gold) !important; color: var(--accent-gold) !important; }
+.btn-xs { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary); border-radius: 4px; cursor: pointer; }
+.btn-xs:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
 /* Manual token collapsible section */
 .manual-token-section {
   margin-top: 12px;

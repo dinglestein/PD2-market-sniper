@@ -1,7 +1,7 @@
 use std::os::windows::process::CommandExt;
 use std::process::{Command, Child};
 use std::sync::Mutex;
-use tauri::{Manager, Listener, WebviewUrl, WebviewWindowBuilder};
+use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 
 static PYTHON_SERVER: Mutex<Option<Child>> = Mutex::new(None);
 
@@ -22,7 +22,6 @@ fn start_python_server(scripts_dir: &str) {
 
 #[tauri::command]
 async fn open_pd2_login(app: tauri::AppHandle) -> Result<String, String> {
-    // Open a webview to PD2 login page
     let label = "pd2-login".to_string();
     
     // Close existing login window if any
@@ -30,65 +29,109 @@ async fn open_pd2_login(app: tauri::AppHandle) -> Result<String, String> {
         let _ = existing.close();
     }
 
-    let window = WebviewWindowBuilder::new(
+    // We'll use a local HTML page that iframes PD2 and reads localStorage
+    // Actually, simpler: open PD2 webview, inject a "Done" button that 
+    // stores token in window title, then poll the title from Rust
+    
+    let _webview_window = WebviewWindowBuilder::new(
         &app,
         &label,
         WebviewUrl::External("https://projectdiablo2.com".parse().unwrap()),
     )
-    .title("PD2 Login — Log in then close this window")
-    .inner_size(900.0, 700.0)
+    .title("PD2 Login — Log in, then click ✓ Capture Token in top-right")
+    .inner_size(1000.0, 750.0)
     .center()
     .initialization_script(r#"
-        // Poll for the token in localStorage after page loads
         (function() {
-            let attempts = 0;
-            const interval = setInterval(() => {
-                attempts++;
-                try {
-                    const token = window.localStorage.getItem('pd2-token');
-                    if (token) {
-                        clearInterval(interval);
-                        // Send token back to the app via Tauri event
-                        window.__TAURI__.event.emit('pd2-token-received', { token: token });
+            function addCaptureButton() {
+                if (document.getElementById('pd2-capture-btn')) return;
+                const btn = document.createElement('div');
+                btn.id = 'pd2-capture-btn';
+                btn.innerHTML = '✓ Capture Token';
+                btn.style.cssText = 'position:fixed;top:12px;right:12px;z-index:999999;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;padding:12px 24px;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.4);font-family:system-ui;user-select:none;transition:transform 0.1s;';
+                btn.onmouseenter = function() { btn.style.transform = 'scale(1.05)'; };
+                btn.onmouseleave = function() { btn.style.transform = 'scale(1)'; };
+                btn.onclick = function() {
+                    try {
+                        const token = window.localStorage.getItem('pd2-token')
+                            || window.localStorage.getItem('pd2Token')
+                            || window.localStorage.getItem('token');
+                        if (token) {
+                            // Put token in document title so Rust can read it
+                            document.title = 'PD2_TOKEN_CAPTURED:' + token;
+                            btn.innerHTML = '✅ Captured!';
+                            btn.style.background = '#22c55e';
+                        } else {
+                            btn.innerHTML = '❌ Not logged in yet';
+                            btn.style.background = '#ef4444';
+                            setTimeout(() => {
+                                btn.innerHTML = '✓ Capture Token';
+                                btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+                            }, 2000);
+                        }
+                    } catch(e) {
+                        btn.innerHTML = '❌ Error: ' + e.message;
                     }
-                } catch(e) {}
-                // Give up after 5 minutes
-                if (attempts > 1500) clearInterval(interval);
-            }, 200);
+                };
+                document.body.appendChild(btn);
+            }
+
+            // Keep trying to add button until body exists
+            const interval = setInterval(() => {
+                if (document.body) {
+                    addCaptureButton();
+                    // Re-add if it gets removed (SPA navigation)
+                    new MutationObserver(() => {
+                        if (!document.getElementById('pd2-capture-btn')) addCaptureButton();
+                    }).observe(document.body, { childList: true, subtree: true });
+                    clearInterval(interval);
+                }
+            }, 300);
         })();
     "#)
     .build()
     .map_err(|e| format!("Failed to open login window: {}", e))?;
 
-    // Listen for the token event
+    // Poll the window title for the token (title-based IPC — works cross-origin)
     let (tx, rx) = tokio::sync::oneshot::channel::<String>();
     let tx = std::sync::Mutex::new(Some(tx));
     
-    let app_clone = app.clone();
+    // Spawn a polling task
+    let app_handle = app.clone();
     let label_clone = label.clone();
-    app.listen("pd2-token-received", move |event| {
-        if let Ok(data) = event.payload().to_string().parse::<serde_json::Value>() {
-            if let Some(token) = data.get("token").and_then(|t| t.as_str()) {
-                if let Some(sender) = tx.lock().unwrap().take() {
-                    let _ = sender.send(token.to_string());
+    tokio::spawn(async move {
+        let prefix = "PD2_TOKEN_CAPTURED:";
+        for _ in 0..600 { // 5 min = 600 * 500ms
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+            if let Some(w) = app_handle.get_webview_window(&label_clone) {
+                if let Ok(title) = w.title() {
+                    if let Some(token) = title.strip_prefix(prefix) {
+                        if let Some(sender) = tx.lock().unwrap().take() {
+                            let _ = sender.send(token.to_string());
+                        }
+                        return;
+                    }
                 }
-                // Close the login window
-                if let Some(w) = app_clone.get_webview_window(&label_clone) {
-                    let _ = w.close();
-                }
+            } else {
+                break; // Window was closed manually
             }
         }
+        // Timeout or window closed — drop the sender to signal failure
     });
 
-    // Wait for token with a 5-minute timeout
+    // Wait for token
     match tokio::time::timeout(std::time::Duration::from_secs(300), rx).await {
-        Ok(Ok(token)) => Ok(token),
-        _ => {
-            // Clean up window on timeout
+        Ok(Ok(token)) => {
             if let Some(w) = app.get_webview_window(&label) {
                 let _ = w.close();
             }
-            Err("Login timed out after 5 minutes".to_string())
+            Ok(token)
+        }
+        _ => {
+            if let Some(w) = app.get_webview_window(&label) {
+                let _ = w.close();
+            }
+            Err("Login window closed without capturing token".to_string())
         }
     }
 }

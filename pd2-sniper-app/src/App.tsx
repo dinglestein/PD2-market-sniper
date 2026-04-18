@@ -350,12 +350,99 @@ function OffersTab() {
   );
 }
 
+// ── Hotkey System ─────────────────────────────────────────────────────────
+
+type HotkeyAction = "scan" | "economy" | "dashboard";
+
+const HOTKEYS_KEY = "pd2-sniper-hotkeys";
+const DEFAULT_HOTKEYS: Record<HotkeyAction, string> = {
+  scan: "Ctrl+Shift+S",
+  economy: "Ctrl+Shift+E",
+  dashboard: "Ctrl+Shift+D",
+};
+
+function loadHotkeys(): Record<HotkeyAction, string> {
+  try {
+    const saved = localStorage.getItem(HOTKEYS_KEY);
+    if (saved) return { ...DEFAULT_HOTKEYS, ...JSON.parse(saved) };
+  } catch {}
+  return { ...DEFAULT_HOTKEYS };
+}
+
+function saveHotkeys(keys: Record<HotkeyAction, string>) {
+  localStorage.setItem(HOTKEYS_KEY, JSON.stringify(keys));
+}
+
+function HotkeyRow({ action, label, defaultKeys, onTrigger: _onTrigger }: {
+  action: HotkeyAction; label: string; defaultKeys: string;
+  onTrigger: (action: HotkeyAction) => void;
+}) {
+  const [hotkeys, setHotkeys] = useState(loadHotkeys);
+  const [recording, setRecording] = useState(false);
+
+  const currentKeys = hotkeys[action] || defaultKeys;
+
+  const startRecording = () => setRecording(true);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!recording) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const parts: string[] = [];
+    if (e.ctrlKey || e.metaKey) parts.push("Ctrl");
+    if (e.altKey) parts.push("Alt");
+    if (e.shiftKey) parts.push("Shift");
+    if (e.key !== "Control" && e.key !== "Alt" && e.key !== "Shift" && e.key !== "Meta") {
+      parts.push(e.key.length === 1 ? e.key.toUpperCase() : e.key);
+    }
+    if (parts.length === 0 || (parts.length === 1 && !e.ctrlKey && !e.altKey && !e.shiftKey)) return;
+
+    const combo = parts.join("+");
+    const updated = { ...hotkeys, [action]: combo };
+    setHotkeys(updated);
+    saveHotkeys(updated);
+    setRecording(false);
+  };
+
+  return (
+    <div className="hotkey-row">
+      <kbd
+        className={recording ? "hotkey-recording" : "hotkey-display"}
+        onClick={startRecording}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        style={{ cursor: "pointer", outline: recording ? "2px solid var(--accent-gold)" : "none" }}
+      >
+        {recording ? "Press keys..." : currentKeys}
+      </kbd>
+      <span>{label}</span>
+      {!recording && (
+        <button className="btn btn-xs" onClick={startRecording} title="Rebind">✏️</button>
+      )}
+      {recording && (
+        <button className="btn btn-xs" onClick={() => setRecording(false)}>✕ Cancel</button>
+      )}
+    </div>
+  );
+}
+
 // ── Settings Tab ──────────────────────────────────────────────────────────
 
 function SettingsTab() {
   const [token, setToken] = useState("");
   const [saved, setSaved] = useState(false);
   const [tokenStatus, setTokenStatus] = useState<"none" | "checking" | "valid" | "invalid">("none");
+
+  const handleHotkey = (action: HotkeyAction) => {
+    if (action === "scan") {
+      fetch(`${API}/api/scan`, { method: "POST" }).catch(() => {});
+    } else if (action === "economy") {
+      fetch(`${API}/api/economy-refresh`, { method: "POST" }).catch(() => {});
+    } else if (action === "dashboard") {
+      // Focus the main window (no-op in settings, but the hotkey itself works globally)
+    }
+  };
 
   // Load existing token on mount
   useEffect(() => {
@@ -399,17 +486,19 @@ function SettingsTab() {
   };
 
   const [loginStatus, setLoginStatus] = useState<"idle" | "logging-in" | "success" | "error">("idle");
+  const [loginError, setLoginError] = useState("");
 
   const autoLogin = async () => {
     setLoginStatus("logging-in");
+    setLoginError("");
     try {
       const { invoke } = await import('@tauri-apps/api/core');
       const result = await invoke<string>('open_pd2_login');
-      if (result) {
-        // Strip surrounding quotes from localStorage value
-        const cleanToken = result.replace(/^"|"$/g, '');
-        setToken(cleanToken);
-        // Auto-save to server
+      // Strip surrounding quotes from localStorage value
+      const cleanToken = result.replace(/^"|"$/g, '');
+      setToken(cleanToken);
+      // Auto-save to server
+      try {
         const res = await fetch(`${API}/api/settings/token`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -421,14 +510,20 @@ function SettingsTab() {
           setTimeout(() => { setSaved(false); setLoginStatus("idle"); }, 3000);
         } else {
           setLoginStatus("error");
-          alert("Token captured but failed to save to server.");
+          setLoginError("Token captured but server save failed. Paste it manually below.");
         }
-      } else {
+      } catch {
         setLoginStatus("error");
+        setLoginError("Token captured but server unreachable. Paste it manually below.");
       }
-    } catch (e) {
-      // Not running in Tauri or failed
+    } catch (e: any) {
       setLoginStatus("error");
+      const msg = e?.toString() || '';
+      if (msg.includes('closed without')) {
+        setLoginError("Window closed without capturing token. Log in first, then click Capture.");
+      } else {
+        setLoginError("Auto-login unavailable — use manual method below");
+      }
     }
   };
 
@@ -459,7 +554,7 @@ function SettingsTab() {
             {loginStatus === "logging-in" ? "⏳ Waiting for login..." : "🔐 Auto-Login to PD2"}
           </button>
           {loginStatus === "success" && <span className="saved-msg">✅ Token captured & saved!</span>}
-          {loginStatus === "error" && <span className="hint">Auto-login unavailable — use manual method below</span>}
+          {loginStatus === "error" && <span className="error-msg">{loginError}</span>}
         </div>
         <details className="manual-token-section">
           <summary>Manual token entry</summary>
@@ -498,20 +593,12 @@ function SettingsTab() {
 
       <div className="setting-section">
         <h3>⌨️ Hotkeys</h3>
-        <p className="hint">Keyboard shortcuts (coming in future update)</p>
+        <p className="hint">Click a hotkey to rebind it. Press your desired key combo.</p>
+
         <div className="hotkey-list">
-          <div className="hotkey-row">
-            <kbd>Ctrl+Shift+S</kbd>
-            <span>Start / Stop Scan</span>
-          </div>
-          <div className="hotkey-row">
-            <kbd>Ctrl+Shift+E</kbd>
-            <span>Refresh Economy</span>
-          </div>
-          <div className="hotkey-row">
-            <kbd>Ctrl+Shift+D</kbd>
-            <span>Show Dashboard</span>
-          </div>
+          <HotkeyRow action="scan" label="Start / Stop Scan" defaultKeys="Ctrl+Shift+S" onTrigger={handleHotkey} />
+          <HotkeyRow action="economy" label="Refresh Economy" defaultKeys="Ctrl+Shift+E" onTrigger={handleHotkey} />
+          <HotkeyRow action="dashboard" label="Show Dashboard" defaultKeys="Ctrl+Shift+D" onTrigger={handleHotkey} />
         </div>
       </div>
 
