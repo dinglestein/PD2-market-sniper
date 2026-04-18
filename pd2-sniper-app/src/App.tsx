@@ -143,9 +143,17 @@ export default function App() {
     } catch (exc: any) { setError(exc.message); setLoading(false); }
   };
 
+  const [econLoading, setEconLoading] = useState(false);
+
   const handleEconomyRefresh = async () => {
+    setEconLoading(true);
     try {
-      await fetch(`${API}/api/economy-refresh`, { method: "POST" });
+      const res = await fetch(`${API}/api/economy-refresh`, { method: "POST" });
+      if (!res.ok) {
+        console.error("Economy refresh failed:", res.status);
+        setEconLoading(false);
+        return;
+      }
       // Poll for updated data
       let tries = 0;
       const poll = setInterval(async () => {
@@ -157,15 +165,19 @@ export default function App() {
               const data = await res.json();
               if (data.values && Object.keys(data.values).length > 0) {
                 setEconomy(data);
+                setEconLoading(false);
                 clearInterval(poll);
                 return;
               }
             }
           } catch { /* */ }
         }
-        if (tries > 30) clearInterval(poll);
+        if (tries > 30) { clearInterval(poll); setEconLoading(false); }
       }, 2000);
-    } catch { /* */ }
+    } catch (e) {
+      console.error("Economy refresh error:", e);
+      setEconLoading(false);
+    }
   };
 
   const handleReset = async () => {
@@ -227,7 +239,7 @@ export default function App() {
           <button className={`btn ${loading ? "btn-stop" : "btn-gold"}`} onClick={handleScan} disabled={!status && !loading}>
             {loading ? <><span className="spinner-red" /> ⏹ Stop</> : "🔍 Scan Now"}
           </button>
-          <button className="btn btn-secondary" onClick={handleEconomyRefresh} disabled={!status}>🔄 Econ</button>
+          <button className="btn btn-secondary" onClick={handleEconomyRefresh} disabled={!status || econLoading}>{econLoading ? "⏳" : "🔄"} Econ</button>
           <button className="btn btn-danger" onClick={handleReset}>🗑️</button>
         </div>
       </header>
@@ -303,7 +315,9 @@ export default function App() {
               <div className="center-state">
                 <div className="empty-icon">📊</div>
                 <p>No economy data loaded</p>
-                <button className="btn btn-gold" onClick={handleEconomyRefresh}>🔄 Fetch Economy Prices</button>
+                <button className="btn btn-gold" onClick={handleEconomyRefresh} disabled={econLoading} style={{ marginTop: 8 }}>
+                  {econLoading ? "⏳ Fetching prices..." : "🔄 Fetch Economy Prices"}
+                </button>
               </div>
             ) : (
               <div className="economy-grid">
