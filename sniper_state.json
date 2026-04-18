@@ -4,71 +4,9 @@
   "rotation_index": 0,
   "filter_health": [],
   "recent_scans": [],
-  "pending_confirmation": {
-    "filter_id": "6530cd7410db0dc1c4bcdaa1",
-    "filter_name": "metalgrid +skill",
-    "item_name": "Unique Amulet",
-    "price_hr": 55.0,
-    "seller_name": "mrlahey420",
-    "listing_id": null,
-    "listing_url": "https://www.projectdiablo2.com/market/listing/69ae424e9aa8b52ed7b76843",
-    "posted_at": "2 days ago",
-    "stats": [
-      "Desecrated",
-      "Corrupt",
-      "+1 to All Skills",
-      "+434 to Attack Rating [400 - 450]",
-      "+20 to Golem Mastery",
-      "+25 to Iron Golem",
-      "+309 Defense [300 - 350]",
-      "2% to Maximum Poison Resist",
-      "2% to Maximum Cold Resist",
-      "2% to Maximum Lightning Resist",
-      "2% to Maximum Fire Resist",
-      "All Resistances +25% [25 - 35]",
-      "Attacker Takes Damage of 840 [750 - 1000]",
-      "Level 12 Iron Maiden (20/20 Charges)"
-    ],
-    "corruption": [
-      "Corrupted"
-    ],
-    "text_preview": "METALGRID\nUnique Amulet\n\nDesecrated\n\nCorrupted\n\nCorrupt\n\n+1 to All Skills\n\n+434 to Attack Rating [400 - 450]\n\n+20 to Golem Mastery\n\n+25 to Iron Golem\n\n+309 Defense [300 - 350]\n\n2% to Maximum Poison Resist\n\n2% to Maximum Cold Resist\n\n2% to Maximum Lightning Resist\n\n2% to Maximum Fire Resist\n\nAll Resistances +25% [25 - 35]\n\nAttacker Takes Damage of 840 [750 - 1000]\n\nLevel 12 Iron Maiden (20/20 Charges)\n\nRequired Level: 81\n\nPrice: 55\nOFFER\nmrlahey420\nmrlahey420\n[ SamsquanchIIII ]\n2 days ago\n(softco",
-    "raw": {
-      "item_name": "Unique Amulet",
-      "price_hr": 55.0,
-      "seller_name": "mrlahey420",
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69ae424e9aa8b52ed7b76843",
-      "posted_at": "2 days ago",
-      "stats": [
-        "Desecrated",
-        "Corrupt",
-        "+1 to All Skills",
-        "+434 to Attack Rating [400 - 450]",
-        "+20 to Golem Mastery",
-        "+25 to Iron Golem",
-        "+309 Defense [300 - 350]",
-        "2% to Maximum Poison Resist",
-        "2% to Maximum Cold Resist",
-        "2% to Maximum Lightning Resist",
-        "2% to Maximum Fire Resist",
-        "All Resistances +25% [25 - 35]",
-        "Attacker Takes Damage of 840 [750 - 1000]",
-        "Level 12 Iron Maiden (20/20 Charges)"
-      ],
-      "corruption": [
-        "Corrupted"
-      ],
-      "description": "METALGRID\nUnique Amulet\n\nDesecrated\n\nCorrupted\n\nCorrupt\n\n+1 to All Skills\n\n+434 to Attack Rating [400 - 450]\n\n+20 to Golem Mastery\n\n+25 to Iron Golem\n\n+309 Defense [300 - 350]\n\n2% to Maximum Poison Resist\n\n2% to Maximum Cold Resist\n\n2% to Maximum Lightning Resist\n\n2% to Maximum Fire Resist\n\nAll Resistances +25% [25 - 35]\n\nAttacker Takes Damage of 840 [750 - 1000]\n\nLevel 12 Iron Maiden (20/20 Charges)\n\nRequired Level: 81\n\nPrice: 55\nOFFER\nmrlahey420\nmrlahey420\n[ SamsquanchIIII ]\n2 days ago\n(softco"
-    },
-    "captured_at": "2026-04-18T04:17:31.410284+00:00",
-    "page": 1,
-    "economy_value_hr": null,
-    "recent_offer_count": 0,
-    "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-6530cd7410db0dc1c4bcdaa1-p1-0.png",
-    "score": 17.0
-  },
+  "pending_confirmation": null,
   "last_economy_refresh": null,
-  "created_at": "2026-04-18T04:06:10.261728+00:00",
+  "created_at": "2026-04-18T10:40:11.213014+00:00",
   "daily_scan": {
     "date": null,
     "count": 0
@@ -77,5 +15,5 @@
   "recent_deals": [],
   "filters": {},
   "last_scan_at": null,
-  "last_economy_refresh_at": "2026-04-18T10:30:39.616932+00:00"
+  "last_economy_refresh_at": "2026-04-18T10:40:14.296464+00:00"
 }

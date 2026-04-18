@@ -367,14 +367,20 @@ function SettingsTab() {
 
   const saveToken = async () => {
     try {
-      await fetch(`${API}/api/settings/token`, {
+      const res = await fetch(`${API}/api/settings/token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ token: token.replace(/^"|"$/g, '') }), // strip surrounding quotes
       });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch { /* */ }
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      } else {
+        alert("Failed to save token — server returned error. Is the Python server running?");
+      }
+    } catch {
+      alert("Failed to save token — can't reach server. Is the app running?");
+    }
   };
 
   const testToken = async () => {
@@ -400,21 +406,28 @@ function SettingsTab() {
       const { invoke } = await import('@tauri-apps/api/core');
       const result = await invoke<string>('open_pd2_login');
       if (result) {
-        setToken(result);
-        // Auto-save
-        await fetch(`${API}/api/settings/token`, {
+        // Strip surrounding quotes from localStorage value
+        const cleanToken = result.replace(/^"|"$/g, '');
+        setToken(cleanToken);
+        // Auto-save to server
+        const res = await fetch(`${API}/api/settings/token`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: result }),
+          body: JSON.stringify({ token: cleanToken }),
         });
-        setSaved(true);
-        setLoginStatus("success");
-        setTimeout(() => { setSaved(false); setLoginStatus("idle"); }, 3000);
+        if (res.ok) {
+          setSaved(true);
+          setLoginStatus("success");
+          setTimeout(() => { setSaved(false); setLoginStatus("idle"); }, 3000);
+        } else {
+          setLoginStatus("error");
+          alert("Token captured but failed to save to server.");
+        }
       } else {
         setLoginStatus("error");
       }
     } catch (e) {
-      // Not running in Tauri or failed — fall back to manual
+      // Not running in Tauri or failed
       setLoginStatus("error");
     }
   };
