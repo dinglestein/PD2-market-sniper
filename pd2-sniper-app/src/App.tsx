@@ -303,7 +303,7 @@ export default function App() {
               <div className="center-state">
                 <div className="empty-icon">📊</div>
                 <p>No economy data loaded</p>
-                <p className="hint">Click "🔄 Econ" in the header to fetch prices from PD2Trader</p>
+                <button className="btn btn-gold" onClick={handleEconomyRefresh}>🔄 Fetch Economy Prices</button>
               </div>
             ) : (
               <div className="economy-grid">

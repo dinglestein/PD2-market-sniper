@@ -414,6 +414,16 @@ def serve(port: int, open_browser: bool = True) -> None:
 
     _refresh_dashboard()
 
+    # Auto-fetch economy data on startup if not cached
+    econ_file = ASSETS_DIR / "all_economy.json"
+    if not econ_file.exists():
+        logger.info("No economy data cached — fetching from PD2Trader...")
+        try:
+            t = threading.Thread(target=_run_economy_background, daemon=True)
+            t.start()
+        except Exception as exc:
+            logger.warning("Auto economy fetch failed: %s", exc)
+
     server = HTTPServer(("127.0.0.1", port), DashboardHandler)
     logger.info("PD2 Dashboard server running at http://localhost:%d", port)
 
