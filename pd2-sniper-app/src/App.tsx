@@ -496,45 +496,19 @@ function SettingsTab() {
     }
   };
 
-  const [loginStatus, setLoginStatus] = useState<"idle" | "logging-in" | "success" | "error">("idle");
-  const [loginError, setLoginError] = useState("");
+  const [loginStatus, setLoginStatus] = useState<"idle" | "copied" | "error">("idle");
 
-  const autoLogin = async () => {
-    setLoginStatus("logging-in");
-    setLoginError("");
+  const copyTokenSnippet = async () => {
+    // Copy a JS snippet that extracts the token and copies it to clipboard
+    const snippet = `void(async()=>{const t=localStorage.getItem('pd2-token')||localStorage.getItem('pd2Token');if(t){await navigator.clipboard.writeText(t);alert('Token copied! Paste it into PD2 Sniper Settings.')}else{alert('No token found — are you logged in to PD2?')}})()`;
     try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      const result = await invoke<string>('open_pd2_login');
-      // Strip surrounding quotes from localStorage value
-      const cleanToken = result.replace(/^"|"$/g, '');
-      setToken(cleanToken);
-      // Auto-save to server
-      try {
-        const res = await fetch(`${API}/api/settings/token`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: cleanToken }),
-        });
-        if (res.ok) {
-          setSaved(true);
-          setLoginStatus("success");
-          setTimeout(() => { setSaved(false); setLoginStatus("idle"); }, 3000);
-        } else {
-          setLoginStatus("error");
-          setLoginError("Token captured but server save failed. Paste it manually below.");
-        }
-      } catch {
-        setLoginStatus("error");
-        setLoginError("Token captured but server unreachable. Paste it manually below.");
-      }
-    } catch (e: any) {
+      await navigator.clipboard.writeText(snippet);
+      setLoginStatus("copied");
+      setTimeout(() => setLoginStatus("idle"), 3000);
+      // Open PD2 in browser
+      openAuthPage();
+    } catch {
       setLoginStatus("error");
-      const msg = e?.toString() || '';
-      if (msg.includes('closed without')) {
-        setLoginError("Window closed without capturing token. Log in first, then click Capture.");
-      } else {
-        setLoginError("Auto-login unavailable — use manual method below");
-      }
     }
   };
 
@@ -559,13 +533,11 @@ function SettingsTab() {
         <div className="setting-actions" style={{ marginBottom: 12 }}>
           <button
             className="btn btn-gold"
-            onClick={autoLogin}
-            disabled={loginStatus === "logging-in"}
+            onClick={copyTokenSnippet}
           >
-            {loginStatus === "logging-in" ? "⏳ Waiting for login..." : "🔐 Auto-Login to PD2"}
+            {loginStatus === "copied" ? "✅ Snippet copied!" : "📋 Copy Token Extractor"}
           </button>
-          {loginStatus === "success" && <span className="saved-msg">✅ Token captured & saved!</span>}
-          {loginStatus === "error" && <span className="error-msg">{loginError}</span>}
+          {loginStatus === "error" && <span className="error-msg">Failed to copy — use manual method below</span>}
         </div>
         <details className="manual-token-section">
           <summary>Manual token entry</summary>
@@ -592,12 +564,12 @@ function SettingsTab() {
             {tokenStatus === "invalid" && <span className="error-msg">❌ Invalid token</span>}
           </div>
           <p className="hint" style={{ marginTop: 8 }}>
-            How to get your token manually:<br />
-            1. Click "Open PD2" above<br />
-            2. Log in to your PD2 account<br />
-            3. Press F12 → Console tab<br />
-            4. Type: <code>localStorage.getItem('pd2-token')</code><br />
-            5. Copy the token value and paste above
+            <strong>Quickest way:</strong><br />
+            1. Click "📋 Copy Token Extractor" above<br />
+            2. PD2 opens in your browser — log in<br />
+            3. Press F12 → Console tab → paste → press Enter<br />
+            4. Token auto-copied! Come back here and paste into the box below<br />
+            5. Click "Save Token"
           </p>
         </details>
       </div>
