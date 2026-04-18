@@ -46,17 +46,45 @@ What it does:
 python scripts/sniper.py scan --filter-id 69e0c58f9fc33c4bc7fe0483 --max-price 0.5 --max-pages 3
 ```
 
-### 3) Alert-Then-Offer Flow
-1. Run an operator scan.
-2. Send the top deal card to the user.
-3. Wait for the user to reply with just an amount like `0.4`.
-4. Submit that amount against the pending deal.
+### 3) Alert-Then-Offer Flow (PRIMARY WORKFLOW FOR CHAT)
 
-Operator scan (best for chat workflow):
-```bash
-python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1 --top 3
+**CRITICAL: The agent IS the notification layer.** The CLI only prints to stdout — it does NOT message the user. The agent must read the JSON output, format deals for the chat platform, and send them to the user.
+
+#### Step-by-step:
+1. **Run operator-scan** — captures JSON with ranked deals to `scan_results.json`.
+2. **Parse the JSON output** — read the structured result from the CLI.
+3. **Format deals for chat** — for each deal, send a concise card with:
+   - Item name, price (HR), seller, score
+   - Key stats/corruptions (if any)
+   - Direct link
+   - Screenshot image (attach via `MEDIA:<path>` if available)
+   - Economy value comparison (if available)
+4. **Message the user** — send each deal as a separate message to the chat channel (WhatsApp/Discord/etc).
+5. **Ask what they want to offer** — explicitly prompt: "Reply with an HR amount (e.g. `0.3`) to make an offer, or skip."
+6. **Wait for user reply** — when the user sends a number, run `reply-offer <amount>`.
+7. **Confirm the result** — tell the user if the offer went through or failed.
+
+#### WhatsApp formatting (no markdown tables, no headers):
 ```
-This prints compact operator-ready deal cards and stores the top result as the current pending confirmation target.
+🎯 DEAL #1 (Score: 12.4)
+⭐ Griffon's Eye
+💰 Asking: 0.4 HR | 💎 Econ: 1.2 HR (66% off)
+👤 Seller: someguy
+🔗 https://www.projectdiablo2.com/market/listing/abc123
+
+Stats:
+- +1 Lightning Skills
+- 20% FCR
+- +15% Light Damage
+
+Reply with an HR amount (e.g. 0.3) to offer, or skip.
+```
+
+Operator scan:
+```bash
+python scripts/sniper.py operator-scan --max-price 0.5 --filters-per-cycle 12 --daily-limit 200 --max-pages 1 --top 5
+```
+This stores the top result as the current pending confirmation target and writes structured JSON to `scan_results.json`.
 
 Show the pending deal again:
 ```bash
@@ -78,7 +106,7 @@ One-click confirm using the last scan result:
 python scripts/sniper.py confirm --deal-index 0 --amount 0.3
 ```
 
-The sniper does **not** auto-price. It alerts, ranks, screenshots, and waits for the user to choose the number.
+The sniper does **not** auto-price. It alerts, ranks, screenshots, and waits for the user to choose the number. **The agent is responsible for delivering these alerts to the user via the active chat channel.**
 
 ## Other Commands
 

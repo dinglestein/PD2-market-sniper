@@ -8,7 +8,9 @@ from urllib.parse import urljoin
 
 from config import MARKET_URL, SITE_ROOT
 
-PRICE_RE = re.compile(r"([\d.]+)\s*HR", re.IGNORECASE)
+PRICE_HR_RE = re.compile(r"([\d.]+)\s*HR", re.IGNORECASE)
+PRICE_BARE_RE = re.compile(r"Price:\s*([\d.]+)", re.IGNORECASE)
+PRICE_WSS_RE = re.compile(r"([\d.]+)\s*/\s*\d+\s*wss", re.IGNORECASE)
 ID_RE = re.compile(r"^[0-9a-f]{24}$", re.IGNORECASE)
 
 
@@ -17,15 +19,34 @@ def utc_now_iso() -> str:
 
 
 def parse_price_to_hr(value: Any) -> float | None:
+    """Extract HR price from various formats.
+    
+    Handles:
+    - "2 HR" or "0.5hr" -> 2.0 / 0.5
+    - "Price: 2" or "Price: 0.25" -> bare number after Price:
+    - "0.25 / 12 wss" -> 0.25 (HR portion of mixed currency)
+    - Plain number "1.5" or 2 -> returned directly
+    """
     if value is None:
         return None
     if isinstance(value, (int, float)):
         return float(value)
     text = str(value).strip().replace(",", "")
-    match = PRICE_RE.search(text)
+    # Explicit "HR" suffix
+    match = PRICE_HR_RE.search(text)
     if match:
         return float(match.group(1))
-    if text.replace(".", "", 1).isdigit():
+    # "Price: X" pattern (common in DOM text)
+    match = PRICE_BARE_RE.search(text)
+    if match:
+        return float(match.group(1))
+    # "X / N wss" mixed currency (HR is the first number)
+    match = PRICE_WSS_RE.search(text)
+    if match:
+        return float(match.group(1))
+    # Plain number
+    stripped = text.replace(".", "", 1)
+    if stripped.isdigit():
         return float(text)
     return None
 

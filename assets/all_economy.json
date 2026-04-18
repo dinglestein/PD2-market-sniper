@@ -1,106 +1,26 @@
 {
-  "refreshed_at": "2026-04-17T12:28:14.706385+00:00",
+  "refreshed_at": "2026-04-17T18:24:41.354464+00:00",
   "sources": {
     "currency": {
       "url": "https://pd2.tools/economy/currency",
-      "values": {
-        "Token of Absolution": 0.75,
-        "Twisted Essence of Suffering": 0.02,
-        "Charged Essence of Hatred": 0.25,
-        "Burning Essence of Terror": 0.07,
-        "Festering Essence of Destruction": 0.25,
-        "WIKI": 0.25,
-        "Larzuk's Puzzlebox": 0.75,
-        "Catalyst Shard": 0.2,
-        "Demonic Cube": 1.25,
-        "Larzuk's Puzzlepiece": 0.05
-      },
-      "value_count": 10
+      "error": "Page.inner_text: Target page, context or browser has been closed",
+      "values": {}
     },
     "runes": {
       "url": "https://pd2.tools/economy/runes",
-      "values": {
-        "Zod Rune": 4.5,
-        "Cham Rune": 2.25,
-        "Jah Rune": 2.0,
-        "Ber Rune": 3.0,
-        "Sur Rune": 1.5,
-        "Lo Rune": 1.0,
-        "Ohm Rune": 0.75,
-        "WIKI": 0.75
-      },
-      "value_count": 8
+      "error": "Page.goto: Target page, context or browser has been closed",
+      "values": {}
     },
     "ubers": {
       "url": "https://pd2.tools/economy/ubers",
-      "values": {
-        "Tainted Worldstone Shard": 0.65,
-        "Black Soulstone": 0.35,
-        "Pure Demonic Essence": 0.04,
-        "Prime Evil Soul": 0.45,
-        "Trang-Oul's Jawbone": 0.05,
-        "Splinter of the Void": 0.5,
-        "Hellfire Ashes": 0.45,
-        "Relic of the Ancients": 0.2,
-        "Sigil of Madawc": 0.07,
-        "Sigil of Talic": 0.1,
-        "Sigil of Korlic": 0.04,
-        "Demonic Insignia": 0.5,
-        "Talisman of Transgression": 0.25,
-        "Flesh of Malic": 0.1
-      },
-      "value_count": 14
+      "error": "Page.goto: Target page, context or browser has been closed",
+      "values": {}
     },
     "maps": {
       "url": "https://pd2.tools/economy/maps",
-      "values": {
-        "Blood Moon Map": 0.1,
-        "Outer Void": 0.5,
-        "Imperial Palace": 1.25,
-        "Fallen Gardens": 1.25,
-        "Warlord of Blood": 0.4,
-        "Zhar's Sanctum": 0.15
-      },
-      "value_count": 6
+      "error": "Page.goto: Target page, context or browser has been closed",
+      "values": {}
     }
   },
-  "values": {
-    "Token of Absolution": 0.75,
-    "Twisted Essence of Suffering": 0.02,
-    "Charged Essence of Hatred": 0.25,
-    "Burning Essence of Terror": 0.07,
-    "Festering Essence of Destruction": 0.25,
-    "WIKI": 0.75,
-    "Larzuk's Puzzlebox": 0.75,
-    "Catalyst Shard": 0.2,
-    "Demonic Cube": 1.25,
-    "Larzuk's Puzzlepiece": 0.05,
-    "Zod Rune": 4.5,
-    "Cham Rune": 2.25,
-    "Jah Rune": 2.0,
-    "Ber Rune": 3.0,
-    "Sur Rune": 1.5,
-    "Lo Rune": 1.0,
-    "Ohm Rune": 0.75,
-    "Tainted Worldstone Shard": 0.65,
-    "Black Soulstone": 0.35,
-    "Pure Demonic Essence": 0.04,
-    "Prime Evil Soul": 0.45,
-    "Trang-Oul's Jawbone": 0.05,
-    "Splinter of the Void": 0.5,
-    "Hellfire Ashes": 0.45,
-    "Relic of the Ancients": 0.2,
-    "Sigil of Madawc": 0.07,
-    "Sigil of Talic": 0.1,
-    "Sigil of Korlic": 0.04,
-    "Demonic Insignia": 0.5,
-    "Talisman of Transgression": 0.25,
-    "Flesh of Malic": 0.1,
-    "Blood Moon Map": 0.1,
-    "Outer Void": 0.5,
-    "Imperial Palace": 1.25,
-    "Fallen Gardens": 1.25,
-    "Warlord of Blood": 0.4,
-    "Zhar's Sanctum": 0.15
-  }
+  "values": {}
 }

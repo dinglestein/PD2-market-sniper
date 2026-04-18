@@ -90,21 +90,43 @@ def _refresh_dashboard() -> None:
         logger.error("Dashboard refresh failed: %s", exc)
 
 
-NOTIFY_FILE = ASSETS_DIR / "_scan_notify.json"
+GATEWAY_URL = "http://127.0.0.1:18789/v1/chat/completions"
 
 
 def _notify_agent(message: str) -> None:
-    """Write a notification file for the OpenClaw agent to pick up."""
+    """Send scan results to the OpenClaw agent via the gateway HTTP API.
+
+    Falls back to writing a notification file if the gateway is unreachable.
+    """
     try:
-        payload = {
-            "pending": True,
-            "message": message,
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        }
-        NOTIFY_FILE.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-        logger.info("Agent notification written")
+        import urllib.request
+        import urllib.error
+
+        payload = json.dumps({
+            "model": "openclaw/default",
+            "messages": [{"role": "user", "content": message}],
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            GATEWAY_URL,
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            logger.info("Gateway notification sent (HTTP %d)", resp.status)
     except Exception as exc:
-        logger.warning("Could not write notification: %s", exc)
+        logger.warning("Gateway notification failed (%s), writing file fallback", exc)
+        try:
+            notify_file = ASSETS_DIR / "_scan_notify.json"
+            payload = {
+                "pending": True,
+                "message": message,
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            }
+            notify_file.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        except Exception as exc2:
+            logger.warning("File notification also failed: %s", exc2)
 
 
 def _run_scan_background() -> None:
@@ -125,16 +147,16 @@ def _run_scan_background() -> None:
             deals_output = result.stdout.strip()
             if deals_output:
                 _notify_agent(
-                    "PD2 market scan completed from dashboard. Results:\n\n" + deals_output
+                    "PD2 scan notification check: A market scan triggered from the dashboard just completed. "
+                    "Read C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\scan_results.json "
+                    "and present the deals to the user. For each deal, show the item name, stats, "
+                    "listed price, estimated value, and ask for an offer amount. "
+                    "Do NOT reply HEARTBEAT_OK — present the deals now.\n\n" + deals_output
                 )
         else:
             logger.error("Scan failed (exit %d): %s", result.returncode, result.stderr[:500])
-            _notify_agent(
-                "PD2 market scan from dashboard FAILED. Error: " + result.stderr[:300]
-            )
     except Exception as exc:
         logger.error("Scan failed: %s", exc)
-        _notify_agent("PD2 market scan from dashboard FAILED: " + str(exc))
     finally:
         with _scan_lock:
             _scan_running = False

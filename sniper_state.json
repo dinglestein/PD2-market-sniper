@@ -1,564 +1,81 @@
 {
-  "created_at": null,
-  "daily_scan": {
-    "date": "2026-04-17",
-    "count": 8
-  },
-  "rotation_offset": 3,
-  "recent_scans": [
-    {
-      "timestamp": "2026-04-17T08:11:32.845175+00:00",
-      "filters_scanned": 1,
-      "deals_found": 0,
-      "daily_filter_count": 1,
-      "max_price_hr": 999.0,
-      "deals": []
-    },
-    {
-      "timestamp": "2026-04-17T08:15:55.145718+00:00",
-      "filters_scanned": 3,
-      "deals_found": 1,
-      "daily_filter_count": 4,
-      "max_price_hr": 999.0,
-      "deals": [
-        {
-          "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-          "filter_name": "passive glove +2-20p",
-          "item_name": "VAMPIREBONE GLOVES",
-          "price_hr": 2.0,
-          "seller_name": "VAMPIREBONE GLOVES",
-          "listing_id": null,
-          "listing_url": "https://www.projectdiablo2.com/market?filter=69e0b9fd9fc33c4bc7fe043a",
-          "posted_at": null,
-          "stats": [],
-          "corruption": [],
-          "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-          "raw": {
-            "item_name": "VAMPIREBONE GLOVES",
-            "price_hr": 2.0,
-            "seller_name": "VAMPIREBONE GLOVES",
-            "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-          },
-          "captured_at": "2026-04-17T08:15:50.261351+00:00",
-          "economy_value_hr": null,
-          "recent_offer_count": 0,
-          "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-          "score": 2.0
-        }
-      ]
-    },
-    {
-      "timestamp": "2026-04-17T08:18:06.484748+00:00",
-      "filters_scanned": 1,
-      "deals_found": 1,
-      "daily_filter_count": 5,
-      "max_price_hr": 999.0,
-      "deals": [
-        {
-          "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-          "filter_name": "passive glove +2-20p",
-          "item_name": "Price: 2 HR",
-          "price_hr": 2.0,
-          "seller_name": "tsetso91",
-          "listing_id": null,
-          "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-          "posted_at": "1 day ago",
-          "stats": [],
-          "corruption": [],
-          "text_preview": "Price: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-          "raw": {
-            "item_name": "Price: 2 HR",
-            "price_hr": 2.0,
-            "seller_name": "tsetso91",
-            "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-            "posted_at": "1 day ago",
-            "stats": [],
-            "corruption": [],
-            "description": "Price: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-          },
-          "captured_at": "2026-04-17T08:18:02.191252+00:00",
-          "economy_value_hr": null,
-          "recent_offer_count": 0,
-          "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-          "score": 2.0
-        }
-      ]
-    },
-    {
-      "timestamp": "2026-04-17T08:20:51.628871+00:00",
-      "filters_scanned": 1,
-      "deals_found": 1,
-      "daily_filter_count": 6,
-      "max_price_hr": 999.0,
-      "deals": [
-        {
-          "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-          "filter_name": "passive glove +2-20p",
-          "item_name": "Rare Vampirebone Gloves",
-          "price_hr": 171.0,
-          "seller_name": "© 2026 - Project Diablo 2",
-          "listing_id": null,
-          "listing_url": "https://www.projectdiablo2.com/market",
-          "posted_at": "1 day ago",
-          "stats": [
-            "Defense: 130",
-            "20% Increased Attack Speed",
-            "10% Chance to Pierce",
-            "+66 to Attack Rating",
-            "+1 to Minimum Fire Damage",
-            "98% Enhanced Defense",
-            "Repairs 1 Durability in 0.05 Seconds",
-            "Required Level: 47",
-            "Required Strength: 50"
-          ],
-          "corruption": [
-            "Corrupted"
-          ],
-          "text_preview": "171\n218\n0\nd1ngl3\nPROJECT DIABLO 2\nHOME\nTRADE\nGAME\nCOMMUNITY\nNEWS\nDONATE\nTRADE\nCREATE\nEXCHANGE\nSERVICES\nMANAGE\nOFFERS\nFAVORITES\nFILTERS\nARCHIVE\nVAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ sta",
-          "raw": {
-            "item_name": "Rare Vampirebone Gloves",
-            "price_hr": 171.0,
-            "seller_name": "© 2026 - Project Diablo 2",
-            "listing_url": "https://www.projectdiablo2.com/market",
-            "posted_at": "1 day ago",
-            "stats": [
-              "Defense: 130",
-              "20% Increased Attack Speed",
-              "10% Chance to Pierce",
-              "+66 to Attack Rating",
-              "+1 to Minimum Fire Damage",
-              "98% Enhanced Defense",
-              "Repairs 1 Durability in 0.05 Seconds",
-              "Required Level: 47",
-              "Required Strength: 50"
-            ],
-            "corruption": [
-              "Corrupted"
-            ],
-            "description": "171\n218\n0\nd1ngl3\nPROJECT DIABLO 2\nHOME\nTRADE\nGAME\nCOMMUNITY\nNEWS\nDONATE\nTRADE\nCREATE\nEXCHANGE\nSERVICES\nMANAGE\nOFFERS\nFAVORITES\nFILTERS\nARCHIVE\nVAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ sta"
-          },
-          "captured_at": "2026-04-17T08:20:47.742084+00:00",
-          "economy_value_hr": null,
-          "recent_offer_count": 0,
-          "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-          "score": 2.0
-        }
-      ]
-    },
-    {
-      "timestamp": "2026-04-17T08:25:17.439951+00:00",
-      "filters_scanned": 1,
-      "deals_found": 1,
-      "daily_filter_count": 7,
-      "max_price_hr": 999.0,
-      "deals": [
-        {
-          "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-          "filter_name": "passive glove +2-20p",
-          "item_name": "Rare Vampirebone Gloves",
-          "price_hr": 2.0,
-          "seller_name": "tsetso91",
-          "listing_id": null,
-          "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-          "posted_at": "1 day ago",
-          "stats": [
-            "20% Increased Attack Speed",
-            "10% Chance to Pierce",
-            "+66 to Attack Rating",
-            "+1 to Minimum Fire Damage",
-            "98% Enhanced Defense",
-            "Repairs 1 Durability in 0.05 Seconds",
-            "Required Level: 47",
-            "Required Strength: 50"
-          ],
-          "corruption": [
-            "Corrupted"
-          ],
-          "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-          "raw": {
-            "item_name": "Rare Vampirebone Gloves",
-            "price_hr": 2.0,
-            "seller_name": "tsetso91",
-            "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-            "posted_at": "1 day ago",
-            "stats": [
-              "20% Increased Attack Speed",
-              "10% Chance to Pierce",
-              "+66 to Attack Rating",
-              "+1 to Minimum Fire Damage",
-              "98% Enhanced Defense",
-              "Repairs 1 Durability in 0.05 Seconds",
-              "Required Level: 47",
-              "Required Strength: 50"
-            ],
-            "corruption": [
-              "Corrupted"
-            ],
-            "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-          },
-          "captured_at": "2026-04-17T08:25:12.634651+00:00",
-          "economy_value_hr": null,
-          "recent_offer_count": 0,
-          "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-          "score": 2.0
-        }
-      ]
-    },
-    {
-      "timestamp": "2026-04-17T08:50:52.822387+00:00",
-      "filters_scanned": 1,
-      "deals_found": 1,
-      "daily_filter_count": 8,
-      "max_price_hr": 999.0,
-      "deals": [
-        {
-          "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-          "filter_name": "passive glove +2-20p",
-          "item_name": "Rare Vampirebone Gloves",
-          "price_hr": 2.0,
-          "seller_name": "tsetso91",
-          "listing_id": null,
-          "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-          "posted_at": "1 day ago",
-          "stats": [
-            "20% Increased Attack Speed",
-            "10% Chance to Pierce",
-            "+66 to Attack Rating",
-            "+1 to Minimum Fire Damage",
-            "98% Enhanced Defense",
-            "Repairs 1 Durability in 0.05 Seconds"
-          ],
-          "corruption": [
-            "Corrupted"
-          ],
-          "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-          "raw": {
-            "item_name": "Rare Vampirebone Gloves",
-            "price_hr": 2.0,
-            "seller_name": "tsetso91",
-            "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-            "posted_at": "1 day ago",
-            "stats": [
-              "20% Increased Attack Speed",
-              "10% Chance to Pierce",
-              "+66 to Attack Rating",
-              "+1 to Minimum Fire Damage",
-              "98% Enhanced Defense",
-              "Repairs 1 Durability in 0.05 Seconds"
-            ],
-            "corruption": [
-              "Corrupted"
-            ],
-            "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-          },
-          "captured_at": "2026-04-17T08:50:48.480317+00:00",
-          "economy_value_hr": null,
-          "recent_offer_count": 0,
-          "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-          "score": 2.0
-        }
-      ]
-    }
-  ],
-  "recent_deals": [
-    {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "item_name": "VAMPIREBONE GLOVES",
-      "price_hr": 2.0,
-      "seller_name": "VAMPIREBONE GLOVES",
-      "listing_id": null,
-      "listing_url": "https://www.projectdiablo2.com/market?filter=69e0b9fd9fc33c4bc7fe043a",
-      "posted_at": null,
-      "stats": [],
-      "corruption": [],
-      "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-      "raw": {
-        "item_name": "VAMPIREBONE GLOVES",
-        "price_hr": 2.0,
-        "seller_name": "VAMPIREBONE GLOVES",
-        "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-      },
-      "captured_at": "2026-04-17T08:15:50.261351+00:00",
-      "economy_value_hr": null,
-      "recent_offer_count": 0,
-      "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-      "score": 2.0
-    },
-    {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "item_name": "Price: 2 HR",
-      "price_hr": 2.0,
-      "seller_name": "tsetso91",
-      "listing_id": null,
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-      "posted_at": "1 day ago",
-      "stats": [],
-      "corruption": [],
-      "text_preview": "Price: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-      "raw": {
-        "item_name": "Price: 2 HR",
-        "price_hr": 2.0,
-        "seller_name": "tsetso91",
-        "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-        "posted_at": "1 day ago",
-        "stats": [],
-        "corruption": [],
-        "description": "Price: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-      },
-      "captured_at": "2026-04-17T08:18:02.191252+00:00",
-      "economy_value_hr": null,
-      "recent_offer_count": 0,
-      "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-      "score": 2.0
-    },
-    {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "item_name": "Rare Vampirebone Gloves",
-      "price_hr": 171.0,
-      "seller_name": "© 2026 - Project Diablo 2",
-      "listing_id": null,
-      "listing_url": "https://www.projectdiablo2.com/market",
-      "posted_at": "1 day ago",
-      "stats": [
-        "Defense: 130",
-        "20% Increased Attack Speed",
-        "10% Chance to Pierce",
-        "+66 to Attack Rating",
-        "+1 to Minimum Fire Damage",
-        "98% Enhanced Defense",
-        "Repairs 1 Durability in 0.05 Seconds",
-        "Required Level: 47",
-        "Required Strength: 50"
-      ],
-      "corruption": [
-        "Corrupted"
-      ],
-      "text_preview": "171\n218\n0\nd1ngl3\nPROJECT DIABLO 2\nHOME\nTRADE\nGAME\nCOMMUNITY\nNEWS\nDONATE\nTRADE\nCREATE\nEXCHANGE\nSERVICES\nMANAGE\nOFFERS\nFAVORITES\nFILTERS\nARCHIVE\nVAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ sta",
-      "raw": {
-        "item_name": "Rare Vampirebone Gloves",
-        "price_hr": 171.0,
-        "seller_name": "© 2026 - Project Diablo 2",
-        "listing_url": "https://www.projectdiablo2.com/market",
-        "posted_at": "1 day ago",
-        "stats": [
-          "Defense: 130",
-          "20% Increased Attack Speed",
-          "10% Chance to Pierce",
-          "+66 to Attack Rating",
-          "+1 to Minimum Fire Damage",
-          "98% Enhanced Defense",
-          "Repairs 1 Durability in 0.05 Seconds",
-          "Required Level: 47",
-          "Required Strength: 50"
-        ],
-        "corruption": [
-          "Corrupted"
-        ],
-        "description": "171\n218\n0\nd1ngl3\nPROJECT DIABLO 2\nHOME\nTRADE\nGAME\nCOMMUNITY\nNEWS\nDONATE\nTRADE\nCREATE\nEXCHANGE\nSERVICES\nMANAGE\nOFFERS\nFAVORITES\nFILTERS\nARCHIVE\nVAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ sta"
-      },
-      "captured_at": "2026-04-17T08:20:47.742084+00:00",
-      "economy_value_hr": null,
-      "recent_offer_count": 0,
-      "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-      "score": 2.0
-    },
-    {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "item_name": "Rare Vampirebone Gloves",
-      "price_hr": 2.0,
-      "seller_name": "tsetso91",
-      "listing_id": null,
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-      "posted_at": "1 day ago",
-      "stats": [
-        "20% Increased Attack Speed",
-        "10% Chance to Pierce",
-        "+66 to Attack Rating",
-        "+1 to Minimum Fire Damage",
-        "98% Enhanced Defense",
-        "Repairs 1 Durability in 0.05 Seconds",
-        "Required Level: 47",
-        "Required Strength: 50"
-      ],
-      "corruption": [
-        "Corrupted"
-      ],
-      "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-      "raw": {
-        "item_name": "Rare Vampirebone Gloves",
-        "price_hr": 2.0,
-        "seller_name": "tsetso91",
-        "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-        "posted_at": "1 day ago",
-        "stats": [
-          "20% Increased Attack Speed",
-          "10% Chance to Pierce",
-          "+66 to Attack Rating",
-          "+1 to Minimum Fire Damage",
-          "98% Enhanced Defense",
-          "Repairs 1 Durability in 0.05 Seconds",
-          "Required Level: 47",
-          "Required Strength: 50"
-        ],
-        "corruption": [
-          "Corrupted"
-        ],
-        "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-      },
-      "captured_at": "2026-04-17T08:25:12.634651+00:00",
-      "economy_value_hr": null,
-      "recent_offer_count": 0,
-      "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-      "score": 2.0
-    },
-    {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "item_name": "Rare Vampirebone Gloves",
-      "price_hr": 2.0,
-      "seller_name": "tsetso91",
-      "listing_id": null,
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-      "posted_at": "1 day ago",
-      "stats": [
-        "20% Increased Attack Speed",
-        "10% Chance to Pierce",
-        "+66 to Attack Rating",
-        "+1 to Minimum Fire Damage",
-        "98% Enhanced Defense",
-        "Repairs 1 Durability in 0.05 Seconds"
-      ],
-      "corruption": [
-        "Corrupted"
-      ],
-      "text_preview": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)",
-      "raw": {
-        "item_name": "Rare Vampirebone Gloves",
-        "price_hr": 2.0,
-        "seller_name": "tsetso91",
-        "listing_url": "https://www.projectdiablo2.com/market/listing/69c672474cbbe44d1073af77",
-        "posted_at": "1 day ago",
-        "stats": [
-          "20% Increased Attack Speed",
-          "10% Chance to Pierce",
-          "+66 to Attack Rating",
-          "+1 to Minimum Fire Damage",
-          "98% Enhanced Defense",
-          "Repairs 1 Durability in 0.05 Seconds"
-        ],
-        "corruption": [
-          "Corrupted"
-        ],
-        "description": "VAMPIREBONE GLOVES\nRare Vampirebone Gloves\nDefense: 130\n\nCorrupted\n\n+2 to Passive and Magic Skills (Amazon Only)\n\n20% Increased Attack Speed\n\n10% Chance to Pierce\n\n+66 to Attack Rating\n\n+1 to Minimum Fire Damage\n\n98% Enhanced Defense\n\nRepairs 1 Durability in 0.05 Seconds\n\nRequired Level: 47\n\nRequired Strength: 50\n\nPrice: 2 HR\nOFFER\ntsetso91\ntsetso91\n[ stash ]\n1 day ago\n(softcore)(ladder)"
-      },
-      "captured_at": "2026-04-17T08:50:48.480317+00:00",
-      "economy_value_hr": null,
-      "recent_offer_count": 0,
-      "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-69e0b9fd9fc33c4bc7fe043a-0.png",
-      "score": 2.0
-    }
-  ],
-  "filters": {
-    "69411fadbf10a6a498b09ad3": {
-      "filter_id": "69411fadbf10a6a498b09ad3",
-      "filter_name": "highlords cbf pierce",
-      "scan_count": 1,
-      "empty_count": 1,
-      "hit_count": 0,
-      "deal_count": 0,
-      "last_seen_result_at": null,
-      "last_scan_at": "2026-04-17T08:11:29.428180+00:00",
-      "last_error": null
-    },
-    "69e0c58f9fc33c4bc7fe0483": {
-      "filter_id": "69e0c58f9fc33c4bc7fe0483",
-      "filter_name": "tombsong +skill",
-      "scan_count": 1,
-      "empty_count": 1,
-      "hit_count": 0,
-      "deal_count": 0,
-      "last_seen_result_at": null,
-      "last_scan_at": "2026-04-17T08:15:32.050840+00:00",
-      "last_error": null
-    },
-    "69e0ba2f9fc33c4bc7fe043c": {
-      "filter_id": "69e0ba2f9fc33c4bc7fe043c",
-      "filter_name": "passive GC +GF",
-      "scan_count": 1,
-      "empty_count": 1,
-      "hit_count": 0,
-      "deal_count": 0,
-      "last_seen_result_at": null,
-      "last_scan_at": "2026-04-17T08:15:41.466007+00:00",
-      "last_error": null
-    },
-    "69e0b9fd9fc33c4bc7fe043a": {
-      "filter_id": "69e0b9fd9fc33c4bc7fe043a",
-      "filter_name": "passive glove +2-20p",
-      "scan_count": 5,
-      "empty_count": 0,
-      "hit_count": 5,
-      "deal_count": 5,
-      "last_seen_result_at": "2026-04-17T08:50:50.532854+00:00",
-      "last_scan_at": "2026-04-17T08:50:50.532846+00:00",
-      "last_error": null
-    }
-  },
-  "last_scan_at": "2026-04-17T08:50:52.822443+00:00",
-  "last_economy_refresh_at": "2026-04-17T12:28:14.707066+00:00",
+  "daily_filter_count": 0,
+  "daily_reset_date": null,
+  "rotation_index": 0,
+  "filter_health": [],
+  "recent_scans": [],
   "pending_confirmation": {
-    "filter_id": "6539c93c3df75bcdae8150f9",
-    "filter_name": "CoA +skill 3os",
-    "item_name": "Unique Corona (3)",
-    "price_hr": 12.0,
-    "seller_name": "mch3551",
+    "filter_id": "6530cd7410db0dc1c4bcdaa1",
+    "filter_name": "metalgrid +skill",
+    "item_name": "Unique Amulet",
+    "price_hr": 55.0,
+    "seller_name": "mrlahey420",
     "listing_id": null,
-    "listing_url": "https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778",
-    "posted_at": null,
+    "listing_url": "https://www.projectdiablo2.com/market/listing/69ae424e9aa8b52ed7b76843",
+    "posted_at": "2 days ago",
     "stats": [
-      "Indestructible",
+      "Desecrated",
+      "Corrupt",
       "+1 to All Skills",
-      "30% Faster Hit Recovery",
-      "50% Reduced Curse Duration",
-      "50% Enhanced Defense",
-      "+132 Defense [100 - 150]",
-      "All Resistances +26% [20 - 30]",
-      "Physical Damage Taken Reduced by 14% [10 - 15]"
+      "+434 to Attack Rating [400 - 450]",
+      "+20 to Golem Mastery",
+      "+25 to Iron Golem",
+      "+309 Defense [300 - 350]",
+      "2% to Maximum Poison Resist",
+      "2% to Maximum Cold Resist",
+      "2% to Maximum Lightning Resist",
+      "2% to Maximum Fire Resist",
+      "All Resistances +25% [25 - 35]",
+      "Attacker Takes Damage of 840 [750 - 1000]",
+      "Level 12 Iron Maiden (20/20 Charges)"
     ],
     "corruption": [
       "Corrupted"
     ],
-    "text_preview": "CROWN OF AGES\nUnique Corona (3)\nDefense: 381\n\nCorrupted\n\nIndestructible\n\n+1 to All Skills\n\n30% Faster Hit Recovery\n\n50% Reduced Curse Duration\n\n50% Enhanced Defense\n\n+132 Defense [100 - 150]\n\nAll Resistances +26% [20 - 30]\n\nPhysical Damage Taken Reduced by 14% [10 - 15]\n\nRequired Level: 82\n\nRequired Strength: 174\n\nPrice: 12 HR\nOFFER\nmch3551\nmch3551\n[ stash ]\nabout 19 hours ago\n(softcore)(ladder)",
+    "text_preview": "METALGRID\nUnique Amulet\n\nDesecrated\n\nCorrupted\n\nCorrupt\n\n+1 to All Skills\n\n+434 to Attack Rating [400 - 450]\n\n+20 to Golem Mastery\n\n+25 to Iron Golem\n\n+309 Defense [300 - 350]\n\n2% to Maximum Poison Resist\n\n2% to Maximum Cold Resist\n\n2% to Maximum Lightning Resist\n\n2% to Maximum Fire Resist\n\nAll Resistances +25% [25 - 35]\n\nAttacker Takes Damage of 840 [750 - 1000]\n\nLevel 12 Iron Maiden (20/20 Charges)\n\nRequired Level: 81\n\nPrice: 55\nOFFER\nmrlahey420\nmrlahey420\n[ SamsquanchIIII ]\n2 days ago\n(softco",
     "raw": {
-      "item_name": "Unique Corona (3)",
-      "price_hr": 12.0,
-      "seller_name": "mch3551",
-      "listing_url": "https://www.projectdiablo2.com/market/listing/69c91b41a4f06b0a32f9b778",
-      "posted_at": null,
+      "item_name": "Unique Amulet",
+      "price_hr": 55.0,
+      "seller_name": "mrlahey420",
+      "listing_url": "https://www.projectdiablo2.com/market/listing/69ae424e9aa8b52ed7b76843",
+      "posted_at": "2 days ago",
       "stats": [
-        "Indestructible",
+        "Desecrated",
+        "Corrupt",
         "+1 to All Skills",
-        "30% Faster Hit Recovery",
-        "50% Reduced Curse Duration",
-        "50% Enhanced Defense",
-        "+132 Defense [100 - 150]",
-        "All Resistances +26% [20 - 30]",
-        "Physical Damage Taken Reduced by 14% [10 - 15]"
+        "+434 to Attack Rating [400 - 450]",
+        "+20 to Golem Mastery",
+        "+25 to Iron Golem",
+        "+309 Defense [300 - 350]",
+        "2% to Maximum Poison Resist",
+        "2% to Maximum Cold Resist",
+        "2% to Maximum Lightning Resist",
+        "2% to Maximum Fire Resist",
+        "All Resistances +25% [25 - 35]",
+        "Attacker Takes Damage of 840 [750 - 1000]",
+        "Level 12 Iron Maiden (20/20 Charges)"
       ],
       "corruption": [
         "Corrupted"
       ],
-      "description": "CROWN OF AGES\nUnique Corona (3)\nDefense: 381\n\nCorrupted\n\nIndestructible\n\n+1 to All Skills\n\n30% Faster Hit Recovery\n\n50% Reduced Curse Duration\n\n50% Enhanced Defense\n\n+132 Defense [100 - 150]\n\nAll Resistances +26% [20 - 30]\n\nPhysical Damage Taken Reduced by 14% [10 - 15]\n\nRequired Level: 82\n\nRequired Strength: 174\n\nPrice: 12 HR\nOFFER\nmch3551\nmch3551\n[ stash ]\nabout 19 hours ago\n(softcore)(ladder)"
+      "description": "METALGRID\nUnique Amulet\n\nDesecrated\n\nCorrupted\n\nCorrupt\n\n+1 to All Skills\n\n+434 to Attack Rating [400 - 450]\n\n+20 to Golem Mastery\n\n+25 to Iron Golem\n\n+309 Defense [300 - 350]\n\n2% to Maximum Poison Resist\n\n2% to Maximum Cold Resist\n\n2% to Maximum Lightning Resist\n\n2% to Maximum Fire Resist\n\nAll Resistances +25% [25 - 35]\n\nAttacker Takes Damage of 840 [750 - 1000]\n\nLevel 12 Iron Maiden (20/20 Charges)\n\nRequired Level: 81\n\nPrice: 55\nOFFER\nmrlahey420\nmrlahey420\n[ SamsquanchIIII ]\n2 days ago\n(softco"
     },
-    "captured_at": "2026-04-17T12:36:22.687255+00:00",
+    "captured_at": "2026-04-18T04:17:31.410284+00:00",
     "page": 1,
     "economy_value_hr": null,
     "recent_offer_count": 0,
-    "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-6539c93c3df75bcdae8150f9-p1-0.png",
+    "screenshot": "C:\\Users\\jding\\.agents\\skills\\pd2-market-sniper\\screenshots\\deal-6530cd7410db0dc1c4bcdaa1-p1-0.png",
     "score": 17.0
-  }
+  },
+  "last_economy_refresh": null,
+  "created_at": "2026-04-18T04:06:10.261728+00:00",
+  "daily_scan": {
+    "date": null,
+    "count": 0
+  },
+  "rotation_offset": 0,
+  "recent_deals": [],
+  "filters": {},
+  "last_scan_at": null,
+  "last_economy_refresh_at": null
 }
