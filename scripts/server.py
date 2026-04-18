@@ -419,7 +419,7 @@ def serve(port: int, open_browser: bool = True) -> None:
     if not econ_file.exists():
         logger.info("No economy data cached — fetching from PD2Trader...")
         try:
-            t = threading.Thread(target=_run_economy_background, daemon=True)
+            t = threading.Thread(target=_run_economy_refresh_background, daemon=True)
             t.start()
         except Exception as exc:
             logger.warning("Auto economy fetch failed: %s", exc)
