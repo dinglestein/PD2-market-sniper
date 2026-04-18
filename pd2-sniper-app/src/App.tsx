@@ -519,7 +519,7 @@ function SettingsTab() {
 
   const copyTokenSnippet = async () => {
     // Copy a simple one-liner that shows the token and copies it
-    const snippet = `copy(localStorage.getItem('pd2Token')||localStorage.getItem('pd2-token')||localStorage.getItem('token'))`;
+    const snippet = `copy(localStorage.getItem('pd2-token'))`;
     try {
       await navigator.clipboard.writeText(snippet);
       setLoginStatus("copied");
