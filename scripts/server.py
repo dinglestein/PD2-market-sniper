@@ -242,6 +242,16 @@ class DashboardHandler(BaseHTTPRequestHandler):
             if token_file.exists():
                 token = token_file.read_text(encoding="utf-8").strip()
             self._send_json({"token": token})
+        elif path == "/api/offer-status":
+            try:
+                from offers import get_my_outgoing_offers, get_my_incoming_offers
+                self._send_json({
+                    "outgoing": get_my_outgoing_offers() or [],
+                    "incoming": get_my_incoming_offers() or [],
+                })
+            except Exception as exc:
+                logger.warning("Offer status failed: %s", exc)
+                self._send_json({"outgoing": [], "incoming": []})
         else:
             # Serve screenshots and other assets relative to skill dir
             skill_dir = ASSETS_DIR.parent
