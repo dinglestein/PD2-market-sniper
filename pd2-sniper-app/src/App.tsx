@@ -392,8 +392,15 @@ function SettingsTab() {
     }
   };
 
-  const openAuthPage = () => {
-    window.open("https://www.projectdiablo2.com/auth", "_blank");
+  const openAuthPage = async () => {
+    // Use Tauri shell to open external URLs
+    try {
+      const { open } = await import('@tauri-apps/plugin-shell');
+      await open('https://www.projectdiablo2.com/auth');
+    } catch {
+      // Fallback for non-Tauri environments (dev/browser)
+      window.open('https://www.projectdiablo2.com/auth', '_blank');
+    }
   };
 
   return (

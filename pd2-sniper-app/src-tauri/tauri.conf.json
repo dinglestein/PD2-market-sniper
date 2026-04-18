@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicegui/tauri-v2/main/tooling/cli/schema.json",
   "productName": "PD2 Market Sniper",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "identifier": "com.dinglestein.pd2-sniper",
   "build": {
     "beforeDevCommand": "npm run dev",
