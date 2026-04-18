@@ -205,8 +205,14 @@ pub fn run() {
             if let tauri::WindowEvent::Destroyed = event {
                 if let Ok(mut server) = PYTHON_SERVER.lock() {
                     if let Some(ref mut child) = *server {
+                        let pid = child.id();
+                        // Kill the process tree (parent + children)
+                        let _ = std::process::Command::new("taskkill")
+                            .args(["/PID", &pid.to_string(), "/T", "/F"])
+                            .creation_flags(0x08000000)
+                            .output();
                         let _ = child.kill();
-                        println!("Python server stopped");
+                        println!("Python server stopped (pid {})", pid);
                     }
                 }
             }
