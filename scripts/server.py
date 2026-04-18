@@ -284,6 +284,14 @@ class DashboardHandler(BaseHTTPRequestHandler):
             except Exception as exc:
                 self._send_json({"ok": False, "error": str(exc)}, 500)
 
+        elif path == "/api/scan-stop":
+            with _scan_lock:
+                if not _scan_running:
+                    self._send_json({"ok": False, "error": "No scan running"}, 409)
+                    return
+                _scan_running = False
+            self._send_json({"ok": True, "message": "Scan stopped"})
+
         elif path == "/api/refresh-dashboard":
             _refresh_dashboard()
             self._send_json({"ok": True, "message": "Dashboard refreshed"})

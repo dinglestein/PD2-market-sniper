@@ -41,9 +41,5 @@
       }
     }
   },
-  "plugins": {
-    "notification": {
-      "all": true
-    }
-  }
+  "plugins": {}
 }

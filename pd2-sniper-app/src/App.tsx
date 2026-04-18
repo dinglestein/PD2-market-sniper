@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 
 // Backend API base URL (Python server on port 8420)
@@ -38,54 +38,115 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"deals" | "economy" | "offers">("deals");
   const [offerAmounts, setOfferAmounts] = useState<Record<number, string>>({});
   const [selectedDeal, setSelectedDeal] = useState<number | null>(null);
+  const [serverStarting, setServerStarting] = useState(true);
+  const scanPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Poll server status
   useEffect(() => {
+    let attempts = 0;
     const poll = async () => {
       try {
         const res = await fetch(`${API}/api/status`);
-        if (res.ok) setStatus(await res.json());
+        if (res.ok) {
+          const data = await res.json();
+          setStatus(data);
+          if (data.scan_running) {
+            setLoading(true);
+          }
+          setServerStarting(false);
+        }
       } catch {
         setStatus(null);
+        attempts++;
+        // Keep trying for up to 30 seconds (server might be starting)
+        if (attempts > 30) setServerStarting(false);
       }
     };
     poll();
-    const id = setInterval(poll, 5000);
+    const id = setInterval(poll, 3000);
     return () => clearInterval(id);
   }, []);
 
   const loadDeals = useCallback(async () => {
     try {
       await fetch(`${API}/api/refresh-dashboard`, { method: "POST" });
-      // Then load scan_results.json via our server
-      const dataRes = await fetch(`${API}/scan_results.json`);
-      if (dataRes.ok) {
+      const dataRes = await fetch(`${API}/assets/scan_results.json`);
+      if (!dataRes.ok) {
+        // Try alternate path
+        const altRes = await fetch(`${API}/scan_results.json`);
+        if (altRes.ok) {
+          const data = await altRes.json();
+          setDeals(data.deals || []);
+          return;
+        }
+      } else {
         const data = await dataRes.json();
         setDeals(data.deals || []);
+        return;
       }
-    } catch (exc) {
-      console.error("Failed to load deals:", exc);
+      // Final fallback: try reading directly
+      const dataRes2 = await fetch(`${API}/api/deals`);
+      if (dataRes2.ok) {
+        const data = await dataRes2.json();
+        setDeals(data.deals || []);
+      }
+    } catch {
+      // server not available
     }
   }, []);
 
   const loadEconomy = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/all_economy.json`);
-      if (res.ok) {
-        const data = await res.json();
-        setEconomy(data);
+      // Try multiple paths to find economy data
+      const paths = [
+        `${API}/assets/all_economy.json`,
+        `${API}/all_economy.json`,
+      ];
+      for (const url of paths) {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.values && Object.keys(data.values).length > 0) {
+            setEconomy(data);
+            return;
+          }
+        }
       }
-    } catch (exc) {
-      console.error("Failed to load economy:", exc);
+    } catch {
+      // server not available
     }
   }, []);
 
   useEffect(() => {
-    loadDeals();
-    loadEconomy();
-  }, [loadDeals, loadEconomy]);
+    if (status) {
+      loadDeals();
+      loadEconomy();
+    }
+  }, [status, loadDeals, loadEconomy]);
+
+  // Cleanup scan poll on unmount
+  useEffect(() => {
+    return () => {
+      if (scanPollRef.current) clearInterval(scanPollRef.current);
+    };
+  }, []);
 
   const handleScan = async () => {
+    if (loading) {
+      // Stop the scan
+      try {
+        await fetch(`${API}/api/scan-stop`, { method: "POST" });
+        setLoading(false);
+        if (scanPollRef.current) {
+          clearInterval(scanPollRef.current);
+          scanPollRef.current = null;
+        }
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -93,13 +154,16 @@ export default function App() {
       const data = await res.json();
       if (!data.ok) {
         setError(data.error || "Scan failed");
+        setLoading(false);
+        return;
       }
       // Poll until scan completes
-      const checkDone = setInterval(async () => {
+      scanPollRef.current = setInterval(async () => {
         try {
           const s = await (await fetch(`${API}/api/status`)).json();
           if (!s.scan_running) {
-            clearInterval(checkDone);
+            if (scanPollRef.current) clearInterval(scanPollRef.current);
+            scanPollRef.current = null;
             setLoading(false);
             await loadDeals();
           }
@@ -116,10 +180,17 @@ export default function App() {
   const handleEconomyRefresh = async () => {
     try {
       await fetch(`${API}/api/economy-refresh`, { method: "POST" });
-      // Wait a bit then reload
-      setTimeout(loadEconomy, 5000);
-    } catch (exc) {
-      console.error("Economy refresh failed:", exc);
+      // Poll for economy data to refresh
+      let attempts = 0;
+      const checkEcon = setInterval(async () => {
+        attempts++;
+        await loadEconomy();
+        if (economy && economy.refreshed_at || attempts > 20) {
+          clearInterval(checkEcon);
+        }
+      }, 2000);
+    } catch {
+      // ignore
     }
   };
 
@@ -167,13 +238,19 @@ export default function App() {
       <header className="header">
         <div className="header-left">
           <h1 className="logo">🎯 PD2 Market Sniper</h1>
-          <span className={`status-dot ${status ? "online" : "offline"}`} />
-          <span className="status-text">{status ? "Server Online" : "Server Offline"}</span>
+          <span className={`status-dot ${status ? "online" : serverStarting ? "starting" : "offline"}`} />
+          <span className="status-text">
+            {serverStarting ? "Starting Server..." : status ? "Server Online" : "Server Offline"}
+          </span>
         </div>
         <div className="header-actions">
-          <button className="btn btn-gold" onClick={handleScan} disabled={loading || !status}>
+          <button
+            className={`btn ${loading ? "btn-stop" : "btn-gold"}`}
+            onClick={handleScan}
+            disabled={!status && !loading}
+          >
             {loading ? (
-              <><span className="spinner" /> Scanning...</>
+              <><span className="spinner-red" /> ⏹ Stop Scan</>
             ) : (
               "🔍 Scan Now"
             )}
@@ -201,7 +278,7 @@ export default function App() {
           Deals {deals.length > 0 && <span className="badge">{deals.length}</span>}
         </button>
         <button className={`tab ${activeTab === "economy" && "active"}`} onClick={() => setActiveTab("economy")}>
-          Economy
+          Economy {economy && <span className="badge">{Object.keys(economy.values).length}</span>}
         </button>
         <button className={`tab ${activeTab === "offers" && "active"}`} onClick={() => setActiveTab("offers")}>
           Offers
@@ -210,7 +287,23 @@ export default function App() {
 
       {/* Content */}
       <main className="content">
-        {activeTab === "deals" && (
+        {!status && !serverStarting && (
+          <div className="empty-state">
+            <div className="empty-icon">🔌</div>
+            <p>Server Offline</p>
+            <p className="hint">Start the Python server with: python scripts/sniper.py serve</p>
+          </div>
+        )}
+
+        {serverStarting && !status && (
+          <div className="empty-state">
+            <div className="empty-icon">⏳</div>
+            <p>Starting Python backend...</p>
+            <p className="hint">This may take a few seconds</p>
+          </div>
+        )}
+
+        {status && activeTab === "deals" && (
           <>
             <div className="search-bar">
               <input
@@ -246,7 +339,7 @@ export default function App() {
           </>
         )}
 
-        {activeTab === "economy" && (
+        {status && activeTab === "economy" && (
           <div className="economy-panel">
             <div className="economy-header">
               <h2>Economy Values</h2>
@@ -256,18 +349,26 @@ export default function App() {
                 </span>
               )}
             </div>
-            <div className="economy-grid">
-              {econEntries.map(([name, price]) => (
-                <div key={name} className="econ-row">
-                  <span className="econ-name">{name}</span>
-                  <span className="econ-price">{(price as number).toFixed(4)} HR</span>
-                </div>
-              ))}
-            </div>
+            {!economy || econEntries.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📊</div>
+                <p>No economy data loaded</p>
+                <p className="hint">Click "🔄 Economy" in the header to fetch prices</p>
+              </div>
+            ) : (
+              <div className="economy-grid">
+                {econEntries.map(([name, price]) => (
+                  <div key={name} className="econ-row">
+                    <span className="econ-name">{name}</span>
+                    <span className="econ-price">{(price as number).toFixed(4)} HR</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {activeTab === "offers" && (
+        {status && activeTab === "offers" && (
           <div className="offers-panel">
             <p className="hint">Offer tracking will show incoming/outgoing offers when PD2 auth is configured.</p>
             <p className="hint">Save your PD2 token in <code>.pd2_token</code> to enable REST API offer management.</p>
@@ -344,7 +445,7 @@ function DealCardView({
             </div>
           )}
           <div className="deal-actions">
-            <a href={deal.listing_url} target="_blank" className="btn btn-link">
+            <a href={deal.listing_url} target="_blank" className="btn btn-link" rel="noreferrer">
               Open Listing ↗
             </a>
             <button className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); doPriceCheck(); }}>
@@ -372,7 +473,6 @@ function DealCardView({
               className="btn btn-gold"
               onClick={(e) => {
                 e.stopPropagation();
-                // Submit offer via chat notification
                 alert(`Offer ${offerAmount} HR — send this through chat and I'll submit it!`);
               }}
               disabled={!offerAmount}
