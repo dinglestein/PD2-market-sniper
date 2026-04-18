@@ -6,30 +6,32 @@ use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 static PYTHON_SERVER: Mutex<Option<Child>> = Mutex::new(None);
 
 fn start_python_server(scripts_dir: &str) {
-    // Try python3 first, then python
-    let python_cmd = if std::process::Command::new("python3")
-        .arg("--version")
-        .creation_flags(0x08000000)
-        .output()
-        .is_ok()
-    {
-        "python3"
-    } else {
-        "python"
-    };
-
-    let child = Command::new(python_cmd)
-        .arg(format!("{}/sniper.py", scripts_dir))
+    let sniper_path = format!("{}\\sniper.py", scripts_dir.replace('/', "\\"));
+    
+    // Use 'python' on Windows (python3 is often a Store stub)
+    let python_cmd = "python";
+    
+    println!("Starting server: {} {} serve --no-browser --port 8420", python_cmd, sniper_path);
+    
+    match Command::new(python_cmd)
+        .arg(&sniper_path)
         .arg("serve")
         .arg("--no-browser")
         .arg("--port")
         .arg("8420")
         .creation_flags(0x08000000) // CREATE_NO_WINDOW
         .spawn()
-        .expect("Failed to start Python server");
-
-    *PYTHON_SERVER.lock().unwrap() = Some(child);
-    println!("Python server starting on port 8420 (using {})...", python_cmd);
+    {
+        Ok(mut child) => {
+            let pid = child.id();
+            *PYTHON_SERVER.lock().unwrap() = Some(child);
+            println!("Python server process spawned (pid: {})", pid);
+        }
+        Err(e) => {
+            eprintln!("ERROR: Failed to start Python server: {}", e);
+            eprintln!("  Command: {} {}", python_cmd, sniper_path);
+        }
+    }
 }
 
 #[tauri::command]
