@@ -340,6 +340,8 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
     .btn-start-server {{ margin-left: auto; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--line); background: #0f1318; color: var(--gold); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .15s; }}
     .btn-start-server:hover {{ border-color: var(--gold); background: rgba(245,196,81,.08); }}
     .btn-start-server:active {{ transform: scale(.96); }}
+    .btn-kill-server {{ padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; transition: all .15s; }}
+    .btn-kill-server:hover {{ border-color: var(--red); color: var(--red); background: rgba(255,135,135,.08); }}
     .btn-reset {{ padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,135,135,.3); background: rgba(255,135,135,.06); color: var(--red); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; letter-spacing: .02em; }}
     .btn-reset:hover {{ border-color: var(--red); background: rgba(255,135,135,.12); }}
     .btn-reset:active {{ transform: scale(.96); }}
@@ -384,6 +386,7 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
       <span id="serverDot" class="server-dot offline"></span>
       <span id="serverLabel" class="server-label offline">Server offline</span>
       <span id="serverUrl" class="server-url" style="display:none">Live at <a href="http://localhost:8420" target="_blank">localhost:8420</a></span>
+      <button id="killServer" class="btn-kill-server" style="display:none" title="Stop the server">✕</button>
       <button id="startServer" class="btn-start-server" title="Start the dashboard server (python sniper.py serve)">⚡ Start Server</button>
     </div>
 
@@ -533,6 +536,8 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
             serverLabel.className = 'server-label online';
             serverLabel.textContent = '✅ Server online';
             serverUrl.style.display = '';
+            const killBtn = document.getElementById('killServer');
+            if (killBtn) killBtn.style.display = '';
             if (startBtn) startBtn.style.display = 'none';
             return true;
           }}
@@ -542,6 +547,8 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
         serverLabel.className = 'server-label offline';
         serverLabel.textContent = 'Server offline';
         serverUrl.style.display = 'none';
+        const killBtn = document.getElementById('killServer');
+        if (killBtn) killBtn.style.display = 'none';
         if (startBtn) startBtn.style.display = '';
         return false;
       }}
@@ -587,6 +594,20 @@ def render_dashboard(scan_results: dict[str, Any], offer_stats: dict[str, Any], 
             startBtn.textContent = '⚡ Start Server';
             startBtn.style.pointerEvents = '';
           }}
+        }});
+      }}
+
+      // Kill Server button
+      const killBtn = document.getElementById('killServer');
+      if (killBtn) {{
+        killBtn.addEventListener('click', async () => {{
+          if (!confirm('Stop the Python server? The dashboard will go offline.')) return;
+          try {{
+            await fetch('/api/shutdown', {{ method: 'POST' }});
+          }} catch {{}}
+          killBtn.style.display = 'none';
+          checkServer();
+          showToast('🛑 Server stopped', 'info', 3000);
         }});
       }}
 

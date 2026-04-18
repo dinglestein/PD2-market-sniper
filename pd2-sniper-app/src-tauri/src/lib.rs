@@ -6,7 +6,19 @@ use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 static PYTHON_SERVER: Mutex<Option<Child>> = Mutex::new(None);
 
 fn start_python_server(scripts_dir: &str) {
-    let child = Command::new("python")
+    // Try python3 first, then python
+    let python_cmd = if std::process::Command::new("python3")
+        .arg("--version")
+        .creation_flags(0x08000000)
+        .output()
+        .is_ok()
+    {
+        "python3"
+    } else {
+        "python"
+    };
+
+    let child = Command::new(python_cmd)
         .arg(format!("{}/sniper.py", scripts_dir))
         .arg("serve")
         .arg("--no-browser")
@@ -17,7 +29,7 @@ fn start_python_server(scripts_dir: &str) {
         .expect("Failed to start Python server");
 
     *PYTHON_SERVER.lock().unwrap() = Some(child);
-    println!("Python server started on port 8420");
+    println!("Python server starting on port 8420 (using {})...", python_cmd);
 }
 
 #[tauri::command]
@@ -170,8 +182,18 @@ pub fn run() {
             // Start Python server in background
             start_python_server(&scripts_dir);
 
-            // Wait briefly for server to be ready
-            std::thread::sleep(std::time::Duration::from_secs(2));
+            // Wait for server to be ready (poll up to 15 seconds)
+            println!("Waiting for server to be ready...");
+            for i in 0..30 {
+                std::thread::sleep(std::time::Duration::from_millis(500));
+                if std::net::TcpStream::connect("127.0.0.1:8420").is_ok() {
+                    println!("Server ready after {}ms", (i + 1) * 500);
+                    break;
+                }
+                if i == 29 {
+                    println!("WARNING: Server did not become ready after 15s");
+                }
+            }
 
             Ok(())
         })
